@@ -1,0 +1,7 @@
+.equipment-list > button {
+    margin-bottom: 25px;
+}
+
+.equipment-list :last-child {
+    margin-bottom: 0;
+}

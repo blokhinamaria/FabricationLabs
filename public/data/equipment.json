@@ -1,0 +1,83 @@
+[
+    {
+        "id": "1",
+        "name": "3D Printer",
+        "available": "true", 
+        "availabilityException": [],
+        "materials": [
+            {
+                "id": "1",
+                "materialName": "fillament 1",
+                "variations": 
+                    {
+                        "size": ["size 1", "size 2"],
+                        "color": ["color 1", "color 2"]
+                    }
+            },
+            {
+                "id": "2",
+                "materialName": "fillament 2",
+                "variations": 
+                    {
+                        "size": ["size 1", "size 2"],
+                        "color": ["color 1", "color 2"]
+                    }
+            }
+        ],
+        "fileRequirements": "STL file"
+    },
+    {
+        "id": "2",
+        "name": "Laser Cutter",
+        "available": "true", 
+        "availabilityException": [],
+        "materials": [
+            {
+                "id": "1",
+                "materialName": "material 1",
+                "variations": 
+                    {
+                        "size": ["size 1", "size 2"],
+                        "color": ["color 1", "color 2"]
+                    }
+            },
+            {
+                "id": "2",
+                "materialName": "material 2",
+                "variations": 
+                    {
+                        "size": ["size 1", "size 2"],
+                        "color": ["color 1", "color 2"]
+                    }
+            }
+        ],
+        "fileRequirements": "SVG or Adobe Illustrator file at 100% scale"
+    },
+    {
+        "id": "3",
+        "name": "Large-format Printer",
+        "available": "true",
+        "availabilityException": ["date 1", "date 2"],
+        "materials": [
+            {
+                "id": "1",
+                "materialName": "matte paper 1",
+                "variations": 
+                    {
+                        "size": ["size 1", "size 2"],
+                        "color": ["color 1", "color 2"]
+                    }
+            },
+            {
+                "id": "2",
+                "materialName": "glossy paper 2",
+                "variations": 
+                    {
+                        "size": ["size 1", "size 2"],
+                        "color": ["color 1", "color 2"]
+                    }
+            }
+        ],
+        "fileRequirements": "PDF for print or Adobe file at 100% scale"
+    }
+]

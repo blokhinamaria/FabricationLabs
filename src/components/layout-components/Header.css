@@ -1,0 +1,91 @@
+header {
+    background-color: rgba(255, 255, 255, 0.1); /* Translucent white */
+    backdrop-filter: blur(5px); /* The core of the glass effect */
+    border-radius: 15px; /* Rounded corners for a softer look */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    padding: 20px;
+    text-align: center;
+
+    margin: 20px;
+    height: 110px;
+
+     /* --fx-filter: blur(4px) liquid-glass(2, 10) saturate(1.25) color-overlay(white,.3) contrast(1.25); */
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+
+    position: sticky;
+}
+
+header > .logo-container {
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+
+  font-family: "Zalando Sans Expanded", sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  text-wrap: nowrap;
+}
+ 
+header nav ul {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+  font-family: "Zalando Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0;
+}
+
+header span.user-type {
+  font-family: "Zalando Sans Expanded", sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.hamburger {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+  nav {
+
+    position: absolute;
+    top: 120px;
+    right: 10px;
+    height: 0;
+    overflow: hidden;
+    
+    flex-direction: column;
+
+    background-color: rgba(255, 255, 255, 0.1); /* Translucent white */
+    backdrop-filter: blur(5px); /* The core of the glass effect */
+    border-radius: 15px; /* Rounded corners for a softer look */
+    border: 0px solid rgba(255, 255, 255, 0.3); /* Subtle border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    
+  }
+
+  nav ul {
+    flex-direction: column;
+  }
+  nav.open {
+    height: 300px;
+    padding: 20px;
+    border-width: 1px;
+  }
+}

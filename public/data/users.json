@@ -1,0 +1,19 @@
+[
+    {
+        "userId": "1",
+        "userEmail": "mail@ut.edu",
+        "userType": "student",
+        "userName": {
+            "first": "Jane",
+            "last": "Doe"
+        },
+        "bookings": [
+            {
+                "bookingId": "1"
+            },
+            {
+                "bookingId": "2"
+            }
+        ]
+    }
+]
