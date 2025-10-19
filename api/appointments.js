@@ -1,5 +1,5 @@
-import { handleGet, handlePut, handleDelete } from "../handlers/routeHandlers"
-import { sendResponse } from "../utils/sendResponse"
+import { handleGet, handlePut, handleDelete } from "../handlers/routeHandlers.js"
+import { sendResponse } from "../utils/sendResponse.js"
 
 export default async function handler(req, res) {
     //CORS headers
