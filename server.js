@@ -3,6 +3,13 @@ import http from 'node:http'
 import { handlePost, handleGet, handlePut, handleDelete } from './handlers/routeHandlers.js';
 import { sendResponse } from './utils/sendResponse.js';
 
+
+// Import your new auth handlers
+import requestLinkHandler from './api/request-link.js';
+import verifyHandler from './api/verify.js';
+import checkAuthHandler from './api/check-auth.js';
+import logoutHandler from './api/logout.js';
+
 const PORT = 3001;
 
 // async function connectDB() {
@@ -19,8 +26,22 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+    // AUTH ROUTES
+    if (req.url === '/api/request-link' && req.method === 'POST') {
+        return await requestLinkHandler(req, res);
+    }
+    else if (req.url.startsWith('/api/verify')) {
+        return await verifyHandler(req, res);
+    }
+    else if (req.url === '/api/check-auth' && req.method === 'GET') {
+        return await checkAuthHandler(req, res);
+    }
+    else if (req.url === '/api/logout' && req.method === 'POST') {
+        return await logoutHandler(req, res);
+    }
+
     //POST — Create new appointment 
-    if (req.url === '/api/new-appointment' && req.method === 'POST') {
+    else if (req.url === '/api/new-appointment' && req.method === 'POST') {
         return await handlePost(req, res)
     } 
     //Fetch all or individual appointments 
