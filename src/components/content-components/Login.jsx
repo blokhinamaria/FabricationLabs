@@ -6,28 +6,50 @@ import './Login.css'
 
 export default function Login() {
 
-const [ varificationInProgress, setVarificationInProgress] = useState(false);
 
-const [ email, setEmail] = useState('');
+
+const [ userEmail, setUserEmail] = useState('');
 const [ inputVlaue, setInputValue ] = useState('');
 const [ errorMessage, setErrorMessage ] = useState('');
 
+const [ authInProgress, setAuthInProgress] = useState(false);
+// const [ message, setMessage ] = useState('');
+
+
 //Form submission
-function handleSubmit(formData) {
+async function handleSubmit(formData) {
     const email = formData.get('email');
+    setErrorMessage('')
     console.log(email);
     if (email) {
-        const validation = isEmailValid(email);
-        if (validation) {
-            setVarificationInProgress(true);
-            setEmail(email);
+        const isValid = isEmailValid(email);
+        if (isValid) {
+            setUserEmail(email);
         }
     } else if (email === '') {
         setErrorMessage('Please, enter valid UT email')
+        return
     } else {
         setErrorMessage('Invalid email')
+        return
     }
-    
+
+    try {
+        const response = await fetch('/api/request-link', {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email: email })
+        })
+        const data = await response.json()
+        if (response.ok) {
+            setAuthInProgress(true)
+        } else {
+            throw new Error('Something went wrong')
+        }
+    } catch (err) {
+        setErrorMessage('Something went wrong. Please try again')
+        console.log(err)
+    }
 }
 
 function isEmailValid(email) {
@@ -36,7 +58,6 @@ function isEmailValid(email) {
         if(!result) {
             setErrorMessage('Email is not valid. Please, enter valid UT email');
             document.getElementById('email').classList.add('invalid');
-            console.log(errorMessage);
             return false;
         } else {
             document.getElementById('email').style.borderColor = 'green';
@@ -53,15 +74,15 @@ function handleClick() {
 
             <h1>Welcome to the University of Tampa<br /><span className="title-emphasis">Fabrication Labs</span></h1>
             <h2>Please sign in with your UTampa Email to start</h2>
-            { !varificationInProgress ? 
+            { !authInProgress ? 
                 <form id='signIn' action={handleSubmit}>
                     <input className='' aria-label='email' type='email' id='email' name='email' placeholder='email@spartan.ut.edu' value={inputVlaue} onChange={e => setInputValue(e.target.value)}></input>
                     { errorMessage ? <p className='error-message'>{errorMessage}</p> : null}
-                    <button type='submit'>Sign In</button>
+                    <button type='submit'>Sing In</button>
                 </form>
                 : 
                 <div>
-                    <h2>Check {email} and confirm sign in</h2>
+                    <h2>Check {userEmail} and confirm sign in</h2>
                     <p>Not seeing the email confirmation? <a>Try again</a></p>
                     <Link to='/dashboard'><button onClick={handleClick}>For Development: Skip to Dashboard</button></Link>
                 </div>
