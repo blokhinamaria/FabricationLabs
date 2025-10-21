@@ -34,9 +34,9 @@ export default async function handler(req, res) {
     }));
 
     // Redirect to dashboard
-    // if (typeof res.redirect === 'function') {
-    //   return res.redirect(307, `${process.env.APP_URL}/dashboard`);
-    // }
+    if (typeof res.redirect === 'function') {
+      return res.redirect(307, `${process.env.APP_URL}/dashboard`);
+    }
     res.writeHead(307, { Location: `${process.env.APP_URL}/dashboard` });
     return res.end();
   } catch (err) {
