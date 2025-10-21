@@ -7,6 +7,8 @@ export default async function handler(req, res) {
     }
 
     // Clear session cookie
+    try {
+    // Clear the session cookie
     res.setHeader('Set-Cookie', cookie.serialize('session', '', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -15,6 +17,9 @@ export default async function handler(req, res) {
         maxAge: 0 // Expire immediately
     }));
 
-    return sendResponse(res, 200, { ok: true })
-
+    return sendResponse(res, 200, { success: true, message: 'Logged out successfully' });
+    } catch (err) {
+        console.error('Logout error:', err);
+        return sendResponse(res, 500, { error: 'Logout failed' });
+    }
 }

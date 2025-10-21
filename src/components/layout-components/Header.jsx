@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import './Header.css'
 
 export default function Header() {
@@ -7,6 +8,19 @@ export default function Header() {
 
     function menuToggle() {
         setIsOpen(prev => !prev);
+    }
+
+
+    async function handleLogout() {
+        try {
+            await fetch('/api/logout', {
+                method: "POST",
+                credentials: 'include'
+            })
+            window.location.href = '/'
+        } catch (err) {
+            console.log(`Logout failed: ${err}`)
+        }
     }
 
     return (
@@ -22,7 +36,7 @@ export default function Header() {
                 <ul>
                     <li><a>Appointments</a></li>
                     <li><a>Profile</a></li>
-                    <li><a>Sign Out</a></li>
+                    <li onClick={handleLogout}>Sign Out</li>
                 </ul>
                     <span className='user-type'>UserType</span>
             </nav>
