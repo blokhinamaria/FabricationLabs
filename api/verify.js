@@ -12,8 +12,11 @@ export default async function handler(req, res) {
     const token = req.query?.token || new URLSearchParams(req.url?.split('?')[1]).get('token');
     
     if (!token) {
-      // Redirect to home if no token
-      res.writeHead(302, { Location: process.env.APP_URL || '/' });
+      // For Vercel, use redirect() or status + setHeader
+      if (typeof res.redirect === 'function') {
+        return res.redirect(307, process.env.APP_URL || '/');
+      }
+      res.writeHead(307, { Location: process.env.APP_URL || '/' });
       return res.end();
     }
 
