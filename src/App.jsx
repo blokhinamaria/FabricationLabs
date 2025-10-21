@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Login from './components/content-components/Login';
 import Dashboard from './components/content-components/Dashboard';
 
+
 import './App.css'
 import NewAppointment from './components/content-components/NewAppointment';
 
@@ -18,6 +19,8 @@ function App() {
     }, [location.pathname]);
     return children;
   }
+
+
 
   return (
     <>

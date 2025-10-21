@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+
+    const navigate = useNavigate();
     
     //data for testing
     const userEmail = 'mail@ut.edu'
@@ -10,6 +12,20 @@ export default function Dashboard() {
     const [ upcomingAppointments, setUpcomingAppointments ] = useState([]);
 
     useEffect(() => {
+
+    //     async function checkAuth() {
+    //     const response = await fetch('/api/check-auth');
+    //     const data = await response.json();
+        
+    //     if (data.authenticated) {
+    //         setUser(data.user);
+    //     } else {
+    //         navigate('/');
+    //     }
+    // }
+
+    // checkAuth();
+
         async function fetchUserData() {
             // const response = await fetch(`data/users/[userId]`); ?
             const response = await fetch(`data/users.json`);
@@ -29,7 +45,7 @@ export default function Dashboard() {
         }
         fetchUserData();
         
-    }, [])
+    }, [navigate])
 
     return (
         <main>
