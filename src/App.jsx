@@ -26,11 +26,9 @@ function App() {
           <Routes>
             <Route path='/' element={<Layout />}>
               <Route index element={<Login />} />
-            </Route>
-            <Route path='/dashboard' element={<Layout/>}>
-              <Route index element={<Dashboard />} />
-              <Route path='/dashboard/newappointment' element={<NewAppointment />} />
-            </Route>
+              <Route path='dashboard' element={<Dashboard />} />
+              <Route path='dashboard/newappointment' element={<NewAppointment />} />
+          </Route>
           </Routes>
         </Wrapper>
       </Router>
