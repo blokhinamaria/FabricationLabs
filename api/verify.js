@@ -24,7 +24,7 @@ export default async function handler(req, res) {
 
     // Verify the token
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Verified user:', payload.user.email);
+    console.log('Verified user:', payload.email);
 
     // Set session cookie
     res.setHeader('Set-Cookie', cookie.serialize('session', token, {
