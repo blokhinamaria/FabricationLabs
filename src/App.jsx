@@ -1,5 +1,6 @@
 import { useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AuthProvider } from './AuthContext';
 import Layout from './components/Layout';
 import Login from './components/content-components/Login';
 import Dashboard from './components/content-components/Dashboard';
@@ -20,20 +21,20 @@ function App() {
     return children;
   }
 
-
-
   return (
     <>
       <Router>
-        <Wrapper>
-          <Routes>
-            <Route path='/' element={<Layout />}>
-              <Route index element={<Login />} />
-              <Route path='dashboard' element={<Dashboard />} />
-              <Route path='dashboard/newappointment' element={<NewAppointment />} />
-          </Route>
-          </Routes>
-        </Wrapper>
+        <AuthProvider>
+          <Wrapper>
+            <Routes>
+              <Route path='/' element={<Layout />}>
+                <Route index element={<Login />} />
+                <Route path='dashboard' element={<Dashboard />} />
+                <Route path='dashboard/newappointment' element={<NewAppointment />} />
+            </Route>
+            </Routes>
+          </Wrapper>
+        </AuthProvider>
       </Router>
       
     </>

@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 import './Login.css'
 
 
 export default function Login() {
-
-
 
 const [ userEmail, setUserEmail] = useState('');
 const [ inputVlaue, setInputValue ] = useState('');
@@ -15,16 +14,19 @@ const [ errorMessage, setErrorMessage ] = useState('');
 const [ authInProgress, setAuthInProgress] = useState(false);
 // const [ message, setMessage ] = useState('');
 
+const navigate = useNavigate()
 
 //Form submission
 async function handleSubmit(formData) {
     const email = formData.get('email');
     setErrorMessage('')
-    console.log(email);
     if (email) {
         const isValid = isEmailValid(email);
         if (isValid) {
             setUserEmail(email);
+        } else {
+            setErrorMessage('Please, enter valid UT email')
+            return
         }
     } else if (email === '') {
         setErrorMessage('Please, enter valid UT email')
@@ -32,7 +34,7 @@ async function handleSubmit(formData) {
     } else {
         setErrorMessage('Invalid email')
         return
-    }
+        }
 
     try {
         const response = await fetch('/api/request-link', {
@@ -65,8 +67,8 @@ function isEmailValid(email) {
         }
 }
 
-function handleClick() {
-
+function handleTryAgain() {
+    navigate('/')
 }
 
     return (
@@ -83,8 +85,8 @@ function handleClick() {
                 : 
                 <div>
                     <h2>Check {userEmail} and confirm sign in</h2>
-                    <p>Not seeing the email confirmation? <a>Try again</a></p>
-                    <Link to='/dashboard'><button onClick={handleClick}>For Development: Skip to Dashboard</button></Link>
+                    <p>Not seeing the email confirmation? <a onClick={handleTryAgain}>Try again</a></p>
+                    {/* <Link to='/dashboard'><button onClick={handleClick}>For Development: Skip to Dashboard</button></Link> */}
                 </div>
             }
             

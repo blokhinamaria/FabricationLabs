@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     }
 
     // Create JWT token for magic link
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '10m' });
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '60m' });
     const link = `${process.env.APP_URL}/api/verify?token=${token}`;
 
     // Send email via Resend
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
       html: `
         <p>Hi there,</p>
         <p>Click the button below to verify your UT email and sign in:</p>
-        <a href="${link}" style="background:#900;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;">Verify Email</a>
+        <a href="${link}" target="_self" style="background:#900;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;">Verify Email</a>
         <p>This link expires in 10 minutes.</p>
         <p>If you didn't request this, you can ignore this email.</p>
         <p>– The FabLab Team</p>

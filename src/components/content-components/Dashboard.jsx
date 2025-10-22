@@ -1,51 +1,33 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../AuthContext";
 
 export default function Dashboard() {
 
     const navigate = useNavigate();
     
     //data for testing
-    const userEmail = 'mail@ut.edu'
+    const { user } = useAuth()
 
-    const [ user, setUser ] = useState(null);
+    // const [ user, setUser ] = useState(null);
     const [ upcomingAppointments, setUpcomingAppointments ] = useState([]);
 
     useEffect(() => {
 
-    //     async function checkAuth() {
-    //     const response = await fetch('/api/check-auth');
-    //     const data = await response.json();
-        
-    //     if (data.authenticated) {
-    //         setUser(data.user);
-    //     } else {
-    //         navigate('/');
-    //     }
-    // }
+        if(user) {
+            console.log(user)
+            async function fetchUserAppointments() {
+                const response = await fetch(`/api/appointments?userId=${user._id}`);
+                const data = await response.json()
 
-    // checkAuth();
-
-        async function fetchUserData() {
-            // const response = await fetch(`data/users/[userId]`); ?
-            const response = await fetch(`data/users.json`);
-            const data = await response.json()
-
-            const user = data.find((user) => user.userEmail === userEmail);
-
-            setUser(user);
-            localStorage.setItem('user', JSON.stringify(user));
-
-            if (user && user.bookings.length > 0) {
-                const response = await fetch(`data/bookings.json`);
-                const data = await response.json();
-                
-                setUpcomingAppointments(data);
+                console.log(data)
+                setUpcomingAppointments(data.appointments)
             }
+            fetchUserAppointments()
         }
-        fetchUserData();
-        
-    }, [navigate])
+    }, [user])
+
+    console.log(upcomingAppointments)
 
     return (
         <main>
@@ -53,14 +35,14 @@ export default function Dashboard() {
                 <Link to='/dashboard/newappointment'><button>Schedule new appointment</button></Link>
             </article>
             <article style={{ marginTop: "50px"}}>
-                {upcomingAppointments.length > 0 ? (
+                {upcomingAppointments?.length > 0 ? (
                     <div>
                         <h2>Upcoming appointments</h2>
                         <div className="appointment-list">
                             <ul>
                                 {upcomingAppointments.map((appointment) => (
-                                <li key={appointment.bookingId} className="appointment-card">
-                                    {appointment.date}
+                                <li key={appointment._id} className="appointment-card">
+                                    {appointment.equipment?.name}
                                 </li>
                             ))}
                             </ul>

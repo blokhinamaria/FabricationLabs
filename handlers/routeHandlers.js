@@ -42,7 +42,8 @@ export async function handleGet(req, res) {
         const { client, db } = await connectDB();
 
         const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
-        const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1].get('userId'))
+        const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
+        console.log(userId)
 
         if (id) {
             const collection = db.collection('bookings')
@@ -51,21 +52,21 @@ export async function handleGet(req, res) {
             await client.close()
 
             if (appointment) {
-                return sendResponse(res, 200, ({ success: true, data: appointment }))
+                return sendResponse(res, 200, ({ success: true, appointment: appointment }))
             } else {
-                return sendResponse(res, 404, ({ success: false, data: 'Not Found' }))
+                return sendResponse(res, 200, ({ success: true, appointment: 'No Appointment Found' }))
             }
         }
 
         if (userId) {
             const collection = db.collection('bookings')
-            const appointments = await collection.find( { userId: userId}).toArray()
+            const appointments = await collection.find( { userId: userId }).toArray()
             await client.close()
 
             if (appointments) {
-                return sendResponse(res, 200, ({ success: true, data: appointments }))
+                return sendResponse(res, 200, ({ success: true, appointments: appointments }))
             } else {
-                return sendResponse(res, 404, ({ success: false, data: 'Not Found' }))
+                return sendResponse(res, 200, ({ success: true, appointments: 'No Appointments Found' }))
             }
         }
 

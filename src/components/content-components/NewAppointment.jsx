@@ -1,14 +1,19 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../AuthContext";
+
 import EquipmentSelection from "./NewAppointment-components/EquipmentSelection";
+
 import './NewAppointment.css'
 
 export default function NewAppointment() {
 
-    const user = JSON.parse(localStorage.getItem('user'));
+    const navigate = useNavigate()
+
+    const { user } = useAuth()
 
     const [ newAppointmentData, setNewAppointmentData ] = useState(
         {
-            bookingId: "generate in database?",
             userId: user.userId,
             equipment: {},
             materialPreference: false,
@@ -48,9 +53,12 @@ export default function NewAppointment() {
             })
             if (response.ok) {
                 console.log(`success. Response: ${response}`)
+                navigate('/dashboard')
             } else {
                 console.error(`Server error: ${response.statusText}`)
             }
+
+
         } catch (err) {
             console.log(err)
         }
