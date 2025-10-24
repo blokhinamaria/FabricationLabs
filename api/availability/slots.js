@@ -1,4 +1,4 @@
-import { getAvailableSlots } from "../../utils/getAvailableSlots";
+import { getAvailableSlots } from "../../utils/getAvailableSlots.js";
 
 
 export default async function handler(req, res) {
