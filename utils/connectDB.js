@@ -1,7 +1,9 @@
 import { MongoClient } from 'mongodb';
+
 import dotenv from 'dotenv';
 
 dotenv.config();
+
 
 export async function connectDB() {
     try {
@@ -9,7 +11,8 @@ export async function connectDB() {
             serverSelectionTimeoutMS: 5000,
             socketTimeoutMS: 45000,
             tls: true,
-            tlsAllowInvalidCertificates: false,
+            maxPoolSize: 10,
+            minPoolSize: 5,
         });
         console.log("✅ Successfully connected to MongoDB!");
         const db = client.db('fabrication-labs');

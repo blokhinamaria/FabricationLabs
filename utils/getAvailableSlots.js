@@ -41,19 +41,21 @@ export async function getAvailableSlots(req, res) {
     const endOfDay = new Date(selectedDate.setHours(23, 59, 59, 999));
 
     const bookingCollection = db.collection('bookings');
-    const existingBookings = bookingCollection.find( {
+    const existingBookings = await bookingCollection.find({
         equipmentId: new ObjectId(equipmentId),
         date: { $gte: startOfDay, $lte: endOfDay },
         status: { $in: ['pending', 'confirmed'] }
-    })
+    }).toArray();
     await client.close();
 
     // 5. Generate all possible time slots
     const daySlots = generateTimeSlots(availability.openTime, availability.closeTime, availability.slotDuration);
 
+
     // 7. Filter out booked slots (respecting capacity)
     const availableSlots = daySlots.filter(slot => {
-        const bookingsAtThisTime = existingBookings.filter(booking => booking.existingBookings === slot.startTime)
+        const bookingsAtThisTime = existingBookings.filter(booking => 
+            booking.startTime === slot.startTime);
         return bookingsAtThisTime.length < equipment.capacity
     })
 

@@ -6,10 +6,8 @@ export default function Dashboard() {
 
     const navigate = useNavigate();
     
-    //data for testing
     const { user } = useAuth()
 
-    // const [ user, setUser ] = useState(null);
     const [ upcomingAppointments, setUpcomingAppointments ] = useState([]);
 
     useEffect(() => {
@@ -28,8 +26,6 @@ export default function Dashboard() {
             fetchUserAppointments()
         }
     }, [user])
-
-    console.log(upcomingAppointments)
 
     return (
         <main>

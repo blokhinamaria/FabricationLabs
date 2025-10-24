@@ -72,6 +72,18 @@ export default function NewAppointment() {
 
     const [isEquipmentConfirmed, setIsEquipmentConfirmed] = useState(false)
 
+    const [appointmentConfirmation, setAppointmentConfirmation] = useState(false)
+
+    function submitDateTime(selectedDate, selectedTime) {
+        setNewAppointmentData((prev) => ({
+            ...prev,
+            date: selectedDate,
+            startTime: selectedTime
+        }))
+        setAppointmentConfirmation(true)
+
+    }
+
 
     async function handleSubmit() {
         try {
@@ -108,8 +120,19 @@ export default function NewAppointment() {
                     )
                 
             ) : (
-                <DateTimeSelection equipmentId={newAppointmentData.equipmentId}/>
+                <DateTimeSelection equipmentId={newAppointmentData.equipmentId} submitDateTime={submitDateTime}/>
             )}
+            { appointmentConfirmation && (
+                <div>
+                    <p>{newAppointmentData.equipmentName}</p>
+                    {newAppointmentData.materialPreference ? <p>{String(newAppointmentData.materialPreference)}</p> : <p>No Material Selected</p>}
+                    <p>{newAppointmentData.materialSelections.map((material => material.name))}</p>
+                    <p>{newAppointmentData.date}</p>
+                    <p>{newAppointmentData.startTime}</p>
+                    <button onClick={handleSubmit}>Book</button>
+                </div>
+            )
+            }
             
         
         </main>

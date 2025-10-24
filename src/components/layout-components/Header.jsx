@@ -29,7 +29,7 @@ export default function Header() {
                             <li><button className='nav' disabled>Profile</button></li>
                             <li><button onClick={logout} className='nav'>Logout</button></li>
                         </ul>
-                            <span className='user-type'>{user.role}</span>
+                            <span className='user-type'>{user?.role}</span>
                     </nav>
                 </>
                 : 

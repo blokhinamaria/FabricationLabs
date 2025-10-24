@@ -80,7 +80,7 @@ function handleTryAgain() {
                 <form id='signIn' action={handleSubmit}>
                     <input className='' aria-label='email' type='email' id='email' name='email' placeholder='email@spartan.ut.edu' value={inputVlaue} onChange={e => setInputValue(e.target.value)}></input>
                     { errorMessage ? <p className='error-message'>{errorMessage}</p> : null}
-                    <button type='submit'>Sing In</button>
+                    <button type='submit'>Sign In</button>
                 </form>
                 : 
                 <div>
