@@ -94,8 +94,7 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                                                 onClick={handleSlotSelect}
                                             />
                                         {slot.startTime}</label>
-                                    
-                                ))
+                                        ))
                                     )
                                 )
                             )
@@ -104,10 +103,6 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                 }
                 {selectedSlot && <button>Confirm</button>}
             </form>
-            
-
-
-            
         </section>
     )
 }
