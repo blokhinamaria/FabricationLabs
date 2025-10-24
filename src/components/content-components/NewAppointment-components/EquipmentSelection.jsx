@@ -4,53 +4,61 @@ import MaterialSelection from "./MaterialSelection"
 export default function EquipmentSelection({submitEquipment}) {
     
     const [ equipment, setEquipment ] = useState([]);
-    const [ isEquipmentSelected, setIsEquipmentSelected ] = useState(false);
+
     const [ selectedEquipment, setSelectedEquipment ] = useState(null)
 
-    useEffect(() => {
-        async function fetchEquipment() {
-            const response = await fetch(`/data/equipment.json`);
-            const data = await response.json()
-            setEquipment(data);
-        };
-        fetchEquipment();
-    }, [])
+    //fetch equipment
+        useEffect(() => {
+            async function fetchEquipment() {
+                const response = await fetch(`/api/equipment`);
+                const data = await response.json()
+                if (data.success) {
+                    const availableEquipment = data.equipment.filter((item => item.available === true))
+                    setEquipment(availableEquipment);
+                }
+                
+            };
+            fetchEquipment();
+        }, [])
 
+    //select equipment
+        const [ isEquipmentSelected, setIsEquipmentSelected ] = useState(false);
 
-    function handleEquipmentSelection(equipment) {
-        setIsEquipmentSelected(true);
-        setSelectedEquipment(equipment);
-    }
-
-    function handleSubmitMaterials(selectedMaterials) {
-        if (selectedMaterials.length > 0) {
-            submitEquipment(selectedEquipment, selectedMaterials)
-        } else {
-            submitEquipment(selectedEquipment)
+        function handleEquipmentSelection(equipment) {
+            setIsEquipmentSelected(true);
+            setSelectedEquipment(equipment);
         }
-    }
+    
+    // select materials and submit equipment (from Material Selection Component)
+        function handleSubmitMaterials(selectedMaterials) {
+            if (selectedMaterials.length > 0) {
+                submitEquipment(selectedEquipment, selectedMaterials)
+            } else {
+                submitEquipment(selectedEquipment)
+            }
+        }
 
     return (
         <article>
             <h1>Schedule an appointment with FabLab Staff</h1>
             <p className="limit-width">Before scheduling an appointment, read through the University of Tampa Fabrication Lab and Woodshop policy and guidelines</p>
-            {
-                !isEquipmentSelected ? (
-                        <section className="equipment-list">
-                            <h2>Choose the technology below to start</h2>
-                                {equipment.map((item) => (
-                                    <button onClick={() => handleEquipmentSelection(item)} key={item.id}>{item.name}</button>
-                                ))}
-                        </section>
-                    ) : (
-                        <>  
-                            <section className="equipment-list">
-                                <button onClick={() => setIsEquipmentSelected(false)}>Go Back</button>
-                                <button className="button-selected" onClick={() => setIsEquipmentSelected(false)}>{selectedEquipment.name}</button>
-                            </section>
-                                <MaterialSelection materials={selectedEquipment.materials} fileRequirements={selectedEquipment.fileRequirements} handleSubmitMaterials={handleSubmitMaterials}/>
-                            </>
-                        )
+            
+            
+            { !isEquipmentSelected ?
+                <section className="equipment-list">
+                    {/* Step 1: Select equipment */}
+                    <h2>Choose the technology or activity below to start</h2>
+                        {equipment.map((item) => (
+                            <button onClick={() => handleEquipmentSelection(item)} key={item._id}>{item.name}</button>
+                        ))}
+                </section>
+                :
+                <section className="equipment-list">
+                    {/* Step 2: Select materials and agree to terms */}
+                    <button onClick={() => setIsEquipmentSelected(false)}>Go Back</button>
+                    <button className="button-selected" onClick={() => setIsEquipmentSelected(false)}>{selectedEquipment.name}</button>
+                    <MaterialSelection materials={selectedEquipment.materials} fileRequirements={selectedEquipment.fileRequirements} handleSubmitMaterials={handleSubmitMaterials}/>
+                </section>
             }
         </article>
         

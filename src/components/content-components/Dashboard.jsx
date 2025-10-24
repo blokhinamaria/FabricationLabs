@@ -15,12 +15,14 @@ export default function Dashboard() {
     useEffect(() => {
 
         if(user) {
-            console.log(user)
             async function fetchUserAppointments() {
-                const response = await fetch(`/api/appointments?userId=${user._id}`);
+                const response = await fetch(`/api/appointments?userId=${user._id}`, 
+                    {
+                    credentials: 'include'
+                }
+                );
                 const data = await response.json()
 
-                console.log(data)
                 setUpcomingAppointments(data.appointments)
             }
             fetchUserAppointments()
@@ -42,7 +44,7 @@ export default function Dashboard() {
                             <ul>
                                 {upcomingAppointments.map((appointment) => (
                                 <li key={appointment._id} className="appointment-card">
-                                    {appointment.equipment?.name}
+                                    {appointment.equipmentName}
                                 </li>
                             ))}
                             </ul>

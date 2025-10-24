@@ -13,7 +13,7 @@ export default async function handler(req, res) {
                 return await handlePut(req, res)
             } else if (req.method === 'DELETE') {
                 return await handleDelete(req, res)
-            } else {
+            }  else {
             sendResponse(res, 404, ({ error: 'Method not allowed'}))
             }
 }

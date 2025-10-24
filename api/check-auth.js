@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         }
 
         if (!user) {
-            user = await collection.insertOne({
+            const result = await collection.insertOne({
                 email: payload.email,
                 role: role,
                 firstName: null,
@@ -36,6 +36,11 @@ export default async function handler(req, res) {
                 classes: [],
                 createdAt: new Date(),
                 isActive: true
+        });
+        
+        // Fetch the newly created user
+        user = await db.collection('users').findOne({
+            _id: result.insertedId
         });
         console.log('Created new user:', user.email);
         }

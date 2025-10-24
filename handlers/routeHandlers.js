@@ -41,41 +41,53 @@ export async function handleGet(req, res) {
     try {
         const { client, db } = await connectDB();
 
-        const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
-        const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
-        console.log(userId)
+        if (req.url.startsWith('/api/appointments')) {
+            const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
+            const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
 
-        if (id) {
-            const collection = db.collection('bookings')
-            const appointment = await collection.findOne( { _id: new ObjectId(id)})
+            if (id) {
+                const collection = db.collection('bookings')
+                const appointment = await collection.findOne( { _id: new ObjectId(id)})
+
+                await client.close()
+
+                if (appointment) {
+                    return sendResponse(res, 200, ({ success: true, appointment: appointment }))
+                } else {
+                    return sendResponse(res, 200, ({ success: true, appointment: 'No Appointment Found' }))
+                }
+            }
+
+            if (userId) {
+                const collection = db.collection('bookings')
+                const appointments = await collection.find( { userId: userId }).toArray()
+                await client.close()
+
+                if (appointments) {
+                    return sendResponse(res, 200, ({ success: true, appointments: appointments }))
+                } else {
+                    return sendResponse(res, 200, ({ success: true, appointments: 'No Appointments Found' }))
+                }
+            }
+
+            //Get all appointments
+            const collection = db.collection('bookings');
+            const appointments = await collection.find({}).toArray()
 
             await client.close()
+            return sendResponse(res, 200, ({success: true, appointments: appointments}))
 
-            if (appointment) {
-                return sendResponse(res, 200, ({ success: true, appointment: appointment }))
-            } else {
-                return sendResponse(res, 200, ({ success: true, appointment: 'No Appointment Found' }))
-            }
-        }
-
-        if (userId) {
-            const collection = db.collection('bookings')
-            const appointments = await collection.find( { userId: userId }).toArray()
+        } else if (req.url.startsWith('/api/equipment')) {
+            const collection = db.collection('equipment')
+            const equipment = await collection.find({}).toArray()
             await client.close()
 
-            if (appointments) {
-                return sendResponse(res, 200, ({ success: true, appointments: appointments }))
+            if (equipment) {
+                return sendResponse(res, 200, ({ success: true, equipment: equipment }))
             } else {
-                return sendResponse(res, 200, ({ success: true, appointments: 'No Appointments Found' }))
+                return sendResponse(res, 400, ({ success: false, equipment: "No equipment found" }))
             }
         }
-
-        //Get all appointments
-        const collection = db.collection('bookings');
-        const appointments = await collection.find({}).toArray()
-            
-        await client.close()
-        return sendResponse(res, 200, ({success: true, data: appointments}))
     } catch (err) {
         console.log(`Error in routeHandlers, handleGet: ${err}`)
         return sendResponse(res, 500, ({ error: err.message }))

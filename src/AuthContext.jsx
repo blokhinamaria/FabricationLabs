@@ -22,6 +22,7 @@ export function AuthProvider( {children} ) {
 
             if (data.authenticated) {
                 setUser(data.user)
+                navigate('/dashboard')
             } else {
                 setUser(null)
                 navigate('/')

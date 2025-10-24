@@ -2,6 +2,7 @@ import http from 'node:http'
 
 import { handlePost, handleGet, handlePut, handleDelete } from './handlers/routeHandlers.js';
 import { sendResponse } from './utils/sendResponse.js';
+import { getAvailableSlots } from './utils/getAvailableSlots.js'
 
 
 // Import your new auth handlers
@@ -53,6 +54,10 @@ const server = http.createServer(async (req, res) => {
         } else if (req.method === 'DELETE') {
             return await handleDelete(req, res)
         }  
+    } else if (req.url === '/api/equipment' && req.method === 'GET') {
+        return await handleGet(req, res)
+    } else if (req.url.startsWith('/api/availability')) {
+        return await getAvailableSlots(req, res)
     } else {
         sendResponse(res, 404, ({ error: 'Not Found', url: req.url}))
     }

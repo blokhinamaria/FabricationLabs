@@ -21,22 +21,6 @@ export default function Layout() {
         )
     }
 
-    // const navigate = useNavigate();
-
-//     useEffect(() => {
-    
-//             async function checkAuth() {
-//             const response = await fetch('/api/check-auth');
-//             const data = await response.json();
-            
-//             if (!data.authenticated) {
-//                 navigate('/');
-//             }
-//             }
-    
-//         checkAuth();
-// }, [navigate])
-
     return (
         <>
             <Header />

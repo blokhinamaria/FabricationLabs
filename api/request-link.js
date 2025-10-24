@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     }
 
     // Create JWT token for magic link
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '60m' });
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '360m' });
     const link = `${process.env.APP_URL}/api/verify?token=${token}`;
 
     // Send email via Resend
