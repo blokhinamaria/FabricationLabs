@@ -58,6 +58,8 @@ const server = http.createServer(async (req, res) => {
         return await handleGet(req, res)
     } else if (req.url.startsWith('/api/availability')) {
         return await getAvailableSlots(req, res)
+    } else if (req.url.startsWith('/api/users') && req.method === 'PUT') {
+        return await handlePut(req, res)
     } else {
         sendResponse(res, 404, ({ error: 'Not Found', url: req.url}))
     }

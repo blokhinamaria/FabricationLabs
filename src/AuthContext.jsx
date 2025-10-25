@@ -5,7 +5,7 @@ const AuthContext = createContext(null)
 
 export function AuthProvider( {children} ) {
     const [ user, setUser ] = useState(null);
-    const [loading, setLoading ] = useState(true);
+    const [ loading, setLoading ] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,6 +37,10 @@ export function AuthProvider( {children} ) {
         }
     }
 
+    const updateUser = (updatedFields) => {
+        setUser(prev => ({ ...prev, ...updatedFields }));
+    };
+
     const logout = async () => {
         try {
             await fetch('/api/logout', {
@@ -51,7 +55,7 @@ export function AuthProvider( {children} ) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, checkAuth, logout }}>
+        <AuthContext.Provider value={{ user, loading, checkAuth, updateUser, logout }}>
             {children}
         </AuthContext.Provider>
     );

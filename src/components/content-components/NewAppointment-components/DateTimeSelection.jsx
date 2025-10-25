@@ -22,7 +22,6 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
             try {
                 const response = await fetch(`/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate}`)
                 const data = await response.json()
-                console.log(data)
 
                 if (data.available) {
                     setIsAvailable(data.available)
@@ -45,18 +44,17 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
     const maxDateString = maxDate.toISOString().split('T')[0]
 
     function handleSlotSelect(e) {
-        setSelectedSlot(e.target.value)
+        setSelectedSlot(availableSlots.find((slot) => slot.startTime === e.target.value))
     }
 
     function handleSubmit(e) {
-        e.preventDafault()
+        e.preventDefault()
+        if (!selectedSlot) return;
         submitDateTime(selectedDate, selectedSlot)
     }
 
-    console.log(selectedSlot)
-
     return (
-        <section>
+        <article>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor='date'>Select a day</label>
@@ -88,10 +86,10 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                                             <input
                                                 id={slot.startTime}
                                                 value={slot.startTime}
-                                                checked={selectedSlot === slot.startTime}
+                                                checked={selectedSlot?.startTime === slot?.startTime}
                                                 type='radio'
-                                                className={`slot-button ${selectedSlot === slot.startTime ? 'selected' : ''}`}
-                                                onClick={handleSlotSelect}
+                                                className={`slot-button ${selectedSlot?.startTime === slot?.startTime ? 'selected' : ''}`}
+                                                onChange={handleSlotSelect}
                                             />
                                         {slot.startTime}</label>
                                         ))
@@ -101,8 +99,8 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                         }
                     </div>
                 }
-                {selectedSlot && <button>Confirm</button>}
+                {selectedSlot && <button onClick={handleSubmit}>Confirm</button>}
             </form>
-        </section>
+        </article>
     )
 }

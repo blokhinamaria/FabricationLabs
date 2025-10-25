@@ -31,8 +31,7 @@ export default async function handler(req, res) {
             const result = await collection.insertOne({
                 email: payload.email,
                 role: role,
-                firstName: null,
-                lastName: null,
+                fullName: null,
                 classes: [],
                 createdAt: new Date(),
                 isActive: true

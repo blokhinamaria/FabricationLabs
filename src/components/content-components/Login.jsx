@@ -8,7 +8,7 @@ import './Login.css'
 export default function Login() {
 
 const [ userEmail, setUserEmail] = useState('');
-const [ inputVlaue, setInputValue ] = useState('');
+const [ inputValue, setInputValue ] = useState('');
 const [ errorMessage, setErrorMessage ] = useState('');
 
 const [ authInProgress, setAuthInProgress] = useState(false);
@@ -78,7 +78,7 @@ function handleTryAgain() {
             <h2>Please sign in with your UTampa Email to start</h2>
             { !authInProgress ? 
                 <form id='signIn' action={handleSubmit}>
-                    <input className='' aria-label='email' type='email' id='email' name='email' placeholder='email@spartan.ut.edu' value={inputVlaue} onChange={e => setInputValue(e.target.value)}></input>
+                    <input className='' aria-label='email' type='email' id='email' name='email' placeholder='email@spartan.ut.edu' value={inputValue} onChange={e => setInputValue(e.target.value)}></input>
                     { errorMessage ? <p className='error-message'>{errorMessage}</p> : null}
                     <button type='submit'>Sign In</button>
                 </form>

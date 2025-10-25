@@ -7,6 +7,8 @@ import { connectDB } from "../utils/connectDB.js"
 import { ObjectId } from "bson"
 
 export async function handlePost(req, res) {
+
+
     try {
         let parsedData 
         if (req.body) {
@@ -29,7 +31,7 @@ export async function handlePost(req, res) {
 
         await client.close();
 
-        sendResponse(res, 200, ({ success: true, data: result.insertedId, message: 'Appointment created' }))
+        sendResponse(res, 200, ({ success: true, appointmentId: result.insertedId, message: 'Appointment created' }))
         console.log(result)
         
     } catch (err) {
@@ -43,7 +45,7 @@ export async function handleGet(req, res) {
 
         if (req.url.startsWith('/api/appointments')) {
             const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
-            const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
+            
 
             if (id) {
                 const collection = db.collection('bookings')
@@ -57,6 +59,8 @@ export async function handleGet(req, res) {
                     return sendResponse(res, 200, ({ success: true, appointment: 'No Appointment Found' }))
                 }
             }
+
+            const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
 
             if (userId) {
                 const collection = db.collection('bookings')
@@ -97,31 +101,56 @@ export async function handleGet(req, res) {
 export async function handlePut(req, res) {
 
     try {
-        const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
 
-        let updateData
-        if (req.body) {
-            updateData = req.body;
-        } else {
-            updateData = await parseJSONBody(req)
+        if (req.url.startsWith('/api/appointments')) {
+            const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
+            let updateData
+            if (req.body) {
+                updateData = req.body;
+            } else {
+                updateData = await parseJSONBody(req)
+            }
+            const sanitizedData = sanitizeInput(updateData)
+
+            const { client, db } = await connectDB()
+            const collection = db.collection('bookings')
+
+            const result = await collection.updateOne(
+                {_id: new ObjectId(id), },
+                { $set: sanitizedData} 
+            )
+
+            await client.close()
+
+            return sendResponse(res, 200, ({ success: true, modified: result.modifiedCount }))
+
+        } else if (req.url.startsWith('/api/users')) {
+            const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
+            
+            let updateData
+            if (req.body) {
+                updateData = req.body;
+            } else {
+                updateData = await parseJSONBody(req)
+            }
+            const sanitizedData = sanitizeInput(updateData)
+
+            const { client, db } = await connectDB()
+            const collection = db.collection('users')
+
+            const result = await collection.updateOne(
+                {_id: new ObjectId(userId), },
+                { $set: sanitizedData} 
+            )
+
+            await client.close()
+
+            return sendResponse(res, 200, ({ success: true, modified: result.modifiedCount }))
         }
-        const sanitizedData = sanitizeInput(updateData)
-
-        const { client, db } = await connectDB()
-        const collection = db.collection('bookings')
-
-        const result = await collection.updateOne(
-            {_id: new ObjectId(id), },
-            { $set: sanitizedData} 
-        )
-
-        await client.close()
-
-        sendResponse(res, 200, ({ success: true, modified: result.modifiedCount }))
-
+        
     } catch (err) {
         console.log(`Error in routeHandlers, handlePut: ${err}`)
-        sendResponse(res, 500, ({error: err.message}))
+        return sendResponse(res, 500, ({error: err.message}))
     }
 }
 

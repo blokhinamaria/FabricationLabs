@@ -1,6 +1,7 @@
 import { useState, useEffect} from 'react'
 import MaterialSelection from "./MaterialSelection" 
 
+
 export default function EquipmentSelection({submitEquipment}) {
     
     const [ equipment, setEquipment ] = useState([]);
