@@ -1,0 +1,8 @@
+form.date-time-form {
+    flex-direction: row;
+    width: 100%;
+}
+
+form.date-time-form > div {
+    min-width: 450px;
+}

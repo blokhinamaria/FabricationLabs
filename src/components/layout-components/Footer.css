@@ -1,14 +1,11 @@
 footer {
-    background-color: rgba(255, 255, 255, 0.1); /* Translucent white */
-    backdrop-filter: blur(5px); /* The core of the glass effect */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
-    padding: 20px;
+    background-color: var(--glass-background);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--glass-border);
+
+    padding: var(--padding-small);
     text-align: center;
     min-height: 200px;
-
-     /* --fx-filter: blur(4px) liquid-glass(2, 10) saturate(1.25) color-overlay(white,.3) contrast(1.25); */
-
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -24,14 +21,14 @@ footer > .information {
 }
 
 footer > .logo-container {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  color: var(--white);
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    color: var(--white);
 
-  font-family: "Zalando Sans Expanded", sans-serif;
-  font-weight: 800;
-  font-size: 1.3rem;
+    font-family: "Zalando Sans Expanded", sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
 }
 
 @media (max-width: 768px) {

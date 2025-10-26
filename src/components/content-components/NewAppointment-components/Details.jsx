@@ -102,7 +102,7 @@ export default function Details({submitDetails}) {
                             value={userFullName}
                             onChange={(e) => setUserFullName(e.target.value)}
                             />
-                        {nameErrorMessage ? <p>{nameErrorMessage}</p> : null}
+                        {nameErrorMessage ? <p className='error-message'>{nameErrorMessage}</p> : null}
                     </div>
                     <div>
                         <label htmlFor='classNumber'>Class</label>
@@ -113,7 +113,7 @@ export default function Details({submitDetails}) {
                             placeholder="ART XXX"
                             value={classNumber}
                             onChange={(e) => setClassNumber(e.target.value)}/>
-                        {classErrorMessage ? <p>{classErrorMessage}</p> : null}
+                        {classErrorMessage ? <p className='error-message'>{classErrorMessage}</p> : null}
                     </div>
                     <div>
                         <label htmlFor='details'>Additional details</label>
@@ -123,9 +123,9 @@ export default function Details({submitDetails}) {
                             placeholder="Provide details of what you need to do so we can better prepare for your visit"
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}/>
-                        {notesErrorMessage ? <p>{notesErrorMessage}</p> : null}
+                        {notesErrorMessage ? <p className='error-message'>{notesErrorMessage}</p> : null}
                     </div>
-                    <div>
+                    <div className='input-group-wrapper'>
                         <input
                             id='terms'
                             name='terms'
@@ -136,6 +136,8 @@ export default function Details({submitDetails}) {
                         <label htmlFor='fileRequirements'>
                             I have read and agree to the Terms and Conditions
                         </label>
+                    </div>
+                    <div className='input-group-wrapper'> 
                             <input
                                 id='policy'
                                 name='policy'
@@ -146,7 +148,7 @@ export default function Details({submitDetails}) {
                             <label htmlFor='policy'>
                                 I have read and understood the UTampa Fabrication Lab and Woodshop policy and guidelines
                             </label>
-                        {termErrorMessage ? <p>{termErrorMessage}</p> : null}
+                        {termErrorMessage ? <p className='error-message'>{termErrorMessage}</p> : null}
                     </div>
                     <button type='submit'>Submit</button>
                 </form>

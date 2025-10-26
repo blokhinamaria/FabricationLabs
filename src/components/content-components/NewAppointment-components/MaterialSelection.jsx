@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import './MaterialSelection.css'
+
 export default function MaterialSelection({materials, fileRequirements, handleSubmitMaterials}) {
 
     function flattenMaterials (materials) {
@@ -50,11 +52,11 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
     }
 
     return (
-        <section>
-            <h2>Select Preferred Materials (optional)</h2>
-            <form onSubmit={handleSubmit}>
+        <section className="material-selection">
+            <h4>Select Preferred Materials (optional)</h4>
+            <form className="material-form" onSubmit={handleSubmit}>
                 {availableMaterials.map((material) => (
-                    <div key={material.id}>
+                    <div className="input-group-wrapper" key={material.id}>
                         <input
                             id={material.id}
                             name="materialSelection"
@@ -68,10 +70,10 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
                     </div>
                 ))}
 
-                <p>Material availability is not guaranteed </p>
-                <h3>File Requirements</h3>
+                <p className="disclaimer">Material availability is not guaranteed </p>
+                <h4>File Requirements</h4>
                 <p>{fileRequirements}</p>
-                    
+                    <div className="input-group-wrapper">
                         <input
                             id='fileRequirements'
                             name='fileRequirements'
@@ -82,10 +84,10 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
                         <label htmlFor='fileRequirements'>
                             I have reviewed and understood the file requirements
                         </label>
-                    { errorMessage !== '' ? (<p>{errorMessage}</p>) : null}
-                <button type="submit">Submit</button>
+                    </div>
+                    { errorMessage !== '' ? (<p className="error-message">{errorMessage}</p>) : null}
+                <button type="submit" disabled={!hasReviewedRequirements}>Submit</button>
             </form>
-            
         </section>
     )
 }

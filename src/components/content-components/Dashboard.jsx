@@ -2,9 +2,11 @@ import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 
-export default function Dashboard() {
+import Appointment from "./appointments/Appointment";
 
-    const navigate = useNavigate();
+
+
+export default function Dashboard() {
     
     const { user } = useAuth()
 
@@ -21,7 +23,14 @@ export default function Dashboard() {
                 );
                 const data = await response.json()
 
-                setUpcomingAppointments(data.appointments)
+                const sortedAppointments = data.appointments.sort((a, b) => {
+                    const aDate = new Date(`${a.date} ${a.startTime}`)
+                    const bDate = new Date(`${b.date} ${b.startTime}`)
+                    return aDate - bDate;
+                }
+                )
+
+                setUpcomingAppointments(sortedAppointments)
             }
             fetchUserAppointments()
         }
@@ -29,25 +38,19 @@ export default function Dashboard() {
 
     return (
         <main>
-            <article className="new-appointment">
+            <article className="appointment-buttons">
                 <Link to='/dashboard/newappointment'><button>Schedule new appointment</button></Link>
             </article>
-            <article style={{ marginTop: "50px"}}>
+            <article style={{ marginTop: "50px"}} className="upcoming-appointments">
                 {upcomingAppointments?.length > 0 ? (
-                    <div>
+                    <>
                         <h2>Upcoming appointments</h2>
-                        <div className="appointment-list">
-                            <ul>
+                        <section className="appointment-list">
                                 {upcomingAppointments.map((appointment) => (
-                                <li key={appointment._id} className="appointment-card">
-                                    {appointment.equipmentName}
-                                </li>
+                                    <Appointment key={appointment._id} data={appointment}/>
                             ))}
-                            </ul>
-                            
-                        </div>
-                    </div>
-                    
+                        </section>
+                    </>
                 ) : (
                     <div>
                         <h2>No upcoming appointments</h2>

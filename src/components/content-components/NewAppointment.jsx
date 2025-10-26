@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 import { ObjectId } from "bson";
@@ -12,8 +12,6 @@ import './NewAppointment.css'
 
 export default function NewAppointment() {
 
-    const navigate = useNavigate()
-
     const { user } = useAuth()
 
     const [ newAppointmentData, setNewAppointmentData ] = useState(
@@ -23,6 +21,8 @@ export default function NewAppointment() {
             userEmail: user.email,
             equipmentId: null, // Reference only - don't duplicate entire object
             equipmentName: null,
+            equipmentLocation: null,
+            
             // Store only the specific selections made at booking time
             materialPreference: false, //boolean, false by default
             materialSelections: [],
@@ -62,6 +62,7 @@ export default function NewAppointment() {
             ...prev,
             equipmentId: new ObjectId(equipment._id),
             equipmentName: equipment.name,
+            location: equipment.location,
             materialPreference: true,
             materialSelections: materialSelection.map(material => (
                 {
@@ -92,7 +93,7 @@ export default function NewAppointment() {
             ...prev,
             date: selectedDate,
             startTime: selectedTime.startTime,
-            endTime: selectedTime.endTime, // "09:30" or calculate from duration / string
+            endTime: selectedTime.endTime, // or calculate from duration / string
         }))
         handleNext("details");
     }
@@ -139,49 +140,62 @@ export default function NewAppointment() {
         }
     }
 
-    // const appointmentDetails = (
-    //         <div>
-    //                 <p>{newAppointmentData.equipmentName}</p>
-    //                 {newAppointmentData.materialPreference ? <p>{String(newAppointmentData.materialPreference)}</p> : <p>No Material Selected</p>}
-    //                 <p>{newAppointmentData.materialSelections.map((material => material.name))}</p>
-    //                 <p>{newAppointmentData.date}</p>
-    //                 <p>{newAppointmentData.startTime}</p>
-    //                 <button onClick={handleBookAppointment}>Book</button>
-    //         </div>
-    //     )
+    const navigate = useNavigate()
 
-    // const appointmentConfirmation = (
-    //     <div>
-    //         {Object.entries(newAppointmentData).map(([key, value]) => (
-    //             <div><p>{key}</p>
-    //             <h3>{value}</h3></div>
-            
-    //         ))}
-    //                 {/* <p>{newAppointmentData.equipmentName}</p>
-    //                 {newAppointmentData.materialPreference ? <p>{String(newAppointmentData.materialPreference)}</p> : <p>No Material Selected</p>}
-    //                 <p>{newAppointmentData.materialSelections.map((material => material.name))}</p>
-    //                 <p>{newAppointmentData.date}</p>
-    //                 <p>{newAppointmentData.startTime}</p>
-    //                 <Link to='/dashboard'><button>Back to dashboard</button></Link> */}
-    //     </div>
-    // )
+    function handleCancel() {
+        navigate('/dashboard')
+    }
 
     return (
         <main>
             {step === 'equipment' && <EquipmentSelection submitEquipment={submitEquipment}/>}
-            {step === 'date' && <DateTimeSelection equipmentId={newAppointmentData.equipmentId} submitDateTime={submitDateTime}/>}
-            {step === 'details' && <Details submitDetails={submitDetails}/>}
+            {step === 'date' && 
+                (   
+                    <div className="appointment-booking-wrapper">  
+                        <section className="appointment-details">
+                            <h2 onClick={() => (handleNext('equipment'))}>{newAppointmentData.equipmentName}</h2>
+                            { newAppointmentData.materialPreference ? (
+                                <div onClick={() => (handleNext('equipment'))}> 
+                                    <h4>Preferred  Materials</h4>
+                                    {newAppointmentData.materialSelections.map(material => (
+                                        <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
+                                    ))}
+                                </div>
+                            ) : null}
+                            <button className="small" onClick={handleCancel}>Cancel</button>
+                        </section>
+                        <DateTimeSelection equipmentId={newAppointmentData.equipmentId} submitDateTime={submitDateTime}/>
+                    </div>
+                    
+                )}
+                
+            {step === 'details' && 
+                (   
+                    <div className="appointment-booking-wrapper">  
+                        <section className="appointment-details">
+                            <h2 onClick={() => (handleNext('equipment'))}>{newAppointmentData.equipmentName}</h2>
+                            { newAppointmentData.materialPreference ? (
+                                <div onClick={() => (handleNext('equipment'))}> 
+                                    <h4>Preferred  Materials</h4>
+                                    {newAppointmentData.materialSelections.map(material => (
+                                        <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
+                                    ))}
+                                </div>
+                            ) : null}
+                            <span>Appointment for</span>
+                            <h2>{newAppointmentData.date}</h2>
+                            <h2>{newAppointmentData.startTime}</h2>
+                            <button className="small" onClick={handleCancel}>Cancel</button>
+                        </section>
+                        <Details submitDetails={submitDetails}/>
+                    </div>
+                )
+            }
             {step === 'confirmation' &&
                 <div>
                     <p>Appointment created</p>
                     <Appointment id={appointmentId} />
                     <Link to='/dashboard'><button>Back to dashboard</button></Link>
-                            {/* <p>{newAppointmentData.equipmentName}</p>
-                            {newAppointmentData.materialPreference ? <p>{String(newAppointmentData.materialPreference)}</p> : <p>No Material Selected</p>}
-                            <p>{newAppointmentData.materialSelections.map((material => material.name))}</p>
-                            <p>{newAppointmentData.date}</p>
-                            <p>{newAppointmentData.startTime}</p>
-                            <Link to='/dashboard'><button>Back to dashboard</button></Link> */}
                 </div>
             }
         </main>

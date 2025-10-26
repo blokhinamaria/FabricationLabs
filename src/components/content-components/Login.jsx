@@ -89,7 +89,6 @@ function handleTryAgain() {
                     {/* <Link to='/dashboard'><button onClick={handleClick}>For Development: Skip to Dashboard</button></Link> */}
                 </div>
             }
-            
         </main>
     )
 }

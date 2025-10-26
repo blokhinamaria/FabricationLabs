@@ -1,6 +1,7 @@
 import { useState, useEffect} from 'react'
 import MaterialSelection from "./MaterialSelection" 
 
+import './EquipmentSelection.css'
 
 export default function EquipmentSelection({submitEquipment}) {
     
@@ -41,9 +42,8 @@ export default function EquipmentSelection({submitEquipment}) {
 
     return (
         <article>
-            <h1>Schedule an appointment with FabLab Staff</h1>
+            <h1>Schedule an appointment with FabLabs Staff</h1>
             <p className="limit-width">Before scheduling an appointment, read through the University of Tampa Fabrication Lab and Woodshop policy and guidelines</p>
-            
             
             { !isEquipmentSelected ?
                 <section className="equipment-list">
@@ -56,8 +56,10 @@ export default function EquipmentSelection({submitEquipment}) {
                 :
                 <section className="equipment-list">
                     {/* Step 2: Select materials and agree to terms */}
-                    <button onClick={() => setIsEquipmentSelected(false)}>Go Back</button>
-                    <button className="button-selected" onClick={() => setIsEquipmentSelected(false)}>{selectedEquipment.name}</button>
+                    <div className='equipment-selection-button-group'>
+                        <button className='back-button' onClick={() => setIsEquipmentSelected(false)}>Go Back</button>
+                        <button className="equipment-button button-selected" onClick={() => setIsEquipmentSelected(false)}>{selectedEquipment.name}</button>
+                    </div>
                     <MaterialSelection materials={selectedEquipment.materials} fileRequirements={selectedEquipment.fileRequirements} handleSubmitMaterials={handleSubmitMaterials}/>
                 </section>
             }
