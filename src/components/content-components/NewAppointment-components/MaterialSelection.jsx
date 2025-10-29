@@ -69,20 +69,21 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
                         </label>
                     </div>
                 ))}
-
-                <p className="disclaimer">Material availability is not guaranteed </p>
-                <h4>File Requirements</h4>
-                <p>{fileRequirements}</p>
+                    <p className="disclaimer">Material availability is not guaranteed </p>
+                        <div>
+                            <h4>File Requirements</h4>
+                            <p>{fileRequirements}</p>
+                        </div>
                     <div className="input-group-wrapper">
                         <input
-                            id='fileRequirements'
-                            name='fileRequirements'
-                            type="checkbox"
-                            value='reviewed'
-                            onChange={() => setHasReviewedRequirements((prev) => !prev)}
+                                id='fileRequirements'
+                                name='fileRequirements'
+                                type="checkbox"
+                                value='reviewed'
+                                onChange={() => setHasReviewedRequirements((prev) => !prev)}
                         />
                         <label htmlFor='fileRequirements'>
-                            I have reviewed and understood the file requirements
+                                I have reviewed and understood the file requirements
                         </label>
                     </div>
                     { errorMessage !== '' ? (<p className="error-message">{errorMessage}</p>) : null}

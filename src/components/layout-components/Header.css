@@ -61,6 +61,10 @@ header span.user-type {
   min-width: none;
 }
 
+img.header-logo {
+  height: 65px;
+}
+
 @media (max-width: 768px) {
   .hamburger {
     display: block;

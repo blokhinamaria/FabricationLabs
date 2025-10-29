@@ -69,23 +69,30 @@ function isEmailValid(email) {
 
 function handleTryAgain() {
     navigate('/')
+    setAuthInProgress(false)
 }
 
     return (
         <main>
 
             <h1>Welcome to the University of Tampa<br /><span className="title-emphasis">Fabrication Labs</span></h1>
-            <h2>Please sign in with your UTampa Email to start</h2>
+            
             { !authInProgress ? 
-                <form id='signIn' action={handleSubmit}>
-                    <input className='' aria-label='email' type='email' id='email' name='email' placeholder='email@spartan.ut.edu' value={inputValue} onChange={e => setInputValue(e.target.value)}></input>
-                    { errorMessage ? <p className='error-message'>{errorMessage}</p> : null}
+                <>
+                    <h2>Please sign in with your UTampa Email to start</h2>
+                    <form id='signIn' action={handleSubmit}>
+                    <div>
+                        <input aria-label='email' type='email' id='email' name='email' placeholder='email@spartan.ut.edu' value={inputValue} onChange={e => setInputValue(e.target.value)}></input>
+                        { errorMessage ? <p className='error-message'>{errorMessage}</p> : null}
+                    </div>
                     <button type='submit'>Sign In</button>
+                    
                 </form>
+                </>
                 : 
                 <div>
-                    <h2>Check {userEmail} and confirm sign in</h2>
-                    <p>Not seeing the email confirmation? <a onClick={handleTryAgain}>Try again</a></p>
+                    <h2>Check <strong>{userEmail}</strong>  and confirm sign in</h2>
+                    <p>Not seeing the email confirmation? Check your span email or <a onClick={handleTryAgain}>Try again</a></p>
                     {/* <Link to='/dashboard'><button onClick={handleClick}>For Development: Skip to Dashboard</button></Link> */}
                 </div>
             }

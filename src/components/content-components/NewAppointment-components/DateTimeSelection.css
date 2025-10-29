@@ -1,8 +1,22 @@
 form.date-time-form {
     flex-direction: row;
-    width: 100%;
 }
 
 form.date-time-form > div {
     min-width: 450px;
+}
+
+div.time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 135px);
+    gap: 10px;
+    margin: auto;
+}
+
+div.time-grid > .input-group-wrapper {
+    justify-content: center;
+}
+
+button.date-time-confirm {
+    margin-top: calc(var(--gap-small) * 2);
 }

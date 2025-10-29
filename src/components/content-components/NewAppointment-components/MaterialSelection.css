@@ -3,6 +3,10 @@ section.material-selection {
     text-align: start;
 }
 
-button[type="submit"] {
+/* button[type="submit"] {
     margin-block-start: var(--gap-small);
+} */
+
+form.material-form {
+    text-align: start;
 }

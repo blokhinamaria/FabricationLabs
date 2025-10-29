@@ -56,9 +56,8 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
     }
 
     return (
-        <article>
             <form className='date-time-form' onSubmit={handleSubmit}>
-                <div>
+                <div className='calendar-form'>
                     <h2>Choose a day</h2>
                     <input
                         type='date'
@@ -72,8 +71,8 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                     />
                 </div>
                 
-                {selectedDate &&
-                    <div>
+                {selectedDate ?
+                    (<div className='time-form'>
                         <h2>Choose a time</h2>
                         {loading ? 
                             <p>Loading available slots...</p>
@@ -84,28 +83,29 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                                     availableSlots.length === 0 ? (
                                         <p>No slots available for this date</p>
                                     ) : (
-                                        availableSlots.map((slot, index) => (
-                                            <div className='input-group-wrapper'>
-                                            <input
-                                                id={slot.startTime}
-                                                value={slot.startTime}
-                                                checked={selectedSlot?.startTime === slot?.startTime}
-                                                type='radio'
-                                                className={`slot-button ${selectedSlot?.startTime === slot?.startTime ? 'selected' : ''}`}
-                                                onChange={handleSlotSelect}
-                                            />
-                                            <label key={index} htmlFor={slot.startTime}>
-                                            {slot.startTime}</label>
-                                            </div>
-                                        ))
+                                        <div className='time-grid'>
+                                            {availableSlots.map((slot, index) => (
+                                                <div className='input-group-wrapper'>
+                                                    <input
+                                                        id={slot.startTime}
+                                                        value={slot.startTime}
+                                                        checked={selectedSlot?.startTime === slot?.startTime}
+                                                        type='radio'
+                                                        className={`slot-button ${selectedSlot?.startTime === slot?.startTime ? 'selected' : ''}`}
+                                                        onChange={handleSlotSelect}
+                                                    />
+                                                    <label key={index} htmlFor={slot.startTime}>
+                                                    {slot.startTime}</label>
+                                                </div>
+                                            ))}
+                                        </div>
                                     )
                                 )
                             )
                         }
-                        {selectedSlot && <button onClick={handleSubmit}>Confirm</button>}
-                    </div>
+                        {selectedSlot && <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>}
+                    </div>) : (<div></div>)
                 }
             </form>
-        </article>
     )
 }

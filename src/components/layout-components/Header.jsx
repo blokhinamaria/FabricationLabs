@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './Header.css'
 import { useAuth } from '../../AuthContext';
+import logo from '/FabLab_logo.png'
 
 export default function Header() {
 
@@ -15,8 +16,9 @@ export default function Header() {
     return (
         <header>
             <div className='logo-container'>
-                <span className='logo'>UTampa</span>
-                <span className='logo'>Fabrication Lab + Woodshop</span>
+                {/* <span className='logo'>UTampa</span> */}
+                <img className='header-logo' src={logo} />
+                {/* <span className='logo'>Fabrication Lab + Woodshop</span> */}
             </div>
 
             { user ? 
