@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 import { ObjectId } from "bson";
+import { convertDate } from "../../func/convertDate.js";
+import { convertTime } from "../../func/convertTime.js";
 
 import EquipmentSelection from "./NewAppointment-components/EquipmentSelection";
 import DateTimeSelection from "./NewAppointment-components/DateTimeSelection";
@@ -79,7 +81,11 @@ export default function NewAppointment() {
     } else {
             setNewAppointmentData((prev) => ({
             ...prev,
-            equipmentId: new ObjectId(equipment._id)
+            equipmentId: new ObjectId(equipment._id),
+            equipmentName: equipment.name,
+            location: equipment.location,
+            materialPreference: false,
+            materialSelections: null
         }))
         }
         //Move to the next step
@@ -97,6 +103,10 @@ export default function NewAppointment() {
         }))
         handleNext("details");
     }
+
+    const formattedDate = (
+        convertDate(newAppointmentData.date).split(', ')
+    )
 
     //STEP 3: Details
 
@@ -153,15 +163,19 @@ export default function NewAppointment() {
                 (   
                     <div className="appointment-booking-wrapper">  
                         <section className="appointment-details">
-                            <h2 onClick={() => (handleNext('equipment'))}>{newAppointmentData.equipmentName}</h2>
-                            { newAppointmentData.materialPreference ? (
-                                <div onClick={() => (handleNext('equipment'))}> 
-                                    <h4>Preferred  Materials</h4>
-                                    {newAppointmentData.materialSelections.map(material => (
-                                        <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
-                                    ))}
+                            <div onClick={() => (handleNext('equipment'))}>
+                                    <p>Appointment for</p>
+                                    <h3 >{newAppointmentData.equipmentName}</h3>
                                 </div>
-                            ) : null}
+                                
+                                { newAppointmentData.materialPreference ? (
+                                    <div onClick={() => (handleNext('equipment'))}> 
+                                        <p><strong>Preferred  Materials</strong></p>
+                                        {newAppointmentData.materialSelections.map(material => (
+                                            <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
+                                        ))}
+                                    </div>
+                                ) : null}
                             <button className="small" onClick={handleCancel}>Cancel</button>
                         </section>
                         <DateTimeSelection equipmentId={newAppointmentData.equipmentId} submitDateTime={submitDateTime}/>
@@ -173,18 +187,30 @@ export default function NewAppointment() {
                 (   
                     <div className="appointment-booking-wrapper">  
                         <section className="appointment-details">
-                            <h2 onClick={() => (handleNext('equipment'))}>{newAppointmentData.equipmentName}</h2>
-                            { newAppointmentData.materialPreference ? (
-                                <div onClick={() => (handleNext('equipment'))}> 
-                                    <h4>Preferred  Materials</h4>
-                                    {newAppointmentData.materialSelections.map(material => (
-                                        <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
-                                    ))}
+                                <div onClick={() => (handleNext('equipment'))}>
+                                    <p>Appointment for</p>
+                                    <h3>{newAppointmentData.equipmentName}</h3>
                                 </div>
-                            ) : null}
-                            <span>Appointment for</span>
-                            <h2>{newAppointmentData.date}</h2>
-                            <h2>{newAppointmentData.startTime}</h2>
+                                
+                                { newAppointmentData.materialPreference ? (
+                                    <div onClick={() => (handleNext('equipment'))}> 
+                                        <p><strong>Preferred  Materials</strong></p>
+                                        {newAppointmentData.materialSelections.map(material => (
+                                            <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
+                                        ))}
+                                    </div>
+                                ) : null}
+
+                                <div onClick={() => (handleNext('date'))}>
+                                    <p>Appointment at</p>
+                                    <h3>{convertTime(newAppointmentData.startTime)}</h3>
+                                    <h3>{formattedDate[0]}</h3>
+                                    <h3>{formattedDate[1]}</h3>
+                                    <span>{formattedDate[2]}</span>
+                                    
+                                </div>
+                                
+                            {/* </div> */}
                             <button className="small" onClick={handleCancel}>Cancel</button>
                         </section>
                         <Details submitDetails={submitDetails}/>
@@ -192,11 +218,11 @@ export default function NewAppointment() {
                 )
             }
             {step === 'confirmation' &&
-                <div>
-                    <p>Appointment created</p>
+                <section className="appointment-details">
+                    <h2>Appointment created</h2>
                     <Appointment id={appointmentId} />
                     <Link to='/dashboard'><button>Back to dashboard</button></Link>
-                </div>
+                </section>
             }
         </main>
     )

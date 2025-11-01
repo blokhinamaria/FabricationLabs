@@ -1,16 +1,25 @@
 form.date-time-form {
     flex-direction: row;
+    min-height: 520px;
 }
 
 form.date-time-form > div {
-    min-width: 450px;
+    width: 100%;
+}
+
+div.time-form, div.calendar-form {
+    max-width: 500px;
+}
+
+div.time-form.empty {
+    height: 0;
 }
 
 div.time-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 135px);
+    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
     gap: 10px;
-    margin: auto;
+    margin: 0 auto;
 }
 
 div.time-grid > .input-group-wrapper {
@@ -19,4 +28,68 @@ div.time-grid > .input-group-wrapper {
 
 button.date-time-confirm {
     margin-top: calc(var(--gap-small) * 2);
+    width: 100%;
+}
+
+button.time-picker {
+    border: 1px solid transparent;
+    background: transparent;
+    box-shadow: none;
+    font-weight: 400;
+}
+
+button.time-picker:hover, button.time-picker:focus {
+    background-color: var(--accent1-opaque);
+    border: 1px solid var(--accent1);
+}
+
+.date-picker {
+    max-width: 500px;
+    font-family: "Zalando Sans", sans-serif;
+}
+
+.date-picker button {
+    box-shadow: none;
+    border: 1px solid transparent;
+}
+
+.date-picker .MuiPickersArrowSwitcher-root {
+    gap: 10px;
+}
+
+.date-picker .MuiPickersCalendarHeader-root button {
+    width: auto;
+    border: 1px solid transparent;
+}
+
+.date-picker .MuiDayCalendar-weekDayLabel {
+    font-family: "Zalando Sans", sans-serif;
+    font-weight: 400;
+}
+
+.date-picker .MuiPickersDay-root {
+    font-family: "Zalando Sans", sans-serif;
+    font-size: 1.125rem;
+    font-weight: 400;
+    border-radius: 10px;
+}
+
+.date-picker .MuiPickersDay-root:hover,
+.date-picker .MuiPickersDay-root:focus {
+    background-color: var(--accent1-opaque);
+    border: 1px solid var(--accent1);
+}
+
+.date-picker .MuiPickersDay-root.Mui-selected {
+    background-color: var(--accent1-opaque);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 6px var(--drop-shadow); 
+    color: var(--black);
+    font-weight: 600;
+}
+
+.date-picker .MuiPickersDay-root.Mui-selected:hover,
+.date-picker .MuiPickersDay-root.Mui-selected:focus {
+    background-color: var(--accent1-opaque);
+    border: 1px solid var(--accent1);
 }

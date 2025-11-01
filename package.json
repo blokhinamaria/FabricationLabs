@@ -12,8 +12,11 @@
     "dev:full": "npm run api & npm run dev"
   },
   "dependencies": {
+    "@emotion/styled": "^11.14.1",
+    "@mui/x-date-pickers": "^8.16.0",
     "bson": "^6.10.4",
     "cookie": "^1.0.2",
+    "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.20.0",

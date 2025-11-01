@@ -34,15 +34,15 @@ export default function Details({submitDetails}) {
             }
         }
         
-        if (!classNumber || classNumber.trim() === '') {
-            setClassErrorMessage('Provide the class number related to your project')
-            return 
-        }
+        // if (!classNumber || classNumber.trim() === '') {
+        //     setClassErrorMessage('Provide the class number related to your project')
+        //     return 
+        // }
 
-        if (!notes || notes.trim() === '') {
-            setNotesErrorMessage('Provide a few details about your needs')
-            return 
-        }
+        // if (!notes || notes.trim() === '') {
+        //     setNotesErrorMessage('Provide a few details about your needs')
+        //     return 
+        // }
 
         if ( !agreedToTerms || !agreedToPolicy ) {
             setTermErrorMessage('You must agree to terms and conditions and review the Policy and Guidelines')
@@ -93,7 +93,7 @@ export default function Details({submitDetails}) {
             <h2>Confirm your details</h2>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor='name'>Full Name</label>
+                        <label htmlFor='name'>Full Name*</label>
                         <input
                             type="text"
                             id="name"
@@ -148,8 +148,8 @@ export default function Details({submitDetails}) {
                             <label htmlFor='policy'>
                                 I have read and understood the UTampa Fabrication Lab and Woodshop policy and guidelines
                             </label>
-                        {termErrorMessage ? <p className='error-message'>{termErrorMessage}</p> : null}
                     </div>
+                    {termErrorMessage ? <p className='error-message'>{termErrorMessage}</p> : null}
                     <button type='submit'>Submit</button>
                 </form>
         </article>

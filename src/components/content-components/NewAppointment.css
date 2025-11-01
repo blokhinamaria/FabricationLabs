@@ -1,5 +1,7 @@
+
 .equipment-list > button {
     margin-bottom: 25px;
+    max-width: 450px;
 }
 
 .equipment-list :last-child {
@@ -14,17 +16,24 @@
     gap: var(--gap-small);
     padding: var(--gap-small);
     align-items: start;
+
 }
 
 section.appointment-details {
     text-align: start;
-    /* max-width: 320px; */
     grid-area: sidebar;
-
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+    cursor: pointer;
 }
 
-section.appointment-details > button {
-    margin-block-start: var(--gap-small);
+section.appointment-details * {
+    margin: 0;
+}
+
+section.appointment-details > div {
+    padding-inline: var(--gap-small);
 }
 
 .appointment-booking-wrapper > article {
@@ -41,10 +50,4 @@ section.appointment-details > button {
     width: 100%;
     max-width: none;
     justify-content: center;
-}
-
-.appointment-booking-wrapper .calendar-form {
-}
-
-.appointment-booking-wrapper .time-form {
 }

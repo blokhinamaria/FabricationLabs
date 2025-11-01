@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 
 import Appointment from "./appointments/Appointment";
-
-
 
 export default function Dashboard() {
     
@@ -22,8 +20,14 @@ export default function Dashboard() {
                 }
                 );
                 const data = await response.json()
+                
+                const today = new Date();
+                const filterAppointments = data.appointments.filter((appointment) => {
+                    const appointmentTime = new Date(`${appointment.date} ${appointment.startTime}`)
+                    return appointmentTime > today;
+                })
 
-                const sortedAppointments = data.appointments.sort((a, b) => {
+                const sortedAppointments = filterAppointments.sort((a, b) => {
                     const aDate = new Date(`${a.date} ${a.startTime}`)
                     const bDate = new Date(`${b.date} ${b.startTime}`)
                     return aDate - bDate;
@@ -36,10 +40,16 @@ export default function Dashboard() {
         }
     }, [user])
 
+    const navigate = useNavigate();
+
+    function handleNewAppointment() {
+        navigate('/dashboard/newappointment')
+    }
+
     return (
         <main>
             <article className="appointment-buttons">
-                <Link to='/dashboard/newappointment'><button>Schedule new appointment</button></Link>
+                <button onClick={handleNewAppointment}>Schedule new appointment</button>
             </article>
             <article style={{ marginTop: "50px"}} className="upcoming-appointments">
                 {upcomingAppointments?.length > 0 ? (

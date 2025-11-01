@@ -1,12 +1,18 @@
 import { useState, useEffect} from 'react'
+import { convertTime } from '../../../func/convertTime.js';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'; 
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 import './DateTimeSelection.css'
 
 export default function DateTimeSelection({equipmentId, submitDateTime}) {
 
-    const today = new Date().toISOString().split('T')[0]
+    const today = dayjs();
+    const minDate = today.hour() >= 16 ? today.add(1, 'day') : today
 
-    const [selectedDate, setSelectedDate] = useState('');
+    const [selectedDate, setSelectedDate] = useState(null);
     const [availableSlots, setAvailableSlots] = useState([]);
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [isAvailable, setIsAvailable] = useState(true);
@@ -41,34 +47,58 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
             }
     }
 
-    const maxDate = new Date()
-    maxDate.setDate(maxDate.getDate() + 30) //30 days from now
-    const maxDateString = maxDate.toISOString().split('T')[0]
+    const maxDate = minDate.add(30, 'day');
+
+    function handleDateSelect(value) {
+        setSelectedDate(value);
+        setSelectedSlot(null);
+    }
 
     function handleSlotSelect(e) {
+        e.preventDefault()
         setSelectedSlot(availableSlots.find((slot) => slot.startTime === e.target.value))
     }
 
     function handleSubmit(e) {
         e.preventDefault()
         if (!selectedSlot) return;
-        submitDateTime(selectedDate, selectedSlot)
+        submitDateTime(selectedDate?.format('MM-DD-YYYY'), selectedSlot)
     }
 
     return (
             <form className='date-time-form' onSubmit={handleSubmit}>
                 <div className='calendar-form'>
                     <h2>Choose a day</h2>
-                    <input
-                        type='date'
-                        id='date'
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        min={today}
-                        max={maxDateString}
-                        aria-label='Appointment date'
-                        required
-                    />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateCalendar
+                            className='date-picker'
+                            value={selectedDate} // This should be a dayjs object
+                            onChange={(newValue) => handleDateSelect(newValue)} // newValue is already a dayjs object
+                            minDate={minDate}
+                            maxDate={maxDate}
+                            views={['day']}
+                            showDaysOutsideCurrentMonth 
+                            fixedWeekNumber={6}
+                            sx={{
+                                width: '100%',
+                                minWidth: '310px',
+                                '& .MuiDayCalendar-root': {
+                                    width: '100%',
+                                },
+
+                                '& .MuiDayCalendar-header': {
+                                    justifyContent: 'space-around',
+                                },
+                                '& .MuiDayCalendar-weekContainer': {
+                                    justifyContent: 'space-between',
+                                },
+                                '& .MuiPickersDay-root': {
+                                    flex: '1 0 auto',
+                                }
+                            }}
+                        />
+                    </LocalizationProvider>
+                    {/* <button className='small' onClick={() => setSelectedDate(null)}>Clear</button> */}
                 </div>
                 
                 {selectedDate ?
@@ -85,7 +115,24 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                                     ) : (
                                         <div className='time-grid'>
                                             {availableSlots.map((slot, index) => (
-                                                <div className='input-group-wrapper'>
+                                                    <button onClick={(e) => handleSlotSelect(e)} key={index} value={slot.startTime} className={selectedSlot?.startTime === slot.startTime ? 'button-selected' : 'time-picker'}>
+                                                        {convertTime(slot.startTime)}
+                                                    </button>
+                                            ))}
+                                        </div>
+                                    )
+                                )
+                            )
+                        }
+                        {selectedSlot && <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>}
+                    </div>) : (<div className='time-form empty'></div>)
+                }
+            </form>
+    )
+}
+
+
+                                                    {/*                                                     
                                                     <input
                                                         id={slot.startTime}
                                                         value={slot.startTime}
@@ -95,17 +142,4 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                                                         onChange={handleSlotSelect}
                                                     />
                                                     <label key={index} htmlFor={slot.startTime}>
-                                                    {slot.startTime}</label>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )
-                                )
-                            )
-                        }
-                        {selectedSlot && <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>}
-                    </div>) : (<div></div>)
-                }
-            </form>
-    )
-}
+                                                    {convertTime(slot.startTime)}</label> */}

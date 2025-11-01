@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useNavigate } from "react-router-dom";
+
 import './Header.css'
 import { useAuth } from '../../AuthContext';
 import logo from '/FabLab_logo.png'
@@ -13,9 +15,18 @@ export default function Header() {
 
     const { user, logout } = useAuth();
 
+    const navigate = useNavigate();
+
+    function handleLogoClick() {
+        if (user) {
+            navigate('/dashboard')
+        }
+        
+    }
+
     return (
         <header>
-            <div className='logo-container'>
+            <div className='logo-container' onClick={handleLogoClick}>
                 {/* <span className='logo'>UTampa</span> */}
                 <img className='header-logo' src={logo} />
                 {/* <span className='logo'>Fabrication Lab + Woodshop</span> */}

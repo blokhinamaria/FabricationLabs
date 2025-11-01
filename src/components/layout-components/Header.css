@@ -39,6 +39,10 @@ header nav {
   text-wrap: nowrap;
 }
 
+header > * {
+  cursor: pointer;
+}
+
 header nav ul {
   display: flex;
   gap: 40px;

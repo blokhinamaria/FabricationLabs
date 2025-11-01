@@ -15,7 +15,7 @@ export default function Layout() {
         return (
             <>
                 <Header />
-                <div>Loading...</div>
+                    <main>Loading...</main>
                 <Footer />
             </>
         )

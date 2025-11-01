@@ -81,13 +81,13 @@ function handleTryAgain() {
                 <>
                     <h2>Please sign in with your UTampa Email to start</h2>
                     <form id='signIn' action={handleSubmit}>
-                    <div>
-                        <input aria-label='email' type='email' id='email' name='email' placeholder='email@spartan.ut.edu' value={inputValue} onChange={e => setInputValue(e.target.value)}></input>
-                        { errorMessage ? <p className='error-message'>{errorMessage}</p> : null}
-                    </div>
-                    <button type='submit'>Sign In</button>
+                        <div>
+                            <input aria-label='email' type='email' id='email' name='email' placeholder='email@spartan.ut.edu' value={inputValue} onChange={e => setInputValue(e.target.value)}></input>
+                            { errorMessage ? <p className='error-message'>{errorMessage}</p> : null}
+                        </div>
+                        <button type='submit'>Sign In</button>
                     
-                </form>
+                    </form>
                 </>
                 : 
                 <div>

@@ -78,6 +78,7 @@ article {
 }
 
 button {
+  box-sizing: border-box;
   background-color: var(--glass-background);
   backdrop-filter: blur(5px);
   border: 1px solid var(--glass-border);
@@ -91,12 +92,13 @@ button {
   color: var(--black);
   border-radius: var(--border-radius-small);
   padding: 12px;
-  min-width: 450px;
+  width: 100%;
+  /* min-width: 450px; */
 }
 
 @media (max-width: 490px) {
   button {
-    min-width: 100%;
+    width: auto;
   }
 }
 
@@ -235,6 +237,11 @@ div.input-group-wrapper {
   display: flex;
   align-items: center;
   gap: 10px;
+  text-align: start;
+}
+
+.input-group-wrapper input[type="checkbox"] {
+  flex-shrink: 0; /* Prevents checkbox from shrinking */
 }
 
 form {
@@ -243,7 +250,13 @@ form {
   gap: var(--gap-small);
   justify-content: flex-start;
   text-align: center;
-  max-width: 450px;
+  width: 450px;
+}
+
+@media (max-width: 498px) {
+  form {
+    width: 100px;
+  }
 }
 
 textarea {
@@ -269,8 +282,13 @@ textarea::placeholder {
   text-align: start;
 }
 
+.appointment-buttons {
+  width: 450px;
+}
+
 .upcoming-appointments {
   max-width: none;
+  padding-inline: var(--gap-small);
 }
 
 .upcoming-appointments > section.appointment-list {
