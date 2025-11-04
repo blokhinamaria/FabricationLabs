@@ -6,6 +6,7 @@ import { convertDate } from "../../func/convertDate.js";
 import { convertTime } from "../../func/convertTime.js";
 
 import EquipmentSelection from "./NewAppointment-components/EquipmentSelection";
+import AppointmentSummary from "./NewAppointment-components/AppointmentSummary.jsx";
 import DateTimeSelection from "./NewAppointment-components/DateTimeSelection";
 import Details from "./NewAppointment-components/Details";
 import Appointment from "./appointments/Appointment";
@@ -51,8 +52,22 @@ export default function NewAppointment() {
 
     const [ step, setStep ] = useState('equipment')
 
+    const [equipmentCreateMode, setEquipmentCreateMode] = useState({
+        status: 'create',
+    }) 
+
     function handleNext(step) {
         setStep(step)
+    }
+
+    function handleClickItem(step) {
+        setStep(step)
+        if(step === 'equipment' || step === 'materials')
+        setEquipmentCreateMode(prev => ({
+            ...prev,
+            prevEquipmentId: newAppointmentData.equipmentId.toString(),
+            prevMaterialSelections: newAppointmentData.materialSelections
+        }))
     }
 
     //STEP 1 : Equipment
@@ -136,9 +151,7 @@ export default function NewAppointment() {
             const data = await response.json();
             if (response.ok) {
                 console.log(`success. Response: ${response}`)
-                
-                // navigate('/dashboard')
-                
+                                
                 setStep('confirmation')
                 setAppointmentId(data.appointmentId)
 
@@ -158,26 +171,15 @@ export default function NewAppointment() {
 
     return (
         <main>
-            {step === 'equipment' && <EquipmentSelection submitEquipment={submitEquipment}/>}
+            {(step === 'equipment' || step === 'materials')  && 
+                <EquipmentSelection
+                    submitEquipment={submitEquipment}
+                    mode={equipmentCreateMode}
+                />}
             {step === 'date' && 
                 (   
                     <div className="appointment-booking-wrapper">  
-                        <section className="appointment-details">
-                            <div onClick={() => (handleNext('equipment'))}>
-                                    <p>Appointment for</p>
-                                    <h3 >{newAppointmentData.equipmentName}</h3>
-                                </div>
-                                
-                                { newAppointmentData.materialPreference ? (
-                                    <div onClick={() => (handleNext('equipment'))}> 
-                                        <p><strong>Preferred  Materials</strong></p>
-                                        {newAppointmentData.materialSelections.map(material => (
-                                            <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
-                                        ))}
-                                    </div>
-                                ) : null}
-                            <button className="small" onClick={handleCancel}>Cancel</button>
-                        </section>
+                        <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                         <DateTimeSelection equipmentId={newAppointmentData.equipmentId} submitDateTime={submitDateTime}/>
                     </div>
                     
@@ -186,33 +188,7 @@ export default function NewAppointment() {
             {step === 'details' && 
                 (   
                     <div className="appointment-booking-wrapper">  
-                        <section className="appointment-details">
-                                <div onClick={() => (handleNext('equipment'))}>
-                                    <p>Appointment for</p>
-                                    <h3>{newAppointmentData.equipmentName}</h3>
-                                </div>
-                                
-                                { newAppointmentData.materialPreference ? (
-                                    <div onClick={() => (handleNext('equipment'))}> 
-                                        <p><strong>Preferred  Materials</strong></p>
-                                        {newAppointmentData.materialSelections.map(material => (
-                                            <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
-                                        ))}
-                                    </div>
-                                ) : null}
-
-                                <div onClick={() => (handleNext('date'))}>
-                                    <p>Appointment at</p>
-                                    <h3>{convertTime(newAppointmentData.startTime)}</h3>
-                                    <h3>{formattedDate[0]}</h3>
-                                    <h3>{formattedDate[1]}</h3>
-                                    <span>{formattedDate[2]}</span>
-                                    
-                                </div>
-                                
-                            {/* </div> */}
-                            <button className="small" onClick={handleCancel}>Cancel</button>
-                        </section>
+                        <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                         <Details submitDetails={submitDetails}/>
                     </div>
                 )

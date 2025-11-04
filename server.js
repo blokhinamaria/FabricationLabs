@@ -13,13 +13,6 @@ import logoutHandler from './api/logout.js';
 
 const PORT = 3001;
 
-// async function connectDB() {
-//     const client = await MongoClient.connect(MONGODB_URI);
-//     console.log("✅ Successfully connected to MongoDB!");
-//     const db = client.db('fabrication-labs');
-//     return { client, db };
-// }
-
 const server = http.createServer(async (req, res) => {
 
     //CORS headers

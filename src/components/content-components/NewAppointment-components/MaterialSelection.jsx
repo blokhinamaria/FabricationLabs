@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import './MaterialSelection.css'
 
-export default function MaterialSelection({materials, fileRequirements, handleSubmitMaterials}) {
+export default function MaterialSelection({materials, fileRequirements, handleSubmitMaterials, prevMaterialSelections = []}) {
+
+    console.log(prevMaterialSelections)
 
     function flattenMaterials (materials) {
         const inStockMaterials = materials.filter(item => item.inStock === true) 
@@ -26,7 +28,16 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
 
     const availableMaterials = flattenMaterials(materials);
 
-    const [ selectedMaterials, setSelectedMaterials ] = useState([]);
+    function transformPrevMaterials(materials) {
+    return materials.map(item => ({
+        id: item.id,
+        name: item.name,
+        size: item.selectedVariations.size,
+        color: item.selectedVariations.color
+    }));
+}
+
+    const [ selectedMaterials, setSelectedMaterials ] = useState( prevMaterialSelections.length > 0 ? transformPrevMaterials(prevMaterialSelections) : []);
 
     function handleChange(e) {
         if (e.target.checked) {
@@ -40,6 +51,8 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
     const [ hasReviewedRequirements, setHasReviewedRequirements ] = useState(false);
     const [ errorMessage, setErrorMessage] = useState('');
 
+    console.log(selectedMaterials)
+
     function handleSubmit(e) {
         e.preventDefault();
         setErrorMessage("");
@@ -48,7 +61,6 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
         } else {
             setErrorMessage("You must review the file requirements");
         }
-        
     }
 
     return (
@@ -63,6 +75,7 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
                             type="checkbox"
                             value={material.id}
                             onChange={handleChange}
+                            checked={selectedMaterials.some(item => item.id === material.id )}
                             />
                         <label  htmlFor={material.id}>
                             {material.name} {material.size} {material.color}

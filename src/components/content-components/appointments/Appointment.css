@@ -1,24 +1,35 @@
 div.appointment-card {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: start;
     padding: var(--gap-small);
-
     background-color: var(--glass-background);
     backdrop-filter: blur(5px);
     border: 1px solid var(--glass-border);
     box-shadow: 0 4px 6px var(--drop-shadow); 
     border-radius: var(--border-radius-small);
     width: 305px;
-
     text-align: start;
 }
 
-div.appointment-card > div {
+div.appointment-overview-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: start;
+}
+
+div.appointment-icon-text {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+.appointment-button-container {
+    display: flex;
+    justify-content: stretch;
+}
+
+.appointment-button-container > button {
+    width: auto;
+    padding-inline: var(--gap-small);
 }
 

@@ -62,7 +62,8 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
     function handleSubmit(e) {
         e.preventDefault()
         if (!selectedSlot) return;
-        submitDateTime(selectedDate?.format('MM-DD-YYYY'), selectedSlot)
+        const jsDate = new Date(selectedDate);
+        submitDateTime(jsDate.toDateString(), selectedSlot)
     }
 
     return (

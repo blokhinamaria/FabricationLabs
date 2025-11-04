@@ -3,11 +3,11 @@ import MaterialSelection from "./MaterialSelection"
 
 import './EquipmentSelection.css'
 
-export default function EquipmentSelection({submitEquipment}) {
+export default function EquipmentSelection({submitEquipment, mode}) {
     
     const [ equipment, setEquipment ] = useState([]);
 
-    const [ selectedEquipment, setSelectedEquipment ] = useState(null)
+    const [ selectedEquipment, setSelectedEquipment ] = useState(null);
 
     //fetch equipment
         useEffect(() => {
@@ -25,10 +25,16 @@ export default function EquipmentSelection({submitEquipment}) {
 
     //select equipment
         const [ isEquipmentSelected, setIsEquipmentSelected ] = useState(false);
+        const [ sameEquipment, setSameEquipment ] = useState(false);
 
         function handleEquipmentSelection(equipment) {
             setIsEquipmentSelected(true);
             setSelectedEquipment(equipment);
+            if (equipment._id === mode.prevEquipmentId) {
+                setSameEquipment(true);
+            } else {
+                setSameEquipment(false);
+            }
         }
     
     // select materials and submit equipment (from Material Selection Component)
@@ -42,15 +48,25 @@ export default function EquipmentSelection({submitEquipment}) {
 
     return (
         <article>
-            <h1>Schedule an appointment with FabLabs Staff</h1>
-            <p className="limit-width">Before scheduling an appointment, read through the University of Tampa Fabrication Lab and Woodshop policy and guidelines</p>
-            
+            {mode.status === 'create' && (
+                <>
+                    <h1>Schedule an appointment with FabLabs Staff</h1>
+                    <p className="limit-width">Before scheduling an appointment, read through the University of Tampa Fabrication Lab and Woodshop policy and guidelines</p>
+                </>
+            )}
             { !isEquipmentSelected ?
                 <section className="equipment-list">
                     {/* Step 1: Select equipment */}
-                    <h2>Choose the technology or activity below to start</h2>
+                    {mode.status === 'create' ? (
+                        <h2>Choose the technology or activity below to start</h2>
+                    )  : (
+                        <>
+                            <button onClick={() => submitEquipment(false)}>Go back</button>   
+                            <h2>Choose a new equipment or confirm your equipment selection below</h2>
+                        </>
+                    )}     
                         {equipment.map((item) => (
-                            <button onClick={() => handleEquipmentSelection(item)} key={item._id}>{item.name}</button>
+                            <button onClick={() => handleEquipmentSelection(item)} key={item._id} className={item._id === mode.prevEquipmentId ? 'button-selected' : null}>{item.name}</button>
                         ))}
                 </section>
                 :
@@ -60,7 +76,12 @@ export default function EquipmentSelection({submitEquipment}) {
                         <button className='back-button' onClick={() => setIsEquipmentSelected(false)}>Go Back</button>
                         <button className="equipment-button button-selected" onClick={() => setIsEquipmentSelected(false)}>{selectedEquipment.name}</button>
                     </div>
-                    <MaterialSelection materials={selectedEquipment.materials} fileRequirements={selectedEquipment.fileRequirements} handleSubmitMaterials={handleSubmitMaterials}/>
+                    <MaterialSelection
+                        materials={selectedEquipment.materials}
+                        fileRequirements={selectedEquipment.fileRequirements}
+                        handleSubmitMaterials={handleSubmitMaterials}
+                        prevMaterialSelections={sameEquipment && mode.prevMaterialSelections.length > 0 ? mode.prevMaterialSelections : []}
+                    />
                 </section>
             }
         </article>

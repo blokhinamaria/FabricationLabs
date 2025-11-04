@@ -8,6 +8,7 @@ import Dashboard from './components/content-components/Dashboard';
 
 import './App.css'
 import NewAppointment from './components/content-components/NewAppointment';
+import EditAppointment from './components/content-components/EditAppointment';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
                 <Route index element={<Login />} />
                 <Route path='dashboard' element={<Dashboard />} />
                 <Route path='dashboard/newappointment' element={<NewAppointment />} />
+                <Route path='dashboard/editappointment' element={<EditAppointment />} />
             </Route>
             </Routes>
           </Wrapper>

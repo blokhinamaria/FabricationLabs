@@ -1,0 +1,102 @@
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+
+export default function AppointmentSummary({appointment, handleClickItem, mode}) {
+
+    const navigate = useNavigate();
+
+    console.log(appointment)
+
+    //populate the form with appointment data
+    const appointmentDate = new Date(`${appointment.date} ${appointment.startTime}`)
+    const [classNumber, setClassNumber] = useState(appointment?.classNumber ? appointment?.classNumber : '')
+    const [notes, setNotes] = useState(appointment?.notes ? appointment?.notes : '')
+
+    function handleCancel() {
+        navigate('/dashboard')
+    }
+
+    return (
+        <section className="appointment-overview">
+            <div onClick={() => handleClickItem('equipment')}>
+                <p>Appointment for</p>
+                <h3>{appointment?.equipmentName}</h3>
+            </div>
+                                                        
+            { appointment.materialPreference ? (
+                <div onClick={() => handleClickItem('materials')}> 
+                    <p><strong>Preferred  Materials</strong></p>
+                        {appointment.materialSelections.map(material => (
+                            <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
+                        ))}
+                </div>
+                ) : null}
+            
+            {appointment?.date && (
+                <div className='appointment-overview-details' onClick={() => handleClickItem('time and date')}>
+                    <p>Appointment at</p>
+                    <div className="appointment-icon-text">
+                        <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
+                        <p>{appointmentDate.toDateString()}</p>
+                    </div>
+                    <div className="appointment-icon-text">
+                        <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
+                        <p>{appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                    </div>
+                </div>
+            )}
+
+            {mode === 'edit' && 
+                (
+                    appointment?.classNumber !== '' ? (
+                        <div onClick={() => handleClick('class')}>
+                            <label htmlFor='classNumber'>Class</label>
+                            <input
+                                type="text"
+                                id="classNumber"
+                                name="classNumber"
+                                value={classNumber}
+                                onChange={(e) => setClassNumber(e.target.value)}/>
+                        </div>
+                    ) : (
+                        <div onClick={() => handleClick('class')}>
+                            <label htmlFor='classNumber'>Class</label>
+                            <input
+                                type="text"
+                                id="classNumber"
+                                name="classNumber"
+                                placeholder="ART XXX"
+                                value={classNumber}
+                                onChange={(e) => setClassNumber(e.target.value)}/>
+                        </div>
+                    )
+                
+                )
+            }
+            {mode === 'edit' && (
+                    appointment?.notes !== ''  ? (
+                    <div onClick={() => handleClick('notes')}>
+                        <label htmlFor='details'>Additional details</label>
+                        <textarea
+                                id="details"
+                                name="details"
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}/>
+                    </div>
+                    ) : (
+                    <div onClick={() => handleClick('notes')}>
+                        <label htmlFor='details'>Additional details</label>
+                        <textarea
+                            id="details"
+                            name="details"
+                            placeholder="Provide details of what you need to do so we can better prepare for your visit"
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}/>
+                    </div>
+                    )
+                )
+            }
+            <button className="small" onClick={handleCancel}>Cancel</button>
+        </section>
+    )
+}

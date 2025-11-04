@@ -5,39 +5,7 @@ import { connectDB } from "../utils/connectDB.js"
 // import { data } from "react-router-dom"
 
 import { ObjectId } from "bson"
-
-export async function handlePost(req, res) {
-
-
-    try {
-        let parsedData 
-        if (req.body) {
-            parsedData = req.body
-        } else {
-            parsedData = await parseJSONBody(req)
-        }
-        const sanitizedData = sanitizeInput(parsedData)
-
-        const { client, db } = await connectDB();
-        const collection = db.collection('bookings');
-
-        //Instead of ... (fs.writeFile....)
-        // await addNewAppointment(sanitizedData)
-            
-        const result = await collection.insertOne({
-                ...sanitizedData,
-                createdAt: new Date()
-        });
-
-        await client.close();
-
-        sendResponse(res, 200, ({ success: true, appointmentId: result.insertedId, message: 'Appointment created' }))
-        console.log(result)
-        
-    } catch (err) {
-        console.log(`Eroor in routeHandlers, handlePost: ${err}`)
-    }
-}
+//Order: GET, POST, PUT, DELETE
 
 export async function handleGet(req, res) {
     try {
@@ -45,7 +13,6 @@ export async function handleGet(req, res) {
 
         if (req.url.startsWith('/api/appointments')) {
             const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
-            
 
             if (id) {
                 const collection = db.collection('bookings')
@@ -98,12 +65,45 @@ export async function handleGet(req, res) {
     }    
 }
 
+export async function handlePost(req, res) {
+
+    try {
+        let parsedData 
+        if (req.body) {
+            parsedData = req.body
+        } else {
+            parsedData = await parseJSONBody(req)
+        }
+        const sanitizedData = sanitizeInput(parsedData)
+
+        const { client, db } = await connectDB();
+        const collection = db.collection('bookings');
+
+        //Instead of ... (fs.writeFile....)
+        // await addNewAppointment(sanitizedData)
+            
+        const result = await collection.insertOne({
+                ...sanitizedData,
+                createdAt: new Date()
+        });
+
+        await client.close();
+
+        sendResponse(res, 200, ({ success: true, appointmentId: result.insertedId, message: 'Appointment created' }))
+        console.log(result)
+        
+    } catch (err) {
+        console.log(`Eroor in routeHandlers, handlePost: ${err}`)
+    }
+}
+
 export async function handlePut(req, res) {
 
     try {
 
         if (req.url.startsWith('/api/appointments')) {
             const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
+            
             let updateData
             if (req.body) {
                 updateData = req.body;
@@ -117,7 +117,7 @@ export async function handlePut(req, res) {
 
             const result = await collection.updateOne(
                 {_id: new ObjectId(id), },
-                { $set: sanitizedData} 
+                { $set: sanitizedData } 
             )
 
             await client.close()

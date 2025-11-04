@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import './Appointment.css'
 
 export default function Appointment({id, data}) {
@@ -6,6 +7,7 @@ export default function Appointment({id, data}) {
     const [ appointment, setAppointment ] = useState(data || null)
     const [ loading, setLoading ] = useState(!data)
     const [ error, setError ] = useState(null)
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!data && id) {
@@ -24,7 +26,7 @@ export default function Appointment({id, data}) {
                 setError('Failed to load appointment')
             }
         } catch (err) {
-            console.log(`Error fetching the newly created appointment: ${err}`)
+            console.log(`Error fetching appointment data: ${err}`)
         } finally {
             setLoading(false)
         }
@@ -88,24 +90,32 @@ export default function Appointment({id, data}) {
         }
     }
 
+    function handleEdit(id) {
+        navigate('/dashboard/editappointment', { state: id });
+    }
+
     return (
-        <div className="appointment-card">
+        <div className="appointment-card appointment-overview-details">
             <p>{daysLeft()}</p>
             <h3>{appointment.equipmentName}</h3>
-            <div>
+            <div className="appointment-icon-text">
                 <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
                 <p>{appointmentDate.toDateString()}</p>
             </div>
-            <div>
+            <div className="appointment-icon-text">
                 <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
                 <p>{appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
             </div>
-            <div>
+            <div className="appointment-icon-text">
                 <img src="/icons/location_on_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Location Pin" width="24" height="24" />
                 <div>
                     <p><strong>{appointment.location}</strong></p>
                     <p>{address()}</p>
                 </div>
+            </div>
+            <div className="appointment-button-container">
+                <button onClick={() => handleEdit(appointment._id)}>Edit</button>
+                <button disabled>Delete</button>
             </div>
         </div>
     )
