@@ -7,12 +7,12 @@ import dayjs from 'dayjs';
 
 import './DateTimeSelection.css'
 
-export default function DateTimeSelection({equipmentId, submitDateTime}) {
+export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
 
     const today = dayjs();
     const minDate = today.hour() >= 16 ? today.add(1, 'day') : today
 
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(mode?.prevDate ? dayjs(mode.prevDate) : null);
     const [availableSlots, setAvailableSlots] = useState([]);
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [isAvailable, setIsAvailable] = useState(true);
@@ -40,6 +40,15 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                     setAvailableSlots([])
                     setSelectedSlot(null)
                 }
+                if (mode?.status === 'edit') {
+                    const selectedDateObject = new Date(selectedDate)
+                    const prevDateObject = new Date(mode.prevDate)
+                if (selectedDateObject.getTime() === prevDateObject.getTime()) {
+                    const matchSlot = data.slots.find(slot => slot.startTime === mode.prevTime)
+                    setSelectedSlot(matchSlot)
+            }
+            }
+
             } catch (err) {
                 console.log(`Error fetching slots: ${err}`)
             } finally {
@@ -128,7 +137,9 @@ export default function DateTimeSelection({equipmentId, submitDateTime}) {
                         {selectedSlot && <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>}
                     </div>) : (<div className='time-form empty'></div>)
                 }
+                
             </form>
+            
     )
 }
 

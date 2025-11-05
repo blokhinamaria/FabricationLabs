@@ -16,7 +16,6 @@
     gap: var(--gap-small);
     padding: var(--gap-small);
     align-items: start;
-
 }
 
 section.appointment-overview {

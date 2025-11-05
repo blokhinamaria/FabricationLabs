@@ -33,7 +33,7 @@ export default function AppointmentSummary({appointment, handleClickItem, mode})
                 ) : null}
             
             {appointment?.date && (
-                <div className='appointment-overview-details' onClick={() => handleClickItem('time and date')}>
+                <div className='appointment-overview-details' onClick={() => handleClickItem('time')}>
                     <p>Appointment at</p>
                     <div className="appointment-icon-text">
                         <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
@@ -46,56 +46,7 @@ export default function AppointmentSummary({appointment, handleClickItem, mode})
                 </div>
             )}
 
-            {mode === 'edit' && 
-                (
-                    appointment?.classNumber !== '' ? (
-                        <div onClick={() => handleClick('class')}>
-                            <label htmlFor='classNumber'>Class</label>
-                            <input
-                                type="text"
-                                id="classNumber"
-                                name="classNumber"
-                                value={classNumber}
-                                onChange={(e) => setClassNumber(e.target.value)}/>
-                        </div>
-                    ) : (
-                        <div onClick={() => handleClick('class')}>
-                            <label htmlFor='classNumber'>Class</label>
-                            <input
-                                type="text"
-                                id="classNumber"
-                                name="classNumber"
-                                placeholder="ART XXX"
-                                value={classNumber}
-                                onChange={(e) => setClassNumber(e.target.value)}/>
-                        </div>
-                    )
-                
-                )
-            }
-            {mode === 'edit' && (
-                    appointment?.notes !== ''  ? (
-                    <div onClick={() => handleClick('notes')}>
-                        <label htmlFor='details'>Additional details</label>
-                        <textarea
-                                id="details"
-                                name="details"
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}/>
-                    </div>
-                    ) : (
-                    <div onClick={() => handleClick('notes')}>
-                        <label htmlFor='details'>Additional details</label>
-                        <textarea
-                            id="details"
-                            name="details"
-                            placeholder="Provide details of what you need to do so we can better prepare for your visit"
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}/>
-                    </div>
-                    )
-                )
-            }
+            
             <button className="small" onClick={handleCancel}>Cancel</button>
         </section>
     )

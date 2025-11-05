@@ -29,7 +29,7 @@ export default function NewAppointment() {
             // Store only the specific selections made at booking time
             materialPreference: false, //boolean, false by default
             materialSelections: [],
-            date: null, // Full date: 2025-10-21T09:00:00Z / date
+            date: null, // .toDateString() Thu Nov 20 2025
             startTime: null, // "09:00" / string
             endTime: null, // "09:30" or calculate from duration / string
             duration: 30, // Number minutes
@@ -52,9 +52,10 @@ export default function NewAppointment() {
 
     const [ step, setStep ] = useState('equipment')
 
-    const [equipmentCreateMode, setEquipmentCreateMode] = useState({
+    const [appointmentCreateMode, setAppointmentCreateMode] = useState({
         status: 'create',
     }) 
+
 
     function handleNext(step) {
         setStep(step)
@@ -62,12 +63,26 @@ export default function NewAppointment() {
 
     function handleClickItem(step) {
         setStep(step)
-        if(step === 'equipment' || step === 'materials')
-        setEquipmentCreateMode(prev => ({
-            ...prev,
+        if (step === 'equipment' || step === 'materials') {
+            setAppointmentCreateMode({
+            status: 'create',
             prevEquipmentId: newAppointmentData.equipmentId.toString(),
             prevMaterialSelections: newAppointmentData.materialSelections
-        }))
+        })
+        } else if (step === 'time') {
+            setAppointmentCreateMode({
+            status: 'edit',
+            prevDate: newAppointmentData.date,
+            prevTime: newAppointmentData.startTime,
+        })
+            setNewAppointmentData((prev) => ({
+                ...prev,
+                date: null,
+                startTime: null, 
+                endTime: null, 
+            }))
+        }
+        
     }
 
     //STEP 1 : Equipment
@@ -91,6 +106,9 @@ export default function NewAppointment() {
                     }
                     }
             )),
+            date: null,
+            startTime: null, 
+            endTime: null, 
         }))
         
     } else {
@@ -100,11 +118,14 @@ export default function NewAppointment() {
             equipmentName: equipment.name,
             location: equipment.location,
             materialPreference: false,
-            materialSelections: null
+            materialSelections: null,
+            date: null,
+            startTime: null, 
+            endTime: null, 
         }))
         }
         //Move to the next step
-        handleNext("date");
+        handleNext("time");
     }
 
     // STEP 2: date and time
@@ -118,10 +139,6 @@ export default function NewAppointment() {
         }))
         handleNext("details");
     }
-
-    const formattedDate = (
-        convertDate(newAppointmentData.date).split(', ')
-    )
 
     //STEP 3: Details
 
@@ -174,13 +191,17 @@ export default function NewAppointment() {
             {(step === 'equipment' || step === 'materials')  && 
                 <EquipmentSelection
                     submitEquipment={submitEquipment}
-                    mode={equipmentCreateMode}
+                    mode={appointmentCreateMode}
                 />}
-            {step === 'date' && 
+            {step === 'time' && 
                 (   
                     <div className="appointment-booking-wrapper">  
                         <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
-                        <DateTimeSelection equipmentId={newAppointmentData.equipmentId} submitDateTime={submitDateTime}/>
+                        <DateTimeSelection
+                            equipmentId={newAppointmentData.equipmentId}
+                            submitDateTime={submitDateTime}
+                            mode={appointmentCreateMode}
+                            />
                     </div>
                     
                 )}

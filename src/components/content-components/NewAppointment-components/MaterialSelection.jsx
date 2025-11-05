@@ -4,8 +4,6 @@ import './MaterialSelection.css'
 
 export default function MaterialSelection({materials, fileRequirements, handleSubmitMaterials, prevMaterialSelections = []}) {
 
-    console.log(prevMaterialSelections)
-
     function flattenMaterials (materials) {
         const inStockMaterials = materials.filter(item => item.inStock === true) 
 
@@ -50,8 +48,6 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
 
     const [ hasReviewedRequirements, setHasReviewedRequirements ] = useState(false);
     const [ errorMessage, setErrorMessage] = useState('');
-
-    console.log(selectedMaterials)
 
     function handleSubmit(e) {
         e.preventDefault();

@@ -133,7 +133,7 @@ export default function Details({submitDetails}) {
                             checked={agreedToTerms}
                             onChange={(e) => setAgreedToTerms(e.target.checked)}
                         />
-                        <label htmlFor='fileRequirements'>
+                        <label htmlFor='terms'>
                             I have read and agree to the Terms and Conditions
                         </label>
                     </div>
