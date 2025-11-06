@@ -1,16 +1,11 @@
-import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 export default function AppointmentSummary({appointment, handleClickItem, mode}) {
 
     const navigate = useNavigate();
 
-    console.log(appointment)
-
     //populate the form with appointment data
-    const appointmentDate = new Date(`${appointment.date} ${appointment.startTime}`)
-    const [classNumber, setClassNumber] = useState(appointment?.classNumber ? appointment?.classNumber : '')
-    const [notes, setNotes] = useState(appointment?.notes ? appointment?.notes : '')
+    const appointmentDate = new Date(appointment.date)
 
     function handleCancel() {
         navigate('/dashboard')

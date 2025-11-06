@@ -23,13 +23,13 @@ export default function Dashboard() {
                 
                 const today = new Date();
                 const filterAppointments = data.appointments.filter((appointment) => {
-                    const appointmentTime = new Date(`${appointment.date} ${appointment.startTime}`)
+                    const appointmentTime = new Date(appointment.date)
                     return appointmentTime > today;
                 })
 
                 const sortedAppointments = filterAppointments.sort((a, b) => {
-                    const aDate = new Date(`${a.date} ${a.startTime}`)
-                    const bDate = new Date(`${b.date} ${b.startTime}`)
+                    const aDate = new Date(a.date)
+                    const bDate = new Date(b.date)
                     return aDate - bDate;
                 }
                 )

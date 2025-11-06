@@ -17,6 +17,8 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [isAvailable, setIsAvailable] = useState(true);
 
+    const appointmentId = mode?.appointmentId || null;
+
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -28,7 +30,12 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
     async function fetchAvailableSlots() {
             setLoading(true);
             try {
-                const response = await fetch(`/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate}`)
+                const url = appointmentId ?
+                    (`/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}&appointmentId=${appointmentId}`
+                ) : (
+                    `/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}`
+                    )
+                const response = await fetch(url)
                 const data = await response.json()
 
                 if (data.available) {
@@ -71,9 +78,16 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
     function handleSubmit(e) {
         e.preventDefault()
         if (!selectedSlot) return;
-        const jsDate = new Date(selectedDate);
-        submitDateTime(jsDate.toDateString(), selectedSlot)
+
+        const bookingDate = selectedDate.toDate();
+        const [hours, minutes] = selectedSlot.startTime.split(':').map(Number);
+        bookingDate.setHours(hours, minutes, 0, 0)
+
+        // bookingDate.setUTCHours(hours, minutes, 0, 0)
+        submitDateTime(bookingDate, selectedSlot)
     }
+
+
 
     return (
             <form className='date-time-form' onSubmit={handleSubmit}>

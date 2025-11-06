@@ -119,7 +119,8 @@ export default function EditAppointment() {
     const dateTimeEditMode = {
         status: 'edit',
         prevDate: appointment.date,
-        prevTime: appointment.startTime
+        prevTime: appointment.startTime,
+        appointmentId: appointment._id
     }
 
     function submitDateTime(selectedDate, selectedTime) {

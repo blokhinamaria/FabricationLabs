@@ -48,7 +48,7 @@ export default function Appointment({id, data}) {
 
     //calculate days left
 
-    const appointmentDate = new Date(`${appointment.date} ${appointment.startTime}`)
+    const appointmentDate = new Date(appointment.date)
 
     const daysLeft = () => {
 
@@ -110,7 +110,7 @@ export default function Appointment({id, data}) {
                 <img src="/icons/location_on_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Location Pin" width="24" height="24" />
                 <div>
                     <p><strong>{appointment.location}</strong></p>
-                    <p>{address()}</p>
+                    {address()}
                 </div>
             </div>
             <div className="appointment-button-container">

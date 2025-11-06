@@ -6,6 +6,9 @@ export async function getAvailableSlots(req, res) {
     
     const equipmentId = req.query?.equipmentId || new URLSearchParams(req.url?.split('?')[1]).get('equipmentId');
     const date = req.query?.date || new URLSearchParams(req.url?.split('?')[1]).get('date');
+    const appointmentId = req.query?.appointmentId || new URLSearchParams(req.url?.split('?')[1]).get('appointmentId') || null;
+
+    console.log(appointmentId)
 
     // 1. Get the day of week from the date
     const selectedDate = new Date(date);
@@ -37,16 +40,21 @@ export async function getAvailableSlots(req, res) {
     }
 
     // 5. Get existing bookings for this equipment and date
-    const startOfDay = new Date(selectedDate.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(selectedDate.setHours(23, 59, 59, 999));
+    const startOfDay = new Date(selectedDate)
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    const endOfDay = new Date(selectedDate);
+    endOfDay.setUTCHours(23, 59, 59, 999)
 
     const bookingCollection = db.collection('bookings');
     const existingBookings = await bookingCollection.find({
-        equipmentId: new ObjectId(equipmentId),
-        date: { $gte: startOfDay, $lte: endOfDay },
+        _id: { $ne: new ObjectId(appointmentId) },
+        equipmentId: equipmentId,
+        date: { $gte: startOfDay.toISOString(), $lte: endOfDay.toISOString()},
         status: { $in: ['pending', 'scheduled', 'confirmed'] }
     }).toArray();
     await client.close();
+
+    console.log(existingBookings)
 
     // 5. Generate all possible time slots
     const daySlots = generateTimeSlots(availability.openTime, availability.closeTime, availability.slotDuration);
