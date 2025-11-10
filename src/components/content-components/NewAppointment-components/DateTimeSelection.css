@@ -1,6 +1,7 @@
 form.date-time-form {
     flex-direction: row;
     min-height: 520px;
+    max-width: 100%;
 }
 
 form.date-time-form > div {

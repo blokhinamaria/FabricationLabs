@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ObjectId } from "bson";
-import AppointmentSummary from "./NewAppointment-components/AppointmentSummary";
+import AppointmentSummary from "./appointments/AppointmentSummary";
 import EquipmentSelection from "./NewAppointment-components/EquipmentSelection";
 import DateTimeSelection from "./NewAppointment-components/DateTimeSelection";
 
@@ -15,6 +15,7 @@ export default function EditAppointment() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('')
     const [step, setStep] = useState('overview')
+    const [ isUpdated, setIsUpdated ] = useState(false)
 
     //populate the form with appointment data
     const [classNumber, setClassNumber] = useState('')
@@ -44,12 +45,9 @@ export default function EditAppointment() {
         }
     }
 
-    
-
     if (loading) return <main>Loading...</main>
     if (error) return <main>Error: {error}</main>
     if (!appointment) return <main>No appointment found</main>
-
 
     //function to change steps
     function handleClickItem(step) {
@@ -60,10 +58,12 @@ export default function EditAppointment() {
     const equipmentEditMode = {
         status: 'edit',
         prevEquipmentId: appointment.equipmentId.toString(),
-        prevMaterialSelections: appointment.materialSelections
+        prevMaterialSelections: appointment.materialSelections,
+        prevDate: appointment.date
     }
 
     function submitEquipment(equipment, materialSelection = []) {
+
         const equipmentChanged = equipment._id !== appointment.equipmentId.toString();
     
         // Check if materials changed (only relevant if equipment is the same)
@@ -78,6 +78,7 @@ export default function EditAppointment() {
     
         // Only update if something changed
         if (equipmentChanged || materialsChanged) {
+            
             
             const updates = {};
             
@@ -107,8 +108,7 @@ export default function EditAppointment() {
             }
             setAppointment(prev => ({ ...prev, ...updates }));
             setUpdatedData(prev => ({ ...prev, ...updates }));
-            console.log('updated');
-            console.log(updates)
+            setIsUpdated(true);
         }
         
         setStep("overview");
@@ -124,8 +124,11 @@ export default function EditAppointment() {
     }
 
     function submitDateTime(selectedDate, selectedTime) {
+        const appointementDate = new Date(appointment.date)
 
-        const dateChanged = selectedDate !== appointment.date
+        const dateChanged = selectedDate.getTime() !== appointementDate.getTime()
+
+        console.log(dateChanged)
         const timeChanged = selectedTime.startTime !== appointment.startTime
 
         if (dateChanged || timeChanged) {
@@ -141,8 +144,7 @@ export default function EditAppointment() {
             }
             setAppointment(prev => ({...prev, ...updates}))
             setUpdatedData(prev => ({...prev, ...updates}))
-            console.log('updated')
-            console.log(updates)
+            setIsUpdated(true);
         }
 
         setStep("overview");
@@ -151,6 +153,7 @@ export default function EditAppointment() {
     //STEP 3: Details
 
     async function handleSubmit(e) {
+        setIsUpdated(true);
         e.preventDefault();
         const classChanged = classNumber.toLowerCase().trim() !== appointment.classNumber.toLowerCase().trim()
         const notesChanged = notes.trim() !== appointment.notes.trim()
@@ -173,11 +176,6 @@ export default function EditAppointment() {
                 ...updatedData
             }
 
-            // setAppointment(prev => ({...prev, ...updates}))
-            // setUpdatedData(prev => ({...prev, ...updates}))
-        console.log('updated')
-        console.log(differences)
-
         await updateAppointment(differences)
     }
 
@@ -190,12 +188,8 @@ export default function EditAppointment() {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(differences)
             })
-            // const data = await response.json();
             if (response.ok) {
                 console.log(`success. Response: ${response}`)
-                                
-                // setStep('confirmation')
-                // setAppointmentId(data.appointmentId)
                 navigate('/dashboard')
 
             } else {
@@ -206,16 +200,20 @@ export default function EditAppointment() {
         }
     }
     
+    function handleCancel() {
+        navigate('/dashboard')
+    }
 
     return (
         <main>
             {step === 'overview' && 
-                <article>
+                <article className="edit-appointment appointment-card">
+                    <h2>Edit Appointment</h2>
                     <AppointmentSummary
                         appointment={appointment}
                         handleClickItem={handleClickItem}
                         mode={'edit'}/>
-
+                    <form onSubmit={e => handleSubmit(e)} style={{ marginBlock: '24px'}}>
                         <div>
                             <label htmlFor='classNumber'>Class</label>
                             <input
@@ -224,7 +222,10 @@ export default function EditAppointment() {
                                 name="classNumber"
                                 placeholder="ART XXX"
                                 value={classNumber}
-                                onChange={(e) => setClassNumber(e.target.value)}/>
+                                onChange={(e) => {
+                                    setClassNumber(e.target.value);
+                                    setIsUpdated(true);
+                                }}/>
                         </div>
                         <div>
                             <label htmlFor='details'>Additional details</label>
@@ -233,18 +234,44 @@ export default function EditAppointment() {
                                 name="details"
                                 placeholder="Provide details of what you need to do so we can better prepare for your visit"
                                 value={notes}
-                                onChange={(e) => setNotes(e.target.value)}/>
+                                onChange={(e) => {
+                                    setNotes(e.target.value);
+                                    setIsUpdated(true);
+                                }}
+                                />
                         </div>
+                    </form>
+                    <button disabled={!isUpdated} onClick={e => handleSubmit(e)}>Submit</button>
+                    <button onClick={handleCancel}>Cancel</button>
                 </article>
             }
             {(step === 'equipment' || step === 'materials') && 
+            <div className="appointment-booking-grid">
+                <div className="appointment-sidebar appointment-card">
+                    <button onClick={() => setStep('overview')}>Go back</button>
+                    <AppointmentSummary
+                        appointment={appointment}
+                        handleClickItem={handleClickItem}
+                        mode={'edit'}/>
+                    
+                </div>
                 <EquipmentSelection
                     submitEquipment={submitEquipment}
                     mode={equipmentEditMode}
                     />
+                
+            </div>
+                
             }
             {step === 'time' &&
-                <div className="appointment-booking-wrapper">
+                <div className="appointment-booking-grid">
+                    <div className="appointment-sidebar appointment-card">
+                        <button onClick={() => setStep('overview')}>Go back</button>
+                        <AppointmentSummary
+                            appointment={appointment}
+                            handleClickItem={handleClickItem}
+                            mode={'edit'}/>
+                    </div>
                     <DateTimeSelection 
                     equipmentId={appointment.equipmentId}
                     submitDateTime={submitDateTime}
@@ -252,9 +279,6 @@ export default function EditAppointment() {
                     />
                 </div>
             }
-
-            <button onClick={() => setStep('overview')}>Go back</button>  
-            <button className="small" onClick={e => handleSubmit(e)}>Submit</button>
             
         </main>
     )

@@ -6,7 +6,7 @@ import { convertDate } from "../../func/convertDate.js";
 import { convertTime } from "../../func/convertTime.js";
 
 import EquipmentSelection from "./NewAppointment-components/EquipmentSelection";
-import AppointmentSummary from "./NewAppointment-components/AppointmentSummary.jsx";
+import AppointmentSummary from "./appointments/AppointmentSummary.jsx";
 import DateTimeSelection from "./NewAppointment-components/DateTimeSelection";
 import Details from "./NewAppointment-components/Details";
 import Appointment from "./appointments/Appointment";
@@ -67,7 +67,7 @@ export default function NewAppointment() {
             setAppointmentCreateMode({
             status: 'create',
             prevEquipmentId: newAppointmentData.equipmentId.toString(),
-            prevMaterialSelections: newAppointmentData.materialSelections
+            prevMaterialSelections: newAppointmentData.materialSelections,
         })
         } else if (step === 'time') {
             setAppointmentCreateMode({
@@ -131,6 +131,7 @@ export default function NewAppointment() {
     // STEP 2: date and time
 
     function submitDateTime(selectedDate, selectedTime) {
+        console.log(selectedDate)
         setNewAppointmentData((prev) => ({
             ...prev,
             date: selectedDate,
@@ -195,8 +196,11 @@ export default function NewAppointment() {
                 />}
             {step === 'time' && 
                 (   
-                    <div className="appointment-booking-wrapper">  
-                        <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
+                    <div className="appointment-booking-grid">  
+                        <div className="appointment-sidebar appointment-card">
+                            <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
+                            <button onClick={handleCancel}>Cancel</button>
+                        </div>
                         <DateTimeSelection
                             equipmentId={newAppointmentData.equipmentId}
                             submitDateTime={submitDateTime}
@@ -208,17 +212,20 @@ export default function NewAppointment() {
                 
             {step === 'details' && 
                 (   
-                    <div className="appointment-booking-wrapper">  
-                        <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
+                    <div className="appointment-booking-grid">  
+                        <div className="appointment-sidebar appointment-card">
+                            <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
+                            <button onClick={handleCancel}>Cancel</button>
+                        </div>
                         <Details submitDetails={submitDetails}/>
                     </div>
                 )
             }
             {step === 'confirmation' &&
-                <section className="appointment-details">
+                <section>
                     <h2>Appointment created</h2>
-                    <Appointment id={appointmentId} />
-                    <Link to='/dashboard'><button>Back to dashboard</button></Link>
+                    <Appointment  id={appointmentId} />
+                    <Link to='/dashboard' ><button style={{ marginTop: '50px'}}>Back to dashboard</button></Link>
                 </section>
             }
         </main>

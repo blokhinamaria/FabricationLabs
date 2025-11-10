@@ -3,7 +3,7 @@ import http from 'node:http'
 import { handlePost, handleGet, handlePut, handleDelete } from './handlers/routeHandlers.js';
 import { sendResponse } from './utils/sendResponse.js';
 import { getAvailableSlots } from './utils/getAvailableSlots.js'
-
+import { getBookedEquipment } from './utils/getBookedEquipment.js';
 
 // Import your new auth handlers
 import requestLinkHandler from './api/request-link.js';
@@ -50,7 +50,11 @@ const server = http.createServer(async (req, res) => {
     } else if (req.url === '/api/equipment' && req.method === 'GET') {
         return await handleGet(req, res)
     } else if (req.url.startsWith('/api/availability')) {
-        return await getAvailableSlots(req, res)
+        if (req.url.startsWith('/api/availability/slots')) {
+            return await getAvailableSlots(req, res)
+        } else if (req.url.startsWith('/api/availability/date')) {
+            return await getBookedEquipment(req, res)
+        }
     } else if (req.url.startsWith('/api/users') && req.method === 'PUT') {
         return await handlePut(req, res)
     } else {

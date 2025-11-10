@@ -1,31 +1,27 @@
-import { useNavigate } from "react-router-dom"
-
-export default function AppointmentSummary({appointment, handleClickItem, mode}) {
-
-    const navigate = useNavigate();
+export default function AppointmentSummary({appointment, handleClickItem}) {
 
     //populate the form with appointment data
     const appointmentDate = new Date(appointment.date)
 
-    function handleCancel() {
-        navigate('/dashboard')
-    }
-
     return (
         <section className="appointment-overview">
-            <div onClick={() => handleClickItem('equipment')}>
-                <p>Appointment for</p>
-                <h3>{appointment?.equipmentName}</h3>
-            </div>
-                                                        
-            { appointment.materialPreference ? (
-                <div onClick={() => handleClickItem('materials')}> 
-                    <p><strong>Preferred  Materials</strong></p>
-                        {appointment.materialSelections.map(material => (
-                            <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
-                        ))}
+            {/* <button onClick={handleCancel}>Cancel</button> */}
+            <div className="appointment-overview-details" onClick={() => handleClickItem('equipment')}>
+                <div onClick={() => handleClickItem('equipment')}>
+                    <p>Appointment for</p>
+                    <h3>{appointment?.equipmentName}</h3>
                 </div>
-                ) : null}
+                                                            
+                { appointment.materialPreference ? (
+                    <div onClick={() => handleClickItem('materials')}> 
+                        <p><strong>Preferred  Materials</strong></p>
+                            {appointment.materialSelections.map(material => (
+                                <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
+                            ))}
+                    </div>
+                    ) : null}
+            </div>
+            
             
             {appointment?.date && (
                 <div className='appointment-overview-details' onClick={() => handleClickItem('time')}>
@@ -40,9 +36,6 @@ export default function AppointmentSummary({appointment, handleClickItem, mode})
                     </div>
                 </div>
             )}
-
-            
-            <button className="small" onClick={handleCancel}>Cancel</button>
         </section>
     )
 }

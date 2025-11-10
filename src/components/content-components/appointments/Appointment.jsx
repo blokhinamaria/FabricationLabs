@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import './Appointment.css'
 
 export default function Appointment({id, data}) {
 
-    const [ appointment, setAppointment ] = useState(data || null)
-    const [ loading, setLoading ] = useState(!data)
-    const [ error, setError ] = useState(null)
+    const [ appointment, setAppointment ] = useState(data || null);
+    const [ loading, setLoading ] = useState(!data);
+    const [ error, setError ] = useState(null);
+    const [ appointmentStatus, setAppointmentStatus ] = useState('')
     const navigate = useNavigate();
+    const dialogRef = useRef(null);
 
     useEffect(() => {
         if (!data && id) {
@@ -94,9 +96,37 @@ export default function Appointment({id, data}) {
         navigate('/dashboard/editappointment', { state: id });
     }
 
+    const openModal = () => {
+        dialogRef.current.showModal()
+    }
+
+    const closeModal = () => {
+        dialogRef.current.close()
+    }
+
+    async function handleDelete(appointmentId) {
+        try {
+            const response = await fetch(`/api/appointments?id=${appointmentId}`, {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(id)
+            })
+            if (response.ok) {
+                console.log(`success. Response: ${response}`)
+                setAppointmentStatus('deleted')
+                closeModal();
+            }
+        } catch (err) {
+            console.log(err)
+            alert('Something went wrong, please try again later')
+        }
+    }
+
     return (
-        <div className="appointment-card appointment-overview-details">
-            <p>{daysLeft()}</p>
+        <div
+            className={`appointment-overview-details appointment-card ${appointmentStatus === 'deleted' ? ('deleted') : null}` }
+        >
+            <p>{appointmentStatus === 'deleted' ? ('deleted') : daysLeft()}</p>
             <h3>{appointment.equipmentName}</h3>
             <div className="appointment-icon-text">
                 <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
@@ -113,10 +143,24 @@ export default function Appointment({id, data}) {
                     {address()}
                 </div>
             </div>
-            <div className="appointment-button-container">
-                <button onClick={() => handleEdit(appointment._id)}>Edit</button>
-                <button disabled>Delete</button>
-            </div>
+            {
+                    appointmentStatus === 'deleted' ? null : (
+                        <div className="appointment-button-container">
+                            <button onClick={() => handleEdit(appointment._id)}>Edit</button>
+                            <button onClick={openModal}>Delete</button>
+                        </div>
+                    )
+                }
+            
+            <dialog ref={dialogRef}>
+                <button onClick={closeModal}>Close</button>
+                <h4>Are you sure you want to delete the appointment for</h4>
+                <h3>{appointment.equipmentName}</h3>
+                <p>on {appointmentDate.toDateString()}</p>
+                <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                <button onClick={() => handleEdit(appointment._id)}>Edit Instead</button>
+                <button onClick={() => handleDelete(appointment._id)}>Delete</button>
+            </dialog>
         </div>
     )
 }

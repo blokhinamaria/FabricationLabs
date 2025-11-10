@@ -78,7 +78,7 @@ function handleTryAgain() {
             <h1>Welcome to the University of Tampa<br /><span className="title-emphasis">Fabrication Labs</span></h1>
             
             { !authInProgress ? 
-                <>
+                <article>
                     <h2>Please sign in with your UTampa Email to start</h2>
                     <form id='signIn' action={handleSubmit}>
                         <div>
@@ -88,13 +88,13 @@ function handleTryAgain() {
                         <button type='submit'>Sign In</button>
                     
                     </form>
-                </>
+                </article>
                 : 
-                <div>
+                <article>
                     <h2>Check <strong>{userEmail}</strong>  and confirm sign in</h2>
                     <p>Not seeing the email confirmation? Check your span email or <a onClick={handleTryAgain}>Try again</a></p>
                     {/* <Link to='/dashboard'><button onClick={handleClick}>For Development: Skip to Dashboard</button></Link> */}
-                </div>
+                </article>
             }
         </main>
     )

@@ -8,8 +8,6 @@ export async function getAvailableSlots(req, res) {
     const date = req.query?.date || new URLSearchParams(req.url?.split('?')[1]).get('date');
     const appointmentId = req.query?.appointmentId || new URLSearchParams(req.url?.split('?')[1]).get('appointmentId') || null;
 
-    console.log(appointmentId)
-
     // 1. Get the day of week from the date
     const selectedDate = new Date(date);
     const selectedDayOfWeek = selectedDate.getDay();

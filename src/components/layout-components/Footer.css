@@ -1,7 +1,10 @@
 footer {
-    background-color: var(--glass-background);
+    background: var(--glass-background);
+    
+    background: var(--footer-background-color);
+
     backdrop-filter: blur(5px);
-    border: 1px solid var(--glass-border);
+    /* border: 1px solid var(--glass-border); */
 
     padding: var(--padding-small);
     text-align: center;
@@ -18,7 +21,7 @@ footer > .information {
     display: flex;
     justify-content: space-evenly;
     text-align: start;
-
+    color: var(--white);
 }
 
 footer > .logo-container {

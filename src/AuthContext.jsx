@@ -31,6 +31,7 @@ export function AuthProvider( {children} ) {
             }
         } catch (err) {
             console.log(`Auth check failed: ${err}`)
+            navigate('/')
             setUser(null)
         } finally {
             setLoading(false)

@@ -70,9 +70,12 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
         setSelectedSlot(null);
     }
 
+    const [ isNewSlotSelected, setIsNewSlotSelected ] = useState(false);
+
     function handleSlotSelect(e) {
         e.preventDefault()
         setSelectedSlot(availableSlots.find((slot) => slot.startTime === e.target.value))
+        setIsNewSlotSelected(true)
     }
 
     function handleSubmit(e) {
@@ -139,7 +142,11 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                                     ) : (
                                         <div className='time-grid'>
                                             {availableSlots.map((slot, index) => (
-                                                    <button onClick={(e) => handleSlotSelect(e)} key={index} value={slot.startTime} className={selectedSlot?.startTime === slot.startTime ? 'button-selected' : 'time-picker'}>
+                                                    <button
+                                                        onClick={(e) => handleSlotSelect(e)}
+                                                        key={index}
+                                                        value={slot.startTime}
+                                                        className={selectedSlot?.startTime === slot.startTime ? 'button-selected' : 'time-picker'}>
                                                         {convertTime(slot.startTime)}
                                                     </button>
                                             ))}
@@ -148,7 +155,7 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                                 )
                             )
                         }
-                        {selectedSlot && <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>}
+                        {isNewSlotSelected && <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>}
                     </div>) : (<div className='time-form empty'></div>)
                 }
                 
