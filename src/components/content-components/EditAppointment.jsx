@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ObjectId } from "bson";
-import AppointmentSummary from "./appointments/AppointmentSummary";
-import EquipmentSelection from "./NewAppointment-components/EquipmentSelection";
-import DateTimeSelection from "./NewAppointment-components/DateTimeSelection";
+import AppointmentSummary from "./Appointment/AppointmentSummary";
+import EquipmentSelection from "./Appointment-components/EquipmentSelection";
+import DateTimeSelection from "./Appointment-components/DateTimeSelection";
 
 export default function EditAppointment() {
     const location = useLocation();

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 
-import Appointment from "./appointments/Appointment";
+import Appointment from "./Appointment/Appointment";
 
 export default function Dashboard() {
     
@@ -42,6 +42,10 @@ export default function Dashboard() {
 
     const navigate = useNavigate();
 
+    function handleNewReservation() {
+        navigate('/dashboard/newreservation')
+    }
+
     function handleNewAppointment() {
         navigate('/dashboard/newappointment')
     }
@@ -49,6 +53,7 @@ export default function Dashboard() {
     return (
         <main>
             <article className="appointment-buttons">
+                {user.role === 'faculty' && <button onClick={handleNewReservation}>Reserve for class</button>}
                 <button onClick={handleNewAppointment}>Schedule new appointment</button>
             </article>
             <article style={{ marginTop: "50px"}} className="upcoming-appointments">

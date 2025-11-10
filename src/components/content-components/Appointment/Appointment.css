@@ -72,3 +72,20 @@ article.edit-appointment {
     display: flex;
     justify-content: center;
 }
+
+dialog:open {
+    background-color: var(--dialog-background-color);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-small);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: var(--gap-small);
+    width: 100%;
+    max-width: 450px;
+
+}
+
+dialog::backdrop {
+    background-color: var(--dialog-backdrop-color);
+}

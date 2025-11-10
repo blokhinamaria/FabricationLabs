@@ -9,6 +9,7 @@ import Dashboard from './components/content-components/Dashboard';
 import './App.css'
 import NewAppointment from './components/content-components/NewAppointment';
 import EditAppointment from './components/content-components/EditAppointment';
+import NewReservation from  './components/content-components/NewReservation';
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
                 <Route path='dashboard' element={<Dashboard />} />
                 <Route path='dashboard/newappointment' element={<NewAppointment />} />
                 <Route path='dashboard/editappointment' element={<EditAppointment />} />
+                <Route path='dashboard/newreservation' element={<NewReservation />} />
             </Route>
             </Routes>
           </Wrapper>

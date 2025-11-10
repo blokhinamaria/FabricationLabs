@@ -124,7 +124,8 @@ export default function Appointment({id, data}) {
 
     return (
         <div
-            className={`appointment-overview-details appointment-card ${appointmentStatus === 'deleted' ? ('deleted') : null}` }
+            className={`appointment-card appointment-overview-details ${appointmentStatus === 'deleted' ? ('deleted') : null}` }
+
         >
             <p>{appointmentStatus === 'deleted' ? ('deleted') : daysLeft()}</p>
             <h3>{appointment.equipmentName}</h3>
@@ -155,9 +156,11 @@ export default function Appointment({id, data}) {
             <dialog ref={dialogRef}>
                 <button onClick={closeModal}>Close</button>
                 <h4>Are you sure you want to delete the appointment for</h4>
-                <h3>{appointment.equipmentName}</h3>
-                <p>on {appointmentDate.toDateString()}</p>
-                <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                <div>  
+                    <h3>{appointment.equipmentName}</h3>
+                    <p>on {appointmentDate.toDateString()}</p>
+                    <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                </div>
                 <button onClick={() => handleEdit(appointment._id)}>Edit Instead</button>
                 <button onClick={() => handleDelete(appointment._id)}>Delete</button>
             </dialog>

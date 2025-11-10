@@ -3,6 +3,7 @@ import { convertTime } from '../../../func/convertTime.js';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'; 
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { generateEndTimeSlots } from '../../../func/generateEndTimeSlots.js';
 import dayjs from 'dayjs';
 
 import './DateTimeSelection.css'
@@ -69,13 +70,12 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
         setSelectedDate(value);
         setSelectedSlot(null);
     }
+    
 
     const [ isNewSlotSelected, setIsNewSlotSelected ] = useState(false);
 
     function handleSlotSelect(e) {
-        e.preventDefault()
-        setSelectedSlot(availableSlots.find((slot) => slot.startTime === e.target.value))
-        setIsNewSlotSelected(true)
+        
     }
 
     function handleSubmit(e) {
@@ -90,7 +90,17 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
         submitDateTime(bookingDate, selectedSlot)
     }
 
+    //class reservation slots 
+    const [ endTimeSlots, setEndTimeSlots ] = useState(null);
 
+    function handleStartSlotSelect(e) {
+        e.preventDefault()
+        setSelectedSlot(availableSlots.find((slot) => slot.startTime === e.target.value));
+        setIsNewSlotSelected(true);
+        const generatedEndSlots = generateEndTimeSlots(e.target.value);
+        console.log(generatedEndSlots);
+        setEndTimeSlots(generatedEndSlots)
+    }
 
     return (
             <form className='date-time-form' onSubmit={handleSubmit}>
@@ -141,15 +151,28 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                                         <p>No slots available for this date</p>
                                     ) : (
                                         <div className='time-grid'>
-                                            {availableSlots.map((slot, index) => (
-                                                    <button
-                                                        onClick={(e) => handleSlotSelect(e)}
+                                            <select id='slot-start' onChange={(e) => handleStartSlotSelect(e)}>
+                                                {availableSlots.map((slot, index) => (
+                                                    <option
+                                                        onSelect={(e) => handleStartSlotSelect(e)}
                                                         key={index}
                                                         value={slot.startTime}
                                                         className={selectedSlot?.startTime === slot.startTime ? 'button-selected' : 'time-picker'}>
                                                         {convertTime(slot.startTime)}
-                                                    </button>
+                                                    </option>
                                             ))}
+                                            </select>
+                                            <select id='slot-end'>
+                                                {endTimeSlots?.map((slot, index) => (
+                                                    <option
+                                                        // onClick={(e) => handleSlotSelect(e)}
+                                                        key={index}
+                                                        value={slot.startTime}
+                                                        className={selectedSlot?.startTime === slot.startTime ? 'button-selected' : 'time-picker'}>
+                                                        {slot}
+                                                    </option>
+                                            ))}
+                                            </select>
                                         </div>
                                     )
                                 )

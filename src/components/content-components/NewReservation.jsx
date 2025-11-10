@@ -1,17 +1,17 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../AuthContext";
+import { useAuth } from "../../AuthContext.jsx";
 import { ObjectId } from "bson";
 
 import EquipmentSelection from "./Appointment-components/EquipmentSelection.jsx";
 import AppointmentSummary from "./Appointment/AppointmentSummary.jsx";
-import DateTimeSelection from "./Appointment-components/DateTimeSelection.jsx";
+import DateTimeSelectionReservation from "./Appointment-components/DateTimeSelectionReservation.jsx";
 import Details from "./Appointment-components/Details.jsx";
 import Appointment from "./Appointment/Appointment.jsx";
 
 import './NewAppointment.css'
 
-export default function NewAppointment() {
+export default function NewReservation() {
 
     const { user } = useAuth()
 
@@ -20,7 +20,7 @@ export default function NewAppointment() {
             userId: new ObjectId(user._id),
             userName: user.fullName,
             userEmail: user.email,
-            equipmentId: null, // Reference only - don't duplicate entire object
+            equipmentId: null,
             equipmentName: null,
             equipmentLocation: null,
             
@@ -30,7 +30,7 @@ export default function NewAppointment() {
             date: null, // .toDateString() Thu Nov 20 2025
             startTime: null, // "09:00" / string
             endTime: null, // "09:30" or calculate from duration / string
-            duration: 30, // Number minutes
+            duration: null, // Number minutes
             
             status: 'scheduled', // 'pending' | 'scheduled' | 'completed' | 'cancelled' | 'no-show'
             
@@ -199,7 +199,7 @@ export default function NewAppointment() {
                             <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                             <button onClick={handleCancel}>Cancel</button>
                         </div>
-                        <DateTimeSelection
+                        <DateTimeSelectionReservation
                             equipmentId={newAppointmentData.equipmentId}
                             submitDateTime={submitDateTime}
                             mode={appointmentCreateMode}
