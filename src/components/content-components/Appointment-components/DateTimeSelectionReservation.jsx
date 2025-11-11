@@ -15,7 +15,7 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
 
     const [selectedDate, setSelectedDate] = useState(mode?.prevDate ? dayjs(mode.prevDate) : null);
     const [availableSlots, setAvailableSlots] = useState([]);
-    const [selectedSlot, setSelectedSlot] = useState(null);
+    const [selectedStartSlot, setSelectedStartSlot] = useState(null);
     const [isAvailable, setIsAvailable] = useState(true);
 
     const appointmentId = mode?.appointmentId || null;
@@ -42,18 +42,18 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                 if (data.available) {
                     setIsAvailable(data.available)
                     setAvailableSlots(data.slots)
-                    setSelectedSlot(null)
+                    setSelectedStartSlot(null)
                 } else {
                     setIsAvailable(data.available)
                     setAvailableSlots([])
-                    setSelectedSlot(null)
+                    setSelectedStartSlot(null)
                 }
                 if (mode?.status === 'edit') {
                     const selectedDateObject = new Date(selectedDate)
                     const prevDateObject = new Date(mode.prevDate)
                 if (selectedDateObject.getTime() === prevDateObject.getTime()) {
                     const matchSlot = data.slots.find(slot => slot.startTime === mode.prevTime)
-                    setSelectedSlot(matchSlot)
+                    setSelectedStartSlot(matchSlot)
             }
             }
 
@@ -68,38 +68,46 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
 
     function handleDateSelect(value) {
         setSelectedDate(value);
-        setSelectedSlot(null);
+        setSelectedStartSlot(null);
     }
     
 
     const [ isNewSlotSelected, setIsNewSlotSelected ] = useState(false);
 
-    function handleSlotSelect(e) {
-        
-    }
-
-    function handleSubmit(e) {
-        e.preventDefault()
-        if (!selectedSlot) return;
-
-        const bookingDate = selectedDate.toDate();
-        const [hours, minutes] = selectedSlot.startTime.split(':').map(Number);
-        bookingDate.setHours(hours, minutes, 0, 0)
-
-        // bookingDate.setUTCHours(hours, minutes, 0, 0)
-        submitDateTime(bookingDate, selectedSlot)
-    }
+    
 
     //class reservation slots 
     const [ endTimeSlots, setEndTimeSlots ] = useState(null);
+    const [ selectedEndSlot, setSelectedEndSlot ] = useState()
 
     function handleStartSlotSelect(e) {
         e.preventDefault()
-        setSelectedSlot(availableSlots.find((slot) => slot.startTime === e.target.value));
+        setSelectedStartSlot(availableSlots.find((slot) => slot.startTime === e.target.value));
         setIsNewSlotSelected(true);
         const generatedEndSlots = generateEndTimeSlots(e.target.value);
-        console.log(generatedEndSlots);
+        console.log(e.target.value);
         setEndTimeSlots(generatedEndSlots)
+        setSelectedEndSlot(generatedEndSlots[0]);
+    }
+
+    function handleEndSlotSelect(e) {
+        e.preventDefault();
+        console.log(e.target.value);
+        setSelectedEndSlot(e.target.value);
+    }
+
+    console.log(selectedEndSlot)
+
+    function handleSubmit(e) {
+        e.preventDefault()
+        if (!selectedStartSlot) return;
+
+        const bookingDate = selectedDate.toDate();
+        const [hours, minutes] = selectedStartSlot.startTime.split(':').map(Number);
+        bookingDate.setHours(hours, minutes, 0, 0)
+
+        // bookingDate.setUTCHours(hours, minutes, 0, 0)
+        submitDateTime(bookingDate, selectedStartSlot, selectedEndSlot)
     }
 
     return (
@@ -152,12 +160,19 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                                     ) : (
                                         <div className='time-grid'>
                                             <select id='slot-start' onChange={(e) => handleStartSlotSelect(e)}>
+                                                    <option
+                                                        value={null}
+                                                        selected
+                                                        disabled
+                                                    >
+                                                        Select start time
+                                                    </option>
                                                 {availableSlots.map((slot, index) => (
                                                     <option
                                                         onSelect={(e) => handleStartSlotSelect(e)}
                                                         key={index}
                                                         value={slot.startTime}
-                                                        className={selectedSlot?.startTime === slot.startTime ? 'button-selected' : 'time-picker'}>
+                                                        className={selectedStartSlot?.startTime === slot.startTime ? 'button-selected' : 'time-picker'}>
                                                         {convertTime(slot.startTime)}
                                                     </option>
                                             ))}
@@ -165,11 +180,11 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                                             <select id='slot-end'>
                                                 {endTimeSlots?.map((slot, index) => (
                                                     <option
-                                                        // onClick={(e) => handleSlotSelect(e)}
+                                                        onChange={(e) => handleEndSlotSelect(e)}
                                                         key={index}
-                                                        value={slot.startTime}
-                                                        className={selectedSlot?.startTime === slot.startTime ? 'button-selected' : 'time-picker'}>
-                                                        {slot}
+                                                        value={slot}
+                                                        className={selectedEndSlot === slot ? 'button-selected' : 'time-picker'}>
+                                                        {convertTime(slot)}
                                                     </option>
                                             ))}
                                             </select>
@@ -181,7 +196,6 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                         {isNewSlotSelected && <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>}
                     </div>) : (<div className='time-form empty'></div>)
                 }
-                
             </form>
             
     )

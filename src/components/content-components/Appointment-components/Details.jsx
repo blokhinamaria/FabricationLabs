@@ -101,8 +101,9 @@ export default function Details({submitDetails}) {
                             placeholder={userFullName || 'Full Name'}
                             value={userFullName}
                             onChange={(e) => setUserFullName(e.target.value)}
+                            aria-required={true}
                             />
-                        {nameErrorMessage ? <p className='error-message'>{nameErrorMessage}</p> : null}
+                        {nameErrorMessage ? <p aria-live='polite' className='error-message'>{nameErrorMessage}</p> : null}
                     </div>
                     <div>
                         <label htmlFor='classNumber'>Class</label>
@@ -113,17 +114,17 @@ export default function Details({submitDetails}) {
                             placeholder="ART XXX"
                             value={classNumber}
                             onChange={(e) => setClassNumber(e.target.value)}/>
-                        {classErrorMessage ? <p className='error-message'>{classErrorMessage}</p> : null}
+                        {classErrorMessage ? <p aria-live='polite' className='error-message'>{classErrorMessage}</p> : null}
                     </div>
                     <div>
                         <label htmlFor='details'>Additional details</label>
                         <textarea
                             id="details"
                             name="details"
-                            placeholder="Provide details of what you need to do so we can better prepare for your visit"
+                            placeholder="Provide details of your project and the materials you need so we can better prepare for your visit"
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}/>
-                        {notesErrorMessage ? <p className='error-message'>{notesErrorMessage}</p> : null}
+                        {notesErrorMessage ? <p aria-live='polite' className='error-message'>{notesErrorMessage}</p> : null}
                     </div>
                     <div className='input-group-wrapper'>
                         <input
@@ -132,6 +133,7 @@ export default function Details({submitDetails}) {
                             type="checkbox"
                             checked={agreedToTerms}
                             onChange={(e) => setAgreedToTerms(e.target.checked)}
+                            aria-required={true}
                         />
                         <label htmlFor='terms'>
                             I have read and agree to the Terms and Conditions
@@ -144,12 +146,13 @@ export default function Details({submitDetails}) {
                                 type="checkbox"
                                 checked={agreedToPolicy}
                                 onChange={(e) => setAgreedToPolicy(e.target.checked)}
+                                aria-required={true}
                             />
                             <label htmlFor='policy'>
                                 I have read and understood the UTampa Fabrication Lab and Woodshop policy and guidelines
                             </label>
                     </div>
-                    {termErrorMessage ? <p className='error-message'>{termErrorMessage}</p> : null}
+                    {termErrorMessage ? <p aria-live='polite' className='error-message'>{termErrorMessage}</p> : null}
                     <button type='submit'>Submit</button>
                 </form>
         </article>

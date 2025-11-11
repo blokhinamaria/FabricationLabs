@@ -53,8 +53,11 @@ export default function Dashboard() {
     return (
         <main>
             <article className="appointment-buttons">
-                {user.role === 'faculty' && <button onClick={handleNewReservation}>Reserve for class</button>}
-                <button onClick={handleNewAppointment}>Schedule new appointment</button>
+                <div className="button-group">
+                    {user.role === 'faculty' && <button onClick={handleNewReservation}>Reserve for class</button>}
+                    <button onClick={handleNewAppointment}>Schedule new appointment</button>
+                </div>
+                
             </article>
             <article style={{ marginTop: "50px"}} className="upcoming-appointments">
                 {upcomingAppointments?.length > 0 ? (

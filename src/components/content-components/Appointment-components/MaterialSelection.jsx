@@ -90,12 +90,13 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
                                 type="checkbox"
                                 value='reviewed'
                                 onChange={() => setHasReviewedRequirements((prev) => !prev)}
+                                aria-required={true}
                         />
                         <label htmlFor='fileRequirements'>
                                 I have reviewed and understood the file requirements
                         </label>
                     </div>
-                    { errorMessage !== '' ? (<p className="error-message">{errorMessage}</p>) : null}
+                    { errorMessage !== '' ? (<p aria-live='polite' className="error-message">{errorMessage}</p>) : null}
                 <button type="submit" disabled={!hasReviewedRequirements}>Submit</button>
             </form>
         </section>

@@ -17,6 +17,7 @@ export default function NewAppointment() {
 
     const [ newAppointmentData, setNewAppointmentData ] = useState(
         {
+            type: 'individual-appointment',
             userId: new ObjectId(user._id),
             userName: user.fullName,
             userEmail: user.email,

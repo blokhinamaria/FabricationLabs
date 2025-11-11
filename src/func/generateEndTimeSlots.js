@@ -1,6 +1,6 @@
 export function generateEndTimeSlots(startTime) {
         const slots = [];
-        const closeTime = 17 * 60;
+        const closeTime = 17 * 60 + 1;
         
         const duration = 30;
         const [startHour, startMin] = startTime.split(':').map(Number);
@@ -10,7 +10,7 @@ export function generateEndTimeSlots(startTime) {
         let currentTime = startHour * 60 + startMin + duration;
         const maxTime = 3 * 60 + currentTime;
 
-        while (currentTime + duration <= maxTime && currentTime + duration <= closeTime) {
+        while (currentTime + duration <= maxTime && currentTime <= closeTime) {
             const hour = Math.floor(currentTime / 60);
             const minutes = currentTime % 60;
             const timeString = `${String(hour).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`

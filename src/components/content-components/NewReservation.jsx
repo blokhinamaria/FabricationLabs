@@ -17,6 +17,7 @@ export default function NewReservation() {
 
     const [ newAppointmentData, setNewAppointmentData ] = useState(
         {
+            type: 'class-reservation',
             userId: new ObjectId(user._id),
             userName: user.fullName,
             userEmail: user.email,
@@ -128,13 +129,19 @@ export default function NewReservation() {
 
     // STEP 2: date and time
 
-    function submitDateTime(selectedDate, selectedTime) {
-        console.log(selectedDate)
+    function submitDateTime(selectedDate, selectedStartSlot, selectedEndSlot) {
+        console.log(selectedDate);
+        const [hour, minutes] = selectedEndSlot.split(':').map(Number);
+        const endDateTime = new Date(selectedDate);
+        endDateTime.setHours(hour, minutes);
+        console.log(endDateTime);
+        const duration = Math.round(Math.abs(selectedDate.getTime() - endDateTime.getTime()) / 60000);
+        console.log(duration);
         setNewAppointmentData((prev) => ({
             ...prev,
             date: selectedDate,
-            startTime: selectedTime.startTime,
-            endTime: selectedTime.endTime, // or calculate from duration / string
+            startTime: selectedStartSlot,
+            endTime: selectedEndSlot,
         }))
         handleNext("details");
     }

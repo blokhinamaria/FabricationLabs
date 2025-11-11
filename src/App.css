@@ -37,23 +37,21 @@
   --drop-shadow: #3D2A231a;
   --light-grey: #CCCCCC;
   --grey: #868684;
-  --black: var(--wood-black);
+  --black: #000000;
+  --black-opaque: #00000087;
   --accent1: rgb(109, 255, 96);
   --accent1-opaque: rgba(109, 255, 96, 0.5);
   --accent1-shadow: rgba(46, 148, 56, 0.25);
-  --link-hover: var(--wood-medium);
-  --input-text: var(--wood-medium);
+  --link-hover: #8A38F5;
+  --input-text: #8A38F5;
   --warning: red;
 
   --gap-small: 24px;
   --border-radius-small: 10px;
 
-  --background-color: var(--wood-light);
-  --background-gradient: linear-gradient(180deg, var(--wood-light) 0%, var(--wood-mid-light) 100%);
-
-  --footer-background-color: linear-gradient(180deg, var(--wood-medium) 0%, var(--wood-dark) 100%);
-  --dialog-background-color: var(--wood-medium);
-  --dialog-backdrop-color: var(--wood-dark-transparent);
+  --footer-background-color: var(--glass-background);
+  --dialog-background-color: #9f90cb;
+  --dialog-backdrop-color: var(--black-opaque);
 }
 
 /* 
@@ -72,11 +70,11 @@ width:
 body {
   margin: 0;
   font-family: "Zalando Sans", sans-serif;
-
-  /* background-image: url('https://images.unsplash.com/photo-1615715874994-bb83092ef331?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); */
-
   background: var(--background-color);
-  background: var(--background-gradient)
+  background-image: url('https://images.unsplash.com/photo-1615715874994-bb83092ef331?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+
+  
+  /* background: var(--background-gradient) */
 }
 
 #root {
@@ -155,12 +153,20 @@ button:hover, button:focus {
 button.button-selected {
   background-color: var(--accent1-opaque);
   box-shadow: 0 4px 6px var(--accent1-shadow); 
-
 }
 
 button:disabled {
   opacity: 0.25;
   cursor: not-allowed;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: center;
+  width: 100%;
+  gap: var(--gap-small);
 }
 
 li > button.nav {

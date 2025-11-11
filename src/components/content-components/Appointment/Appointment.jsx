@@ -34,10 +34,6 @@ export default function Appointment({id, data}) {
         }
     }
 
-    if (loading) return <p>Loading...</p>
-    if (error) return <div>Error: {error}</div>
-    if (!appointment) return <p>No appointment found</p>
-
     const address = () => {
         if (appointment.location === 'FabLab') {
             return <p>R.K. Bailey Art Studios<br />310 N Blvd, Tampa, FL 33606</p>
@@ -96,12 +92,23 @@ export default function Appointment({id, data}) {
         navigate('/dashboard/editappointment', { state: id });
     }
 
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+
     const openModal = () => {
         dialogRef.current.showModal()
+        setIsDialogOpen(true)
     }
 
     const closeModal = () => {
         dialogRef.current.close()
+        setIsDialogOpen(false)
+    }
+
+    //close dialog when clicking outside
+    const handleDialogClick = (e) => {
+        if (e.target === dialogRef.current) {
+            closeModal();
+        }
     }
 
     async function handleDelete(appointmentId) {
@@ -121,6 +128,10 @@ export default function Appointment({id, data}) {
             alert('Something went wrong, please try again later')
         }
     }
+
+    if (loading) return <p>Loading...</p>
+    if (error) return <div>Error: {error}</div>
+    if (!appointment) return <p>No appointment found</p>
 
     return (
         <div
@@ -148,22 +159,28 @@ export default function Appointment({id, data}) {
                     appointmentStatus === 'deleted' ? null : (
                         <div className="appointment-button-container">
                             <button onClick={() => handleEdit(appointment._id)}>Edit</button>
-                            <button onClick={openModal}>Delete</button>
+                            <button 
+                                onClick={openModal}
+                                aria-expanded={isDialogOpen}
+                                aria-controls="delete-dialog"
+                                aria-haspopup="dialog"
+                                >
+                                    Delete
+                            </button>
+                            <dialog id='delete-dialog' ref={dialogRef} onClick={handleDialogClick}>
+                                <button onClick={closeModal}>Close</button>
+                                <h4>Are you sure you want to delete the appointment for</h4>
+                                <div>  
+                                    <h3>{appointment.equipmentName}</h3>
+                                    <p>on {appointmentDate.toDateString()}</p>
+                                    <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                                </div>
+                                <button onClick={() => handleEdit(appointment._id)}>Edit Instead</button>
+                                <button onClick={() => handleDelete(appointment._id)}>Delete</button>
+                            </dialog>
                         </div>
                     )
                 }
-            
-            <dialog ref={dialogRef}>
-                <button onClick={closeModal}>Close</button>
-                <h4>Are you sure you want to delete the appointment for</h4>
-                <div>  
-                    <h3>{appointment.equipmentName}</h3>
-                    <p>on {appointmentDate.toDateString()}</p>
-                    <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
-                </div>
-                <button onClick={() => handleEdit(appointment._id)}>Edit Instead</button>
-                <button onClick={() => handleDelete(appointment._id)}>Delete</button>
-            </dialog>
         </div>
     )
 }

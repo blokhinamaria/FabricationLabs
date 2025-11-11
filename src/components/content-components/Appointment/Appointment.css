@@ -49,7 +49,6 @@ div.appointment-icon-text {
 }
 
 .appointment-button-container {
-    display: none;
     margin-top: var(--gap-small);
     display: flex;
     width: 100%;

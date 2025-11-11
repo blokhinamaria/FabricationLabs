@@ -82,8 +82,17 @@ function handleTryAgain() {
                     <h2>Please sign in with your UTampa Email to start</h2>
                     <form id='signIn' action={handleSubmit}>
                         <div>
-                            <input aria-label='email' type='email' id='email' name='email' placeholder='email@spartan.ut.edu' value={inputValue} onChange={e => setInputValue(e.target.value)}></input>
-                            { errorMessage ? <p className='error-message'>{errorMessage}</p> : null}
+                            <input
+                                aria-label='email'
+                                aria-required={true}
+                                type='email'
+                                id='email'
+                                name='email'
+                                placeholder='email@spartan.ut.edu'
+                                value={inputValue}
+                                onChange={e => setInputValue(e.target.value)}>
+                            </input>
+                            { errorMessage ? <p aria-live='polite' className='error-message'>{errorMessage}</p> : null}
                         </div>
                         <button type='submit'>Sign In</button>
                     

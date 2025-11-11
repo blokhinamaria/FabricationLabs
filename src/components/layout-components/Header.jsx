@@ -27,14 +27,12 @@ export default function Header() {
     return (
         <header>
             <div className='logo-container' onClick={handleLogoClick}>
-                {/* <span className='logo'>UTampa</span> */}
                 <img className='header-logo' src={logo} />
-                {/* <span className='logo'>Fabrication Lab + Woodshop</span> */}
             </div>
 
             { user ? 
                 <>
-                    <button className='hamburger' onClick={menuToggle}>Menu</button>
+                    <button className='hamburger' onClick={menuToggle} aria-expanded={isOpen}>Menu</button>
                 
                     <nav id='main-menu' className={isOpen ? 'open' : ''}>
                         <ul>

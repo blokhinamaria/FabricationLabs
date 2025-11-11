@@ -1,12 +1,3 @@
-
-.equipment-list > button {
-    margin-bottom: 25px;
-}
-
-.equipment-list :last-child {
-    margin-bottom: 0;
-}
-
 .appointment-booking-grid {
     display: grid;
     grid-auto-columns: 305px auto;

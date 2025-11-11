@@ -241,8 +241,11 @@ export default function EditAppointment() {
                                 />
                         </div>
                     </form>
-                    <button disabled={!isUpdated} onClick={e => handleSubmit(e)}>Submit</button>
-                    <button onClick={handleCancel}>Cancel</button>
+                    <div className="button-group">
+                        <button disabled={!isUpdated} onClick={e => handleSubmit(e)}>Submit</button>
+                        <button onClick={handleCancel}>Cancel</button>
+                    </div>
+                    
                 </article>
             }
             {(step === 'equipment' || step === 'materials') && 

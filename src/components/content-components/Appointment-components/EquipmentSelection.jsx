@@ -95,16 +95,18 @@ export default function EquipmentSelection({submitEquipment, mode}) {
                             <h2>Choose a new equipment or confirm your equipment selection below</h2>
                         </>
                     )}     
-                        {equipment.map((item) => (
-                            <button
-                                onClick={() => handleEquipmentSelection(item)}
-                                key={item._id}
-                                className={item._id === mode.prevEquipmentId ? 'button-selected' : null}
-                                disabled={bookedEquipment.includes(item._id)}
-                                >
-                                    {item.name}
-                            </button>
-                        ))}
+                        <div className='button-group'>
+                            {equipment.map((item) => (
+                                <button
+                                    onClick={() => handleEquipmentSelection(item)}
+                                    key={item._id}
+                                    className={item._id === mode.prevEquipmentId ? 'button-selected' : null}
+                                    disabled={bookedEquipment.includes(item._id)}
+                                    >
+                                        {item.name}
+                                </button>
+                            ))}
+                        </div>
                 </section>
                 :
                 <section className="equipment-list">
