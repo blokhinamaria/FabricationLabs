@@ -28,9 +28,9 @@ export default function NewReservation() {
             // Store only the specific selections made at booking time
             materialPreference: false, //boolean, false by default
             materialSelections: [],
-            date: null, // .toDateString() Thu Nov 20 2025
+            date: null, //date object
             startTime: null, // "09:00" / string
-            endTime: null, // "09:30" or calculate from duration / string
+            endTime: null, // date object on reservations
             duration: null, // Number minutes
             
             status: 'scheduled', // 'pending' | 'scheduled' | 'completed' | 'cancelled' | 'no-show'
@@ -73,6 +73,7 @@ export default function NewReservation() {
             status: 'edit',
             prevDate: newAppointmentData.date,
             prevTime: newAppointmentData.startTime,
+            prevEndTime: newAppointmentData.endTime
         })
             setNewAppointmentData((prev) => ({
                 ...prev,
@@ -129,19 +130,16 @@ export default function NewReservation() {
 
     // STEP 2: date and time
 
-    function submitDateTime(selectedDate, selectedStartSlot, selectedEndSlot) {
-        console.log(selectedDate);
-        const [hour, minutes] = selectedEndSlot.split(':').map(Number);
-        const endDateTime = new Date(selectedDate);
-        endDateTime.setHours(hour, minutes);
-        console.log(endDateTime);
-        const duration = Math.round(Math.abs(selectedDate.getTime() - endDateTime.getTime()) / 60000);
-        console.log(duration);
+    function submitDateTime(selectedDate, selectedStartSlot, endTime) {
+        console.log(typeof selectedDate);
+        const duration = Math.round(Math.abs(selectedDate.getTime() - endTime.getTime()) / 60000);
+
         setNewAppointmentData((prev) => ({
             ...prev,
             date: selectedDate,
             startTime: selectedStartSlot,
-            endTime: selectedEndSlot,
+            endTime: endTime,
+            duration: duration
         }))
         handleNext("details");
     }

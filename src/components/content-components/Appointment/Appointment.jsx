@@ -11,6 +11,10 @@ export default function Appointment({id, data}) {
     const navigate = useNavigate();
     const dialogRef = useRef(null);
 
+    const isClassReservation = appointment?.type === 'class-reservation'
+    const reservationEnd = (isClassReservation && appointment.endTime ? new Date(appointment.endTime) : null)
+    const appointmentType = (appointment?.type === 'class-reservation' ? 'Class Reservation' : 'Appointment');
+
     useEffect(() => {
         if (!data && id) {
             fetchAppointment(id)
@@ -35,9 +39,9 @@ export default function Appointment({id, data}) {
     }
 
     const address = () => {
-        if (appointment.location === 'FabLab') {
+        if (appointment?.location === 'FabLab') {
             return <p>R.K. Bailey Art Studios<br />310 N Blvd, Tampa, FL 33606</p>
-        } else if (appointment.location === 'Woodshop') {
+        } else if (appointment?.location === 'Woodshop') {
             return <p>Ferman Center for the Arts<br />214 N Blvd, Tampa, FL 33606</p>
         } else {
             return null
@@ -46,7 +50,7 @@ export default function Appointment({id, data}) {
 
     //calculate days left
 
-    const appointmentDate = new Date(appointment.date)
+    const appointmentDate = new Date(appointment?.date)
 
     const daysLeft = () => {
 
@@ -146,7 +150,10 @@ export default function Appointment({id, data}) {
             </div>
             <div className="appointment-icon-text">
                 <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
-                <p>{appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                <p>
+                    {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                    {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
+                </p>
             </div>
             <div className="appointment-icon-text">
                 <img src="/icons/location_on_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Location Pin" width="24" height="24" />
@@ -158,7 +165,7 @@ export default function Appointment({id, data}) {
             {
                     appointmentStatus === 'deleted' ? null : (
                         <div className="appointment-button-container">
-                            <button onClick={() => handleEdit(appointment._id)}>Edit</button>
+                            <button onClick={() => handleEdit(appointment._id)} disabled={isClassReservation}>Edit</button>
                             <button 
                                 onClick={openModal}
                                 aria-expanded={isDialogOpen}
@@ -169,13 +176,15 @@ export default function Appointment({id, data}) {
                             </button>
                             <dialog id='delete-dialog' ref={dialogRef} onClick={handleDialogClick}>
                                 <button onClick={closeModal}>Close</button>
-                                <h4>Are you sure you want to delete the appointment for</h4>
+                                <h4>Are you sure you want to delete the {appointmentType} for</h4>
                                 <div>  
                                     <h3>{appointment.equipmentName}</h3>
                                     <p>on {appointmentDate.toDateString()}</p>
-                                    <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                                    <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                        {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
+                                    </p>
                                 </div>
-                                <button onClick={() => handleEdit(appointment._id)}>Edit Instead</button>
+                                {!isClassReservation && <button onClick={() => handleEdit(appointment._id)}>Edit Instead</button>}
                                 <button onClick={() => handleDelete(appointment._id)}>Delete</button>
                             </dialog>
                         </div>

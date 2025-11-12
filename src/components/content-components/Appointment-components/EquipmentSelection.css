@@ -26,3 +26,16 @@
 .equipment-button .button-selected {
     flex: 3;
 }
+
+fieldset {
+    border: 2px solid var(--glass-border);
+    padding: var(--gap-small);
+    border-radius: var(--border-radius-small);
+}
+
+fieldset > legend {
+    color: var(--white);
+    font-family: "Zalando Sans", sans-serif;
+    font-weight: 700;
+
+}

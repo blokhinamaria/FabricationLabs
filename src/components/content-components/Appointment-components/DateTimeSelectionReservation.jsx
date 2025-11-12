@@ -53,6 +53,7 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                     const prevDateObject = new Date(mode.prevDate)
                 if (selectedDateObject.getTime() === prevDateObject.getTime()) {
                     const matchSlot = data.slots.find(slot => slot.startTime === mode.prevTime)
+                    console.log(`matchSlot: ${matchSlot}`)
                     setSelectedStartSlot(matchSlot)
             }
             }
@@ -71,10 +72,7 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
         setSelectedStartSlot(null);
     }
     
-
     const [ isNewSlotSelected, setIsNewSlotSelected ] = useState(false);
-
-    
 
     //class reservation slots 
     const [ endTimeSlots, setEndTimeSlots ] = useState(null);
@@ -85,18 +83,16 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
         setSelectedStartSlot(availableSlots.find((slot) => slot.startTime === e.target.value));
         setIsNewSlotSelected(true);
         const generatedEndSlots = generateEndTimeSlots(e.target.value);
-        console.log(e.target.value);
         setEndTimeSlots(generatedEndSlots)
-        setSelectedEndSlot(generatedEndSlots[0]);
+        if(!selectedEndSlot) {
+            setSelectedEndSlot(generatedEndSlots[0]);
+        }
     }
 
     function handleEndSlotSelect(e) {
         e.preventDefault();
-        console.log(e.target.value);
         setSelectedEndSlot(e.target.value);
     }
-
-    console.log(selectedEndSlot)
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -106,8 +102,14 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
         const [hours, minutes] = selectedStartSlot.startTime.split(':').map(Number);
         bookingDate.setHours(hours, minutes, 0, 0)
 
+        
+
+        const endTime = selectedDate.toDate();
+        const [endHour, endMinutes] = selectedEndSlot.split(':').map(Number);
+        endTime.setHours(endHour, endMinutes);
+
         // bookingDate.setUTCHours(hours, minutes, 0, 0)
-        submitDateTime(bookingDate, selectedStartSlot, selectedEndSlot)
+        submitDateTime(bookingDate, selectedStartSlot.startTime, endTime)
     }
 
     return (
@@ -158,36 +160,45 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                                     availableSlots.length === 0 ? (
                                         <p>No slots available for this date</p>
                                     ) : (
-                                        <div className='time-grid'>
-                                            <select id='slot-start' onChange={(e) => handleStartSlotSelect(e)}>
-                                                    <option
-                                                        value={null}
-                                                        selected
-                                                        disabled
-                                                    >
-                                                        Select start time
-                                                    </option>
-                                                {availableSlots.map((slot, index) => (
-                                                    <option
-                                                        onSelect={(e) => handleStartSlotSelect(e)}
-                                                        key={index}
-                                                        value={slot.startTime}
-                                                        className={selectedStartSlot?.startTime === slot.startTime ? 'button-selected' : 'time-picker'}>
-                                                        {convertTime(slot.startTime)}
-                                                    </option>
-                                            ))}
-                                            </select>
-                                            <select id='slot-end'>
-                                                {endTimeSlots?.map((slot, index) => (
-                                                    <option
-                                                        onChange={(e) => handleEndSlotSelect(e)}
-                                                        key={index}
-                                                        value={slot}
-                                                        className={selectedEndSlot === slot ? 'button-selected' : 'time-picker'}>
-                                                        {convertTime(slot)}
-                                                    </option>
-                                            ))}
-                                            </select>
+                                        <div className='reservation-time-form'>
+                                            <div className='input-group-wrapper column'>
+                                                <label htmlFor='slot-start'>Select the Start Time</label>
+                                                <select
+                                                    id='slot-start'
+                                                    value={selectedStartSlot?.startTime || ''}
+                                                    onChange={handleStartSlotSelect}>
+                                                        <option
+                                                            value=''
+                                                            disabled
+                                                        >
+                                                            Select start time
+                                                        </option>
+                                                    {availableSlots.map((slot, index) => (
+                                                        <option
+                                                            key={index}
+                                                            value={slot.startTime}>
+                                                            {convertTime(slot.startTime)}
+                                                        </option>
+                                                ))}
+                                                </select>
+                                            </div>
+                                            <div className='input-group-wrapper column'>
+                                                <label htmlFor='slot-end'>Select the End Time</label>
+                                                <select
+                                                    id='slot-end'
+                                                    onChange={(e) => handleEndSlotSelect(e)}
+                                                    value={selectedEndSlot}
+                                                >
+                                                    {endTimeSlots?.map((slot, index) => (
+                                                        <option
+                                                            key={index}
+                                                            value={slot}>
+                                                            {convertTime(slot)}
+                                                        </option>
+                                                ))}
+                                                </select>
+                                                <p>Max allowed reservations are 3 hours</p>
+                                            </div>
                                         </div>
                                     )
                                 )

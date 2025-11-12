@@ -16,6 +16,12 @@ div.time-form.empty {
     height: 0;
 }
 
+div.reservation-time-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 div.time-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));

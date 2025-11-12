@@ -9,6 +9,7 @@ export default function Dashboard() {
     const { user } = useAuth()
 
     const [ upcomingAppointments, setUpcomingAppointments ] = useState([]);
+    const [ upcomingReservations, setUpcomingReservations ] = useState([]);
 
     useEffect(() => {
 
@@ -22,10 +23,12 @@ export default function Dashboard() {
                 const data = await response.json()
                 
                 const today = new Date();
-                const filterAppointments = data.appointments.filter((appointment) => {
+                const filterAppointmentsByDate = data.appointments.filter((appointment) => {
                     const appointmentTime = new Date(appointment.date)
                     return appointmentTime > today;
                 })
+
+                const filterAppointments = filterAppointmentsByDate.filter(appointment => (appointment?.type === 'individual-appointment' || !appointment?.type))
 
                 const sortedAppointments = filterAppointments.sort((a, b) => {
                     const aDate = new Date(a.date)
@@ -35,6 +38,18 @@ export default function Dashboard() {
                 )
 
                 setUpcomingAppointments(sortedAppointments)
+
+                const filteredReservations = filterAppointmentsByDate.filter(appointment => appointment?.type === 'class-reservation')
+
+                const sortedReservations = filteredReservations.sort((a, b) => {
+                    const aDate = new Date(a.date)
+                    const bDate = new Date(b.date)
+                    return aDate - bDate;
+                }
+                )
+
+                setUpcomingReservations(sortedReservations)
+
             }
             fetchUserAppointments()
         }
@@ -60,20 +75,31 @@ export default function Dashboard() {
                 
             </article>
             <article style={{ marginTop: "50px"}} className="upcoming-appointments">
+                {upcomingReservations?.length > 0 && (
+                    <div>
+                        <h2>Upcoming Reservations</h2>
+                        <section className="appointment-list">
+                                {upcomingReservations.map((appointment) => (
+                                    <Appointment key={appointment._id} data={appointment}/>
+                            ))}
+                        </section>
+                    </div>
+                )}
                 {upcomingAppointments?.length > 0 ? (
-                    <>
-                        <h2>Upcoming appointments</h2>
+                    <div>
+                        <h2>Upcoming Appointments</h2>
                         <section className="appointment-list">
                                 {upcomingAppointments.map((appointment) => (
                                     <Appointment key={appointment._id} data={appointment}/>
                             ))}
                         </section>
-                    </>
+                    </div>
                 ) : (
                     <div>
                         <h2>No upcoming appointments</h2>
                     </div>
                 )}
+                
             </article>
         </main>
     )

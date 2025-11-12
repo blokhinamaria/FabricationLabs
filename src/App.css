@@ -33,7 +33,7 @@
   --white: #fff;
   --white-semi-opaque: rgba(255, 255, 255, 0.9);
   --glass-background: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.4);
   --drop-shadow: #3D2A231a;
   --light-grey: #CCCCCC;
   --grey: #868684;
@@ -99,6 +99,7 @@ main {
   margin-block-end: 40px;
   text-align: center;
   overflow: hidden;
+  padding: var(--gap-small);
 }
 
 article {
@@ -132,12 +133,6 @@ button {
   padding: 12px;
   width: 100%;
   max-width: 450px;
-}
-
-@media (max-width: 490px) {
-  button {
-    width: auto;
-  }
 }
 
 button.small {
@@ -290,6 +285,11 @@ div.input-group-wrapper {
   text-align: start;
 }
 
+div.input-group-wrapper.column {
+  flex-direction: column;
+  gap: 0;
+}
+
 .input-group-wrapper input[type="checkbox"] {
   flex-shrink: 0; /* Prevents checkbox from shrinking */
 }
@@ -302,6 +302,7 @@ form {
   text-align: center;
   width: 100%;
   max-width: 450px;
+  margin: auto;
 }
 
 textarea {
@@ -331,21 +332,40 @@ textarea:hover, textarea:focus {
   border: 1px solid var(--accent1);
 }
 
-.appointment-buttons {
-  width: 450px;
+select {
+  width: 100%;
+  max-width: 250px;
+  height: 45px;
+  background-color: var(--white-semi-opaque);
+  border: 1px solid var(--light-grey);
+  border-radius: 10px;
+  color: var(--input-text);
+  font-family: "Zalando Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px;
+  text-align: center;
 }
 
 .upcoming-appointments {
   margin-block: 50px;
   max-width: none;
   padding-inline: var(--gap-small);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-small);
 }
 
-.upcoming-appointments > section.appointment-list {
+.upcoming-appointments section.appointment-list {
   display: flex;
   gap: var(--gap-small);
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: center;
+}
+
+.appointment-buttons {
+  width: 100%;
 }
 

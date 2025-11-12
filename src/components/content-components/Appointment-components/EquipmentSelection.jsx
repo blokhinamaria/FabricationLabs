@@ -10,6 +10,8 @@ export default function EquipmentSelection({submitEquipment, mode}) {
     const [ bookedEquipment, setBookedEquipment] = useState([]);
     const [ loading, setLoading ] = useState(false);
 
+    
+
     //fetch equipment
         useEffect(() => {
             async function fetchEquipment() {
@@ -77,6 +79,9 @@ export default function EquipmentSelection({submitEquipment, mode}) {
         
     if (loading) return <p>Loading...</p>
 
+    const fablabEquipment = equipment.filter(equipment => equipment.location === "FabLab")
+    const woodshopEquipment = equipment.filter(equipment => equipment.location === "Woodshop")
+
     return (
         <article>
             {mode.status === 'create' && (
@@ -96,16 +101,32 @@ export default function EquipmentSelection({submitEquipment, mode}) {
                         </>
                     )}     
                         <div className='button-group'>
-                            {equipment.map((item) => (
-                                <button
-                                    onClick={() => handleEquipmentSelection(item)}
-                                    key={item._id}
-                                    className={item._id === mode.prevEquipmentId ? 'button-selected' : null}
-                                    disabled={bookedEquipment.includes(item._id)}
-                                    >
-                                        {item.name}
-                                </button>
-                            ))}
+                            <fieldset className='button-group'>
+                                <legend>Fabrication Lab</legend>
+                                    {fablabEquipment.map((item) => (
+                                        <button
+                                            onClick={() => handleEquipmentSelection(item)}
+                                            key={item._id}
+                                            className={item._id === mode.prevEquipmentId ? 'button-selected' : null}
+                                            disabled={bookedEquipment.includes(item._id)}
+                                            >
+                                                {item.name}
+                                        </button>
+                                    ))}
+                            </fieldset>
+                            <fieldset className='button-group'>
+                                <legend>Woodshop</legend>
+                                    {woodshopEquipment.map((item) => (
+                                        <button
+                                            onClick={() => handleEquipmentSelection(item)}
+                                            key={item._id}
+                                            className={item._id === mode.prevEquipmentId ? 'button-selected' : null}
+                                            disabled={bookedEquipment.includes(item._id)}
+                                            >
+                                                {item.name}
+                                        </button>
+                                    ))}
+                            </fieldset>
                         </div>
                 </section>
                 :

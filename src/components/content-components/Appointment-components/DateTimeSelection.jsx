@@ -53,6 +53,7 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                 if (selectedDateObject.getTime() === prevDateObject.getTime()) {
                     const matchSlot = data.slots.find(slot => slot.startTime === mode.prevTime)
                     setSelectedSlot(matchSlot)
+                    console.log(`matchSlot: ${matchSlot.startTime}`)
             }
             }
 
