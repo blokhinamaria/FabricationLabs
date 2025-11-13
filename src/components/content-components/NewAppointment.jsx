@@ -7,7 +7,7 @@ import EquipmentSelection from "./Appointment-components/EquipmentSelection.jsx"
 import AppointmentSummary from "./Appointment/AppointmentSummary.jsx";
 import DateTimeSelection from "./Appointment-components/DateTimeSelection.jsx";
 import Details from "./Appointment-components/Details.jsx";
-import Appointment from "./Appointment/Appointment.jsx";
+import AppointmentCard from "./Appointment/AppointmentCard.jsx";
 
 import './NewAppointment.css'
 
@@ -223,7 +223,7 @@ export default function NewAppointment() {
             {step === 'confirmation' &&
                 <section>
                     <h2>Appointment created</h2>
-                    <Appointment  id={appointmentId} />
+                    <AppointmentCard id={appointmentId} />
                     <Link to='/dashboard' ><button style={{ marginTop: '50px'}}>Back to dashboard</button></Link>
                 </section>
             }

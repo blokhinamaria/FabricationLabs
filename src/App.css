@@ -39,7 +39,7 @@
   --grey: #868684;
   --black: #000000;
   --black-opaque: #00000087;
-  --accent1: rgb(109, 255, 96);
+  --accent1: #6dff60;
   --accent1-opaque: rgba(109, 255, 96, 0.5);
   --accent1-shadow: rgba(46, 148, 56, 0.25);
   --link-hover: #8A38F5;
@@ -357,7 +357,7 @@ select {
   gap: var(--gap-small);
 }
 
-.upcoming-appointments section.appointment-list {
+.upcoming-appointments .appointment-list {
   display: flex;
   gap: var(--gap-small);
   flex-wrap: wrap;

@@ -16,15 +16,18 @@ export function AuthProvider( {children} ) {
     const checkAuth = async() => {
         try {
             const response = await fetch('/api/check-auth', 
-            //     {
-            //     credentials: 'include'
-            // }
+                {
+                credentials: 'include'
+            }
         )
             const data = await response.json()
 
             if (data.authenticated) {
+
+                const redirect = data.user.role === 'admin' ? '/admin-dashboard' : '/dashboard'
+                                
                 setUser(data.user)
-                navigate('/dashboard')
+                navigate(redirect)
             } else {
                 setUser(null)
                 navigate('/')

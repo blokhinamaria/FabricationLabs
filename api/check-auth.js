@@ -34,7 +34,8 @@ export default async function handler(req, res) {
                 fullName: null,
                 classes: [],
                 createdAt: new Date(),
-                isActive: true
+                isActive: true,
+                assignedLabs: []
         });
         
         // Fetch the newly created user

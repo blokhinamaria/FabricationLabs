@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 
-import Appointment from "./Appointment/Appointment";
+import AppointmentCard from "./Appointment/AppointmentCard";
 
 export default function Dashboard() {
     
@@ -75,12 +75,12 @@ export default function Dashboard() {
                 
             </article>
             <article style={{ marginTop: "50px"}} className="upcoming-appointments">
-                {upcomingReservations?.length > 0 && (
+                {user.role === 'faculty' && upcomingReservations?.length > 0 && (
                     <div>
                         <h2>Upcoming Reservations</h2>
                         <section className="appointment-list">
                                 {upcomingReservations.map((appointment) => (
-                                    <Appointment key={appointment._id} data={appointment}/>
+                                    <AppointmentCard key={appointment._id} data={appointment}/>
                             ))}
                         </section>
                     </div>
@@ -90,7 +90,7 @@ export default function Dashboard() {
                         <h2>Upcoming Appointments</h2>
                         <section className="appointment-list">
                                 {upcomingAppointments.map((appointment) => (
-                                    <Appointment key={appointment._id} data={appointment}/>
+                                    <AppointmentCard key={appointment._id} data={appointment}/>
                             ))}
                         </section>
                     </div>

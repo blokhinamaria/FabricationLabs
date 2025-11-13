@@ -4,7 +4,7 @@ import { AuthProvider } from './AuthContext';
 import Layout from './components/Layout';
 import Login from './components/content-components/Login';
 import Dashboard from './components/content-components/Dashboard';
-
+import AdminDashboard from './components/content-components/AdminDashboard';
 
 import './App.css'
 import NewAppointment from './components/content-components/NewAppointment';
@@ -35,6 +35,7 @@ function App() {
                 <Route path='dashboard/newappointment' element={<NewAppointment />} />
                 <Route path='dashboard/editappointment' element={<EditAppointment />} />
                 <Route path='dashboard/newreservation' element={<NewReservation />} />
+                <Route path="admin-dashboard" element={<AdminDashboard />} />
             </Route>
             </Routes>
           </Wrapper>

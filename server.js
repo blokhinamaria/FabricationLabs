@@ -5,7 +5,7 @@ import { sendResponse } from './utils/sendResponse.js';
 import { getAvailableSlots } from './utils/getAvailableSlots.js'
 import { getBookedEquipment } from './utils/getBookedEquipment.js';
 
-// Import your new auth handlers
+// auth handlers
 import requestLinkHandler from './api/request-link.js';
 import verifyHandler from './api/verify.js';
 import checkAuthHandler from './api/check-auth.js';

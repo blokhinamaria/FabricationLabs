@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import './Appointment.css'
 
-export default function Appointment({id, data}) {
+export default function AppointmentCard({id, data}) {
 
     const [ appointment, setAppointment ] = useState(data || null);
     const [ loading, setLoading ] = useState(!data);

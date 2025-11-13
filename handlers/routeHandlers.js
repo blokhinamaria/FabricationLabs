@@ -41,12 +41,19 @@ export async function handleGet(req, res) {
                 }
             }
 
-            //Get all appointments
-            const collection = db.collection('bookings');
-            const appointments = await collection.find({}).toArray()
+            //Get all appointments (only for admins)
+            const role = req.query?.role || new URLSearchParams(req.url?.split('?')[1]).get('role');
+            const labsParam = req.query?.labs || new URLSearchParams(req.url?.split('?')[1]).get('labs');
 
-            await client.close()
-            return sendResponse(res, 200, ({success: true, appointments: appointments}))
+            if(role === 'admin') {
+                let assignedLabs = labsParam.split(',');
+
+                const collection = db.collection('bookings');
+                const appointments = await collection.find({ location: { $in: assignedLabs }}).toArray()
+
+                await client.close()
+                return sendResponse(res, 200, ({success: true, appointments: appointments}))
+            }
 
         } else if (req.url.startsWith('/api/equipment')) {
             const collection = db.collection('equipment')
@@ -139,7 +146,7 @@ export async function handlePut(req, res) {
             const collection = db.collection('users')
 
             const result = await collection.updateOne(
-                {_id: new ObjectId(userId), },
+                {_id: new ObjectId(userId) },
                 { $set: sanitizedData} 
             )
 
