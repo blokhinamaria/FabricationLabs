@@ -19,9 +19,9 @@ export default function Header() {
 
     function handleLogoClick() {
         if (user) {
-            navigate('/dashboard')
+            const dashboard = user.role === 'admin' ? 'admin-dashboard' : 'dashboard'
+            navigate(`/${dashboard}`)
         }
-        
     }
 
     return (
@@ -36,8 +36,9 @@ export default function Header() {
                 
                     <nav id='main-menu' className={isOpen ? 'open' : ''}>
                         <ul>
-                            <li><button className='nav' disabled>Appointments</button></li>
-                            <li><button className='nav' disabled>Profile</button></li>
+                            {user.role === 'admin' && <li><button className='nav' onClick={() => navigate(`/admin-dashboard/equipment`)}>Equipment</button></li>}
+                            {user.role !== 'admin' && <li><button className='nav' disabled>Appointments</button></li>}
+                            {user.role !== 'admin' && <li><button className='nav' disabled>Profile</button></li>}
                             <li><button onClick={logout} className='nav'>Logout</button></li>
                         </ul>
                             <span className='user-type'>{user?.role}</span>

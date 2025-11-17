@@ -7,7 +7,7 @@ export default function AppointmentCard({id, data}) {
     const [ appointment, setAppointment ] = useState(data || null);
     const [ loading, setLoading ] = useState(!data);
     const [ error, setError ] = useState(null);
-    const [ appointmentStatus, setAppointmentStatus ] = useState('')
+    const [ appointmentStatus, setAppointmentStatus ] = useState(appointment?.status)
     const navigate = useNavigate();
     const dialogRef = useRef(null);
 
@@ -141,8 +141,14 @@ export default function AppointmentCard({id, data}) {
         <div
             className={`appointment-card appointment-overview-details ${appointmentStatus === 'deleted' ? ('deleted') : null}` }
 
-        >
-            <p>{appointmentStatus === 'deleted' ? ('deleted') : daysLeft()}</p>
+        >   
+            {appointmentStatus === 'cancelled' ? (
+                <div className="error-message">
+                    <p>Cancelled</p>
+                </div>
+                ) : (
+                    <p>{appointmentStatus === 'deleted' ? ('Deleted') : daysLeft()}</p>
+                )}
             <h3>{appointment.equipmentName}</h3>
             <div className="appointment-icon-text">
                 <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
@@ -165,7 +171,7 @@ export default function AppointmentCard({id, data}) {
             {
                     appointmentStatus === 'deleted' ? null : (
                         <div className="appointment-button-container">
-                            <button onClick={() => handleEdit(appointment._id)} disabled={isClassReservation}>Edit</button>
+                            <button onClick={() => handleEdit(appointment._id)} disabled={isClassReservation || appointment.status === 'cancelled'}>Edit</button>
                             <button 
                                 onClick={openModal}
                                 aria-expanded={isDialogOpen}
@@ -184,7 +190,7 @@ export default function AppointmentCard({id, data}) {
                                         {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
                                     </p>
                                 </div>
-                                {!isClassReservation && <button onClick={() => handleEdit(appointment._id)}>Edit Instead</button>}
+                                {!isClassReservation || appointment.status === 'cancelled' && <button onClick={() => handleEdit(appointment._id)} >Edit Instead</button>}
                                 <button onClick={() => handleDelete(appointment._id)}>Delete</button>
                             </dialog>
                         </div>

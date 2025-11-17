@@ -96,16 +96,7 @@ export default function NewReservation() {
             equipmentName: equipment.name,
             location: equipment.location,
             materialPreference: true,
-            materialSelections: materialSelection.map(material => (
-                {
-                    id: material.id,
-                    name: material.name,
-                    selectedVariations: {
-                        size: material.size,
-                        color: material.color
-                    }
-                    }
-            )),
+            materialSelections: materialSelection,
             date: null,
             startTime: null, 
             endTime: null, 
@@ -226,7 +217,7 @@ export default function NewReservation() {
             }
             {step === 'confirmation' &&
                 <section>
-                    <h2>Appointment created</h2>
+                    <h2>Class Reservation created</h2>
                     <AppointmentCard id={appointmentId} />
                     <Link to='/dashboard' ><button style={{ marginTop: '50px'}}>Back to dashboard</button></Link>
                 </section>

@@ -30,9 +30,9 @@ export default async function handler(req, res) {
 
     // Send email via Resend
     await resend.emails.send({
-      from: 'FabLab <no-reply@sadaveena.com>',
+      from: 'UTampa Fabrication Labs <no-reply@mariablokhina.com>',
       to: email,
-      subject: "Sign in to University of Tampa FabLab",
+      subject: "Sign in to UTampa Fabrication Labs",
       html: `
         <p>Hi there,</p>
         <p>Click the button below to verify your UT email and sign in:</p>

@@ -9,7 +9,6 @@ export default function EquipmentSelection({submitEquipment, mode}) {
     const [ selectedEquipment, setSelectedEquipment ] = useState(null);
     const [ bookedEquipment, setBookedEquipment] = useState([]);
     const [ loading, setLoading ] = useState(false);
-
     
 
     //fetch equipment

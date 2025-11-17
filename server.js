@@ -11,6 +11,9 @@ import verifyHandler from './api/verify.js';
 import checkAuthHandler from './api/check-auth.js';
 import logoutHandler from './api/logout.js';
 
+//notifications
+import sendCancelNotice from './api/send-cancel-notice.js';
+
 const PORT = 3001;
 
 const server = http.createServer(async (req, res) => {
@@ -34,6 +37,11 @@ const server = http.createServer(async (req, res) => {
         return await logoutHandler(req, res);
     }
 
+    //Email Notifications 
+    if (req.url === '/api/send-cancel-notice' && req.method === 'POST') {
+        return await sendCancelNotice(req, res)
+    }
+
     //POST — Create new appointment 
     else if (req.url === '/api/new-appointment' && req.method === 'POST') {
         return await handlePost(req, res)
@@ -47,8 +55,10 @@ const server = http.createServer(async (req, res) => {
         } else if (req.method === 'DELETE') {
             return await handleDelete(req, res)
         }  
-    } else if (req.url === '/api/equipment' && req.method === 'GET') {
+    } else if (req.url.startsWith('/api/equipment') && req.method === 'GET') {
         return await handleGet(req, res)
+    } else if (req.url.startsWith('/api/equipment') && req.method === 'PUT') {
+        return await handlePut(req, res)
     } else if (req.url.startsWith('/api/availability')) {
         if (req.url.startsWith('/api/availability/slots')) {
             return await getAvailableSlots(req, res)

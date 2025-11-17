@@ -7,7 +7,7 @@ export default function AppointmentCardAdmin({id, data}) {
     const [ appointment, setAppointment ] = useState(data || null);
     const [ loading, setLoading ] = useState(!data);
     const [ error, setError ] = useState(null);
-    const [ appointmentStatus, setAppointmentStatus ] = useState('')
+    const [ appointmentStatus, setAppointmentStatus ] = useState(appointment?.status)
     const navigate = useNavigate();
     const dialogRef = useRef(null);
 
@@ -63,22 +63,59 @@ export default function AppointmentCardAdmin({id, data}) {
         }
     }
 
+    const [ cancellationReason, setCancellationReason ] = useState('')
+
     async function handleCancel(appointmentId) {
         try {
             const response = await fetch(`/api/appointments?id=${appointmentId}`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({status: 'canceled'})
+                body: JSON.stringify({status: 'cancelled'})
             })
             if (response.ok) {
                 console.log(`success. Response: ${response}`)
-                setAppointmentStatus('Cancelled')
+                setAppointmentStatus('cancelled')
+                sendCancelNotice()
                 closeModal();
             }
         } catch (err) {
             console.log(err)
             alert('Something went wrong, please try again later')
         }
+    }
+
+    async function sendCancelNotice() {
+        
+        const email = appointment.userEmail
+
+        let html = `
+            <p>Hi there,</p>
+            <p>We had to cancel your ${appointmentType} for ${appointment.equipmentName}</p>
+            <p>On ${appointmentDate.toDateString()} at ${appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+            <p>Reason for cancellation</p>
+            <p>${cancellationReason}</p>
+            <p>You can use the link below to login and reschedule</p>
+            <a href="{{VERIFY_LINK}}" target="_self" style="background:#6dff60;color:#000;padding:10px 20px;text-decoration:none;border-radius:4px;">Log in</a>
+            <p>This link expires in 10 minutes.</p>
+            <p>– The FabLab Team</p>
+        `
+
+        try {
+        const response = await fetch('/api/send-cancel-notice', {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email: email, html: html })
+        })
+        const data = await response.json()
+        if (response.ok) {
+            // setAuthInProgress(true)
+        } else {
+            throw new Error('Something went wrong')
+        }
+    } catch (err) {
+        // setErrorMessage('Something went wrong. Please try again')
+        console.log(err)
+    }
     }
 
     const [dateVisible, setDateVisible] = useState(false);
@@ -91,8 +128,11 @@ export default function AppointmentCardAdmin({id, data}) {
         <div
             className={`appointment-card appointment-overview-details ${appointmentStatus === 'cancelled' ? ('deleted') : null}` }
         >   
+            {appointmentStatus === 'cancelled' &&
+                <div className="error-message">
+                    <p>Cancelled</p>
+                </div>}
             <p>{appointment.type === 'class-reservation' ? "Class" : "Individual"}</p>
-            <p>{appointment.status}</p>
             {!dateVisible ? (
                 <div className="appointment-icon-text" onClick={() => setDateVisible(prev => !prev)}>
                         <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
@@ -130,9 +170,6 @@ export default function AppointmentCardAdmin({id, data}) {
                 <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
                 <p>{appointment.userName || appointment.userEmail}</p>
             </div>
-            
-            
-
                         <div className="appointment-button-container">
                             <button>View Details</button>
                             <button 
@@ -140,8 +177,9 @@ export default function AppointmentCardAdmin({id, data}) {
                                 aria-expanded={isDialogOpen}
                                 aria-controls="delete-dialog"
                                 aria-haspopup="dialog"
+                                disabled={appointmentStatus === 'cancelled'}
                                 >
-                                    Cancel
+                                    {appointmentStatus !== 'cancelled' ? 'Cancel' : 'Cancelled'}
                             </button>
                             <dialog id='delete-dialog' ref={dialogRef} onClick={handleDialogClick}>
                                 <button onClick={closeModal}>Close</button>
@@ -154,11 +192,18 @@ export default function AppointmentCardAdmin({id, data}) {
                                     </p>
                                     <div>
                                         <label htmlFor="reason">Reason</label>
-                                        <input type="text" id="reason" name="reason" placeholder="Reason for appointment cancelation" />
+                                        <input
+                                            type="text"
+                                            id="reason"
+                                            name="reason"
+                                            placeholder="Reason for appointment cancelation"
+                                            value={cancellationReason}
+                                            onChange={e => setCancellationReason(e.target.value)}
+                                            required />
                                     </div>
                                     <p>The user will be notified via email</p>
                                 </div>
-                                <button onClick={() => handleCancel(appointment._id)}>Cancel</button>
+                                <button onClick={() => handleCancel(appointment._id)}>Cancel {appointment.type}</button>
                             </dialog>
                         </div>
         </div>

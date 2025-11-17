@@ -15,7 +15,7 @@ export default function EditAppointment() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('')
     const [step, setStep] = useState('overview')
-    const [ isUpdated, setIsUpdated ] = useState(false)
+    const [isUpdated, setIsUpdated ] = useState(false)
 
     //populate the form with appointment data
     const [classNumber, setClassNumber] = useState('')
@@ -79,7 +79,6 @@ export default function EditAppointment() {
         // Only update if something changed
         if (equipmentChanged || materialsChanged) {
             
-            
             const updates = {};
             
             // If equipment changed, update all equipment fields
@@ -93,14 +92,7 @@ export default function EditAppointment() {
             if (equipmentChanged || materialsChanged) {
                 if (materialSelection.length > 0) {
                     updates.materialPreference = true;
-                    updates.materialSelections = materialSelection.map(material => ({
-                        id: material.id,
-                        name: material.name,
-                        selectedVariations: {
-                            size: material.size,
-                            color: material.color
-                        }
-                    }));
+                    updates.materialSelections = materialSelection;
                 } else {
                     updates.materialPreference = false;
                     updates.materialSelections = null;
@@ -128,7 +120,6 @@ export default function EditAppointment() {
 
         const dateChanged = selectedDate.getTime() !== appointementDate.getTime()
 
-        console.log(dateChanged)
         const timeChanged = selectedTime.startTime !== appointment.startTime
 
         if (dateChanged || timeChanged) {
@@ -169,8 +160,8 @@ export default function EditAppointment() {
             if ( notesChanged ) {
                 updates.notes = notes.trim()
             }
-
         }
+        
         const differences = {
                 ...updates,
                 ...updatedData

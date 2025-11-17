@@ -4,31 +4,7 @@
   box-sizing: border-box;
 }
 
-/* :root {
-  --white: #fff;
-  --white-semi-opaque: rgba(255, 255, 255, 0.9);
-  --glass-background: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --drop-shadow: rgba(0, 0, 0, 0.1);
-  --light-grey: #CCCCCC;
-  --grey: #868684;
-  --black: hsl(0, 0%, 10%);
-  --accent1: #8A38F5;
-  --accent1-opaque: rgba(138, 56, 245, 0.2);
-  --accent1-shadow: rgba(138, 56, 245, 0.2);
-
-  --gap-small: 24px;
-  --border-radius-small: 10px
-} */
-
 :root {
-  --wood-light: #F0E1CE;
-  --wood-mid-light: #FFC18C;
-  --wood-medium: #93511D;
-  --wood-dark: #3D2A23;
-  --wood-black: #101010;
-  --wood-dark-transparent: rgba(61, 42, 35, 0.8);
-
 
   --white: #fff;
   --white-semi-opaque: rgba(255, 255, 255, 0.9);
@@ -49,6 +25,7 @@
   --gap-small: 24px;
   --border-radius-small: 10px;
 
+  --background-color: #c2b6ca;
   --footer-background-color: var(--glass-background);
   --dialog-background-color: #9f90cb;
   --dialog-backdrop-color: var(--black-opaque);
@@ -71,10 +48,10 @@ body {
   margin: 0;
   font-family: "Zalando Sans", sans-serif;
   background: var(--background-color);
-  background-image: url('https://images.unsplash.com/photo-1615715874994-bb83092ef331?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-image: url('https://images.unsplash.com/photo-1637150899351-0ce1779710c7?q=80&w=921&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  /* background-image: url('https://images.unsplash.com/photo-1615715874994-bb83092ef331?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); */
+  background-size: 100% auto;
 
-  
-  /* background: var(--background-gradient) */
 }
 
 #root {
@@ -109,7 +86,7 @@ article {
   justify-content: center;
   align-items: center;
   text-align: center;
-  
+  gap: 50px;
 }
 
 .limit-width {
@@ -136,7 +113,7 @@ button {
 }
 
 button.small {
-  min-width: 100%;
+  width: auto;
 }
 
 button:hover, button:focus {
@@ -276,6 +253,10 @@ input[type='checkbox'], input[type='radio'] {
   margin-block: 5px;
   accent-color: var(--accent1);
   outline: 1px solid var(--accent1-opaque);
+}
+
+input[type="date"] {
+  color-scheme: light;
 }
 
 div.input-group-wrapper {

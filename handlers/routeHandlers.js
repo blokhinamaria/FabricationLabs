@@ -45,7 +45,7 @@ export async function handleGet(req, res) {
             const role = req.query?.role || new URLSearchParams(req.url?.split('?')[1]).get('role');
             const labsParam = req.query?.labs || new URLSearchParams(req.url?.split('?')[1]).get('labs');
 
-            if(role === 'admin') {
+            if(role && role === 'admin') {
                 let assignedLabs = labsParam.split(',');
 
                 const collection = db.collection('bookings');
@@ -56,20 +56,35 @@ export async function handleGet(req, res) {
             }
 
         } else if (req.url.startsWith('/api/equipment')) {
-            const collection = db.collection('equipment')
-            const equipment = await collection.find({}).toArray()
-            await client.close()
 
-            if (equipment) {
-                return sendResponse(res, 200, ({ success: true, equipment: equipment }))
+            const role = req.query?.role || new URLSearchParams(req.url?.split('?')[1]).get('role');
+            const labsParam = req.query?.labs || new URLSearchParams(req.url?.split('?')[1]).get('labs');
+
+            if (role && role === 'admin') {
+                let assignedLabs = labsParam.split(',');
+                
+                const collection = db.collection('equipment');
+                const equipment = await collection.find({ location: { $in: assignedLabs }}).toArray()
+
+                await client.close()
+                return sendResponse(res, 200, ({success: true, equipment: equipment}))
             } else {
-                return sendResponse(res, 400, ({ success: false, equipment: "No equipment found" }))
+                //return all for users
+                const collection = db.collection('equipment')
+                const equipment = await collection.find({}).toArray()
+                await client.close()
+
+                if (equipment) {
+                    return sendResponse(res, 200, ({ success: true, equipment: equipment }))
+                } else {
+                    return sendResponse(res, 400, ({ success: false, equipment: "No equipment found" }))
+                }
             }
         }
     } catch (err) {
         console.log(`Error in routeHandlers, handleGet: ${err}`)
         return sendResponse(res, 500, ({ error: err.message }))
-    }    
+    }
 }
 
 export async function handlePost(req, res) {
@@ -147,6 +162,28 @@ export async function handlePut(req, res) {
 
             const result = await collection.updateOne(
                 {_id: new ObjectId(userId) },
+                { $set: sanitizedData} 
+            )
+
+            await client.close()
+
+            return sendResponse(res, 200, ({ success: true, modified: result.modifiedCount }))
+        } else if (req.url.startsWith('/api/equipment')) {
+            const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id')
+            
+            let updateData
+            if (req.body) {
+                updateData = req.body;
+            } else {
+                updateData = await parseJSONBody(req)
+            }
+            const sanitizedData = sanitizeInput(updateData)
+
+            const { client, db } = await connectDB()
+            const collection = db.collection('equipment')
+
+            const result = await collection.updateOne(
+                {_id: new ObjectId(id) },
                 { $set: sanitizedData} 
             )
 

@@ -4,27 +4,29 @@ import './MaterialSelection.css'
 
 export default function MaterialSelection({materials, fileRequirements, handleSubmitMaterials, prevMaterialSelections = []}) {
 
-    function flattenMaterials (materials) {
-        const inStockMaterials = materials.filter(item => item.inStock === true) 
+    // function flattenMaterials (materials) {
+    //     const inStockMaterials = materials.filter(item => item.inStock === true) 
 
-        const flatMaterials = inStockMaterials.flatMap(({ name, variations, ...rest }) =>
-                variations.flatMap(({ size, colors,}) =>
-                colors.map(color => ({
-                    id: (
-                        name.toLowerCase() +
-                        size.toLowerCase() +
-                        color.toLowerCase()
-                        ).replaceAll(' ', ''),
-                    name, 
-                    size,
-                    color, 
-                    ...rest }))
-            )
-        );
-        return flatMaterials;
-    }
+    //     const flatMaterials = inStockMaterials.flatMap(({ name, sizes, ...rest }) =>
+    //             sizes.flatMap(({ size, colors}) =>
+    //             colors.map(color => ({
+    //                 id: (
+    //                     name.toLowerCase() +
+    //                     size.toLowerCase() +
+    //                     color.toLowerCase()
+    //                     ).replaceAll(' ', ''),
+    //                 name, 
+    //                 size,
+    //                 color, 
+    //                 ...rest }))
+    //         )
+    //     );
+    //     return flatMaterials;
+    // }
 
-    const availableMaterials = flattenMaterials(materials);
+    // const availableMaterials = flattenMaterials(materials);
+
+    const availableMaterials = materials.filter(material => material.inStock)
 
     function transformPrevMaterials(materials) {
     return materials.map(item => ({
@@ -35,7 +37,7 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
     }));
 }
 
-    const [ selectedMaterials, setSelectedMaterials ] = useState( prevMaterialSelections.length > 0 ? transformPrevMaterials(prevMaterialSelections) : []);
+    const [ selectedMaterials, setSelectedMaterials ] = useState( prevMaterialSelections.length > 0 ? prevMaterialSelections : []);
 
     function handleChange(e) {
         if (e.target.checked) {
@@ -45,6 +47,8 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
             setSelectedMaterials((prev) => prev.filter((material) => material.id !== e.target.value))
         }
     }
+
+    console.log(selectedMaterials)
 
     const [ hasReviewedRequirements, setHasReviewedRequirements ] = useState(false);
     const [ errorMessage, setErrorMessage] = useState('');
@@ -74,7 +78,7 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
                             checked={selectedMaterials.some(item => item.id === material.id )}
                             />
                         <label  htmlFor={material.id}>
-                            {material.name} {material.size} {material.color}
+                            {material.material} {material.size} {material.color}
                         </label>
                     </div>
                 ))}

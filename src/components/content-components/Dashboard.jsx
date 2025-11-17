@@ -75,31 +75,32 @@ export default function Dashboard() {
                 
             </article>
             <article style={{ marginTop: "50px"}} className="upcoming-appointments">
-                {user.role === 'faculty' && upcomingReservations?.length > 0 && (
-                    <div>
-                        <h2>Upcoming Reservations</h2>
-                        <section className="appointment-list">
-                                {upcomingReservations.map((appointment) => (
-                                    <AppointmentCard key={appointment._id} data={appointment}/>
-                            ))}
-                        </section>
-                    </div>
-                )}
-                {upcomingAppointments?.length > 0 ? (
-                    <div>
-                        <h2>Upcoming Appointments</h2>
-                        <section className="appointment-list">
-                                {upcomingAppointments.map((appointment) => (
-                                    <AppointmentCard key={appointment._id} data={appointment}/>
-                            ))}
-                        </section>
-                    </div>
-                ) : (
-                    <div>
-                        <h2>No upcoming appointments</h2>
-                    </div>
-                )}
-                
+                {upcomingAppointments?.length > 0 || upcomingReservations?.length > 0 ? (
+                    <>
+                        {user.role === 'faculty' && upcomingReservations?.length > 0 && (
+                            <div>
+                                <h2>Upcoming Reservations</h2>
+                                <section className="appointment-list">
+                                        {upcomingReservations.map((appointment) => (
+                                            <AppointmentCard key={appointment._id} data={appointment}/>
+                                    ))}
+                                </section>
+                            </div>
+                            )}
+                        {upcomingAppointments?.length > 0 && (
+                            <div>
+                                <h2>Upcoming Appointments</h2>
+                                <section className="appointment-list">
+                                        {upcomingAppointments.map((appointment) => (
+                                            <AppointmentCard key={appointment._id} data={appointment}/>
+                                    ))}
+                                </section>
+                            </div>
+                            )}
+                    </>
+                    ) : (
+                        <h3>You have no Upcoming Appointments</h3>
+                    )}
             </article>
         </main>
     )

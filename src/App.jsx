@@ -1,15 +1,17 @@
 import { useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AuthProvider } from './AuthContext';
-import Layout from './components/Layout';
-import Login from './components/content-components/Login';
-import Dashboard from './components/content-components/Dashboard';
-import AdminDashboard from './components/content-components/AdminDashboard';
+import { AuthProvider } from './AuthContext.jsx';
+import Layout from './components/Layout.jsx';
+import Login from './components/content-components/Login.jsx';
+import Dashboard from './components/content-components/Dashboard.jsx';
+import AdminDashboard from './components/content-components/AdminDashboard.jsx';
 
 import './App.css'
-import NewAppointment from './components/content-components/NewAppointment';
-import EditAppointment from './components/content-components/EditAppointment';
-import NewReservation from  './components/content-components/NewReservation';
+import NewAppointment from './components/content-components/NewAppointment.jsx';
+import EditAppointment from './components/content-components/EditAppointment.jsx';
+import NewReservation from  './components/content-components/NewReservation.jsx';
+import Equipment from './components/content-components/Admin-components/Equipment.jsx';
+import EditEquipment from './components/content-components/Admin-components/EditEquipment.jsx';
 
 function App() {
 
@@ -36,6 +38,8 @@ function App() {
                 <Route path='dashboard/editappointment' element={<EditAppointment />} />
                 <Route path='dashboard/newreservation' element={<NewReservation />} />
                 <Route path="admin-dashboard" element={<AdminDashboard />} />
+                <Route path="admin-dashboard/equipment" element={<Equipment />} />
+                <Route path="admin-dashboard/equipment/edit" element={<EditEquipment />} />
             </Route>
             </Routes>
           </Wrapper>

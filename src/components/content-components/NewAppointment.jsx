@@ -95,16 +95,7 @@ export default function NewAppointment() {
             equipmentName: equipment.name,
             location: equipment.location,
             materialPreference: true,
-            materialSelections: materialSelection.map(material => (
-                {
-                    id: material.id,
-                    name: material.name,
-                    selectedVariations: {
-                        size: material.size,
-                        color: material.color
-                    }
-                    }
-            )),
+            materialSelections: materialSelection,
             date: null,
             startTime: null, 
             endTime: null, 

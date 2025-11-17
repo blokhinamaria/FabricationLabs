@@ -4,6 +4,8 @@ export default function AppointmentSummary({appointment, handleClickItem}) {
     const appointmentType = (appointment?.type === 'class-reservation' ? 'Class Reservation' : 'Appointment');
     const isClassReservation = appointment?.type === 'class-reservation'
 
+    console.log(appointment.materialSelections)
+
     const appointmentDate = new Date(appointment.date)
     const reservationEnd = (appointment?.type === 'class-reservation' && appointment.endTime ? appointment.endTime : null)
 
@@ -20,7 +22,7 @@ export default function AppointmentSummary({appointment, handleClickItem}) {
                     <div onClick={() => handleClickItem('materials')}> 
                         <p><strong>Preferred  Materials</strong></p>
                             {appointment.materialSelections.map(material => (
-                                <p key={material.id}>{material.name} {material.selectedVariations.size} {material.selectedVariations.color}</p>
+                                <p key={material.id}>{material.material} {material.size} {material.color}</p>
                             ))}
                     </div>
                     ) : null}
