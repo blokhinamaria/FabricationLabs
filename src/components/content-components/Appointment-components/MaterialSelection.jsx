@@ -1,41 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 import './MaterialSelection.css'
 
-export default function MaterialSelection({materials, fileRequirements, handleSubmitMaterials, prevMaterialSelections = []}) {
+export default function MaterialSelection({materials = [], fileRequirements, handleSubmitMaterials, prevMaterialSelections = []}) {
 
-    // function flattenMaterials (materials) {
-    //     const inStockMaterials = materials.filter(item => item.inStock === true) 
-
-    //     const flatMaterials = inStockMaterials.flatMap(({ name, sizes, ...rest }) =>
-    //             sizes.flatMap(({ size, colors}) =>
-    //             colors.map(color => ({
-    //                 id: (
-    //                     name.toLowerCase() +
-    //                     size.toLowerCase() +
-    //                     color.toLowerCase()
-    //                     ).replaceAll(' ', ''),
-    //                 name, 
-    //                 size,
-    //                 color, 
-    //                 ...rest }))
-    //         )
-    //     );
-    //     return flatMaterials;
-    // }
-
-    // const availableMaterials = flattenMaterials(materials);
-
-    const availableMaterials = materials.filter(material => material.inStock)
-
-    function transformPrevMaterials(materials) {
-    return materials.map(item => ({
-        id: item.id,
-        name: item.name,
-        size: item.selectedVariations.size,
-        color: item.selectedVariations.color
-    }));
-}
+    const availableMaterials = materials?.filter(material => material.inStock)
 
     const [ selectedMaterials, setSelectedMaterials ] = useState( prevMaterialSelections.length > 0 ? prevMaterialSelections : []);
 
@@ -47,8 +16,6 @@ export default function MaterialSelection({materials, fileRequirements, handleSu
             setSelectedMaterials((prev) => prev.filter((material) => material.id !== e.target.value))
         }
     }
-
-    console.log(selectedMaterials)
 
     const [ hasReviewedRequirements, setHasReviewedRequirements ] = useState(false);
     const [ errorMessage, setErrorMessage] = useState('');

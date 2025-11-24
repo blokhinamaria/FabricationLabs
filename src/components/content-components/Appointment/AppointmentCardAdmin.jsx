@@ -43,7 +43,6 @@ export default function AppointmentCardAdmin({id, data}) {
         console.log('contact')
     }
 
-
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
     const openModal = () => {

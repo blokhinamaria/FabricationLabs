@@ -1,4 +1,4 @@
-import { handlePost } from '../handlers/routeHandlers.js';
+import { handlePost } from '../handlers/routePost.js';
 import { sendResponse } from '../utils/sendResponse.js';
 
 export default async function handler(req, res) {
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     
         //POST — Create new appointment 
         if (req.url === '/api/new-appointment' && req.method === 'POST') {
-            return await handlePost(req, res)
+            return await handlePost(req, res, 'bookings')
         } else {
             return sendResponse(res, 405, ({ error: 'Method not allowed' }))
         }

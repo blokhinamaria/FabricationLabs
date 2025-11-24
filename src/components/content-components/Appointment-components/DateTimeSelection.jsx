@@ -3,32 +3,78 @@ import { convertTime } from '../../../func/convertTime.js';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'; 
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useAvailability } from '../../../AvailabilityContext.jsx';
 import dayjs from 'dayjs';
 
 import './DateTimeSelection.css'
 
-export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
+export default function DateTimeSelection({equipmentId, lab, submitDateTime, mode}) {
 
     const today = dayjs();
     const minDate = today.hour() >= 16 ? today.add(1, 'day') : today
+
+    const { shouldDisableDate, loading } = useAvailability();
 
     const [selectedDate, setSelectedDate] = useState(mode?.prevDate ? dayjs(mode.prevDate) : null);
     const [availableSlots, setAvailableSlots] = useState([]);
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [isAvailable, setIsAvailable] = useState(true);
+    const [ availabilityExceptions, setAvailabilityExceptions ] = useState([]);
+
+    //Allow shouldDisableDate to handle dayjs objects from the calendar
+    function handleDisableDate (dayjsDate) {
+
+        const generallyDisabled = shouldDisableDate(dayjsDate.toDate(), lab);
+        if (generallyDisabled) {
+            return true;
+        }
+
+        if (availabilityExceptions.length > 0) {
+            const isUnavailable = availabilityExceptions.some(date => {
+            // Single day
+            if (date.date) {
+                return date.date === dayjsDate.format('YYYY-MM-DD');
+            }
+
+            // Date range blackout
+            if (date.startDate && date.endDate) {
+                const dateStart = dayjs(date.startDate, 'YYYY-MM-DD');
+                const dateEnd = dayjs(date.endDate, 'YYYY-MM-DD');
+                return dayjsDate >= dateStart && dayjsDate <= dateEnd;
+            }
+            return false;
+        });
+        return isUnavailable;
+        }
+
+        return false;
+    };  
 
     const appointmentId = mode?.appointmentId || null;
 
-    const [loading, setLoading] = useState(false);
-
     useEffect(() => {
-        if (selectedDate && equipmentId) {
+        if (selectedDate) {
             fetchAvailableSlots()
         }
-    }, [selectedDate, equipmentId] )
+    }, [selectedDate] )
+
+
+    useEffect(() => {
+        async function fetchEquipment(id) {
+        try {
+            const response = await fetch(`/api/equipment?id=${id}`)
+            const data = await response.json()
+                if (response.ok) {
+                    setAvailabilityExceptions(data.equipment.availabilityExceptions)
+                }
+            } catch (err) {
+                console.log(`Failed to fetch equipment: ${err}`)
+            }
+        }
+        fetchEquipment(equipmentId)
+    }, [equipmentId])
 
     async function fetchAvailableSlots() {
-            setLoading(true);
             try {
                 const url = appointmentId ?
                     (`/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}&appointmentId=${appointmentId}`
@@ -59,8 +105,6 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
 
             } catch (err) {
                 console.log(`Error fetching slots: ${err}`)
-            } finally {
-                setLoading(false);
             }
     }
 
@@ -104,6 +148,7 @@ export default function DateTimeSelection({equipmentId, submitDateTime, mode}) {
                             maxDate={maxDate}
                             views={['day']}
                             showDaysOutsideCurrentMonth 
+                            shouldDisableDate={handleDisableDate}
                             fixedWeekNumber={6}
                             sx={{
                                 width: '100%',

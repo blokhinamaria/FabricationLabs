@@ -1,4 +1,6 @@
-import { handleGet, handlePut, handleDelete } from "../handlers/routeHandlers.js"
+import { handleGet } from './handlers/routeGet.js';
+import { handlePut } from './handlers/routePut.js';
+import { handleDelete } from "../handlers/routeDelete.js"
 import { sendResponse } from "../utils/sendResponse.js"
 
 export default async function handler(req, res) {
@@ -10,9 +12,9 @@ export default async function handler(req, res) {
             if (req.method === 'GET') {
                 return await handleGet(req, res)
             } else if (req.method === 'PUT') {
-                return await handlePut(req, res)
+                return await handlePut(req, res, 'bookings')
             } else if (req.method === 'DELETE') {
-                return await handleDelete(req, res)
+                return await handleDelete(req, res, 'bookings')
             } else {
             sendResponse(res, 404, ({ error: 'Method not allowed'}))
             }

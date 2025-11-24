@@ -140,7 +140,6 @@ export default function AppointmentCard({id, data}) {
     return (
         <div
             className={`appointment-card appointment-overview-details ${appointmentStatus === 'deleted' ? ('deleted') : null}` }
-
         >   
             {appointmentStatus === 'cancelled' ? (
                 <div className="error-message">

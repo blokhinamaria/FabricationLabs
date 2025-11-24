@@ -1,9 +1,17 @@
 import http from 'node:http'
 
-import { handlePost, handleGet, handlePut, handleDelete } from './handlers/routeHandlers.js';
+//handlers
+import { handleGet } from './handlers/routeGet.js';
+import { handlePost } from './handlers/routePost.js';
+import { handlePut } from './handlers/routePut.js';
+import { handleDelete } from './handlers/routeDelete.js';
+
+//special utils
+import { getSemesters} from './utils/getSemesters.js';
 import { sendResponse } from './utils/sendResponse.js';
 import { getAvailableSlots } from './utils/getAvailableSlots.js'
 import { getBookedEquipment } from './utils/getBookedEquipment.js';
+import { getBlockoutDates } from './utils/getBlockoutDates.js';
 
 // auth handlers
 import requestLinkHandler from './api/request-link.js';
@@ -37,36 +45,65 @@ const server = http.createServer(async (req, res) => {
         return await logoutHandler(req, res);
     }
 
-    //Email Notifications 
+    //EMAIL NOTIFICATIONS 
     if (req.url === '/api/send-cancel-notice' && req.method === 'POST') {
         return await sendCancelNotice(req, res)
     }
 
+    //APPOINTMENTS
     //POST — Create new appointment 
     else if (req.url === '/api/new-appointment' && req.method === 'POST') {
-        return await handlePost(req, res)
+        return await handlePost(req, res, 'bookings')
     } 
-    //Fetch all or individual appointments 
+
+    //OTHER APOOINTMENT METHODS
     else if (req.url.startsWith('/api/appointments')) {
         if (req.method === 'GET') {
             return await handleGet(req, res)
         } else if (req.method === 'PUT') {
-            return await handlePut(req, res)
+            return await handlePut(req, res, 'bookings')
         } else if (req.method === 'DELETE') {
-            return await handleDelete(req, res)
-        }  
+            return await handleDelete(req, res, 'bookings')
+        }
+
+    //EQUIPMENT 
     } else if (req.url.startsWith('/api/equipment') && req.method === 'GET') {
         return await handleGet(req, res)
     } else if (req.url.startsWith('/api/equipment') && req.method === 'PUT') {
-        return await handlePut(req, res)
+        return await handlePut(req, res, 'equipment')
+    
+    //AVAILABILITY
     } else if (req.url.startsWith('/api/availability')) {
         if (req.url.startsWith('/api/availability/slots')) {
             return await getAvailableSlots(req, res)
         } else if (req.url.startsWith('/api/availability/date')) {
             return await getBookedEquipment(req, res)
         }
+    //SEMESTERS
+        } else if (req.url.startsWith('/api/semesters')) {
+            if (req.method === 'GET') {
+                return await getSemesters(res, res)
+            } else if (req.method === 'POST') {
+                return await handlePost(req, res, 'semesterPeriods')
+            } else if (req.method === 'PUT') {
+                return await handlePut(req, res, 'semesterPeriods')
+            } else if (req.method === 'DELETE') {
+                return await handlePut(req, res, 'semesterPeriods')
+            }
+
+        } else if (req.url.startsWith('/api/blockoutdates')) {
+            if (req.method === 'GET') {
+                return await getBlockoutDates(req, res)
+            } else if (req.method === 'POST') {
+                return await handlePost(req, res, 'blockoutDates')
+            } else if (req.method === 'PUT') {
+                return await handlePut(req, res, 'blockoutDates')
+            } else if (req.method === 'DELETE') {
+                return await handlePut(req, res, 'blockoutDates')
+            }
+    //USERS
     } else if (req.url.startsWith('/api/users') && req.method === 'PUT') {
-        return await handlePut(req, res)
+        return await handlePut(req, res, 'users')
     } else {
         sendResponse(res, 404, ({ error: 'Not Found', url: req.url}))
     }

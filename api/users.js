@@ -1,4 +1,5 @@
-import { handleGet, handlePut, handleDelete } from "../handlers/routeHandlers.js"
+import { handleGet } from './handlers/routeGet.js';
+import { handlePut, handleDelete } from "../handlers/routeHandlers.js"
 import { sendResponse } from "../utils/sendResponse.js"
 
 export default async function handler(req, res) {

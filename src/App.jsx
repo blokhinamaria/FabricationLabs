@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AuthProvider } from './AuthContext.jsx';
+import { AppProviders } from './AppProviders.jsx'
 import Layout from './components/Layout.jsx';
 import Login from './components/content-components/Login.jsx';
 import Dashboard from './components/content-components/Dashboard.jsx';
@@ -12,6 +12,7 @@ import EditAppointment from './components/content-components/EditAppointment.jsx
 import NewReservation from  './components/content-components/NewReservation.jsx';
 import Equipment from './components/content-components/Admin-components/Equipment.jsx';
 import EditEquipment from './components/content-components/Admin-components/EditEquipment.jsx';
+import Schedule from './components/content-components/Admin-components/Schedule.jsx';
 
 function App() {
 
@@ -28,7 +29,7 @@ function App() {
   return (
     <>
       <Router>
-        <AuthProvider>
+        <AppProviders>
           <Wrapper>
             <Routes>
               <Route path='/' element={<Layout />}>
@@ -40,10 +41,11 @@ function App() {
                 <Route path="admin-dashboard" element={<AdminDashboard />} />
                 <Route path="admin-dashboard/equipment" element={<Equipment />} />
                 <Route path="admin-dashboard/equipment/edit" element={<EditEquipment />} />
+                <Route path="admin-dashboard/schedule" element={<Schedule />} />
             </Route>
             </Routes>
           </Wrapper>
-        </AuthProvider>
+        </AppProviders>
       </Router>
       
     </>

@@ -16,7 +16,6 @@ export async function getAvailableSlots(req, res) {
     const { client, db } = await connectDB();
     const availabilityCollection = db.collection('availability');
     const availability = await availabilityCollection.findOne( { dayOfWeek: selectedDayOfWeek });
-
     if (!availability || !availability.isOpen ) {
         await client.close();
         return sendResponse(res, 400, ({ available: false, slots: []}));
@@ -59,8 +58,27 @@ export async function getAvailableSlots(req, res) {
 
     // 7. Filter out booked slots (respecting capacity)
     const availableSlots = daySlots.filter(slot => {
-        const bookingsAtThisTime = existingBookings.filter(booking => 
-            booking.startTime === slot.startTime);
+        const bookingsAtThisTime = existingBookings.filter(booking => {
+            // if matches exactly
+            if (booking.startTime === slot.startTime) {
+                return true;
+
+                // if overlaps with a class reservation
+            } else if (booking.type === 'class-reservation') {
+                return isSlotDuringClass(slot, booking)
+
+            }
+            // not a class reservations and starttime doesn't match
+            return false;
+        })
+
+        // if booking is class reservation, block the slot 
+        const conflictWithClass = bookingsAtThisTime.some(booking => booking.type === 'class-reservation')
+        if (conflictWithClass) {
+            return false;
+        }
+
+        //add slot if capacity allows
         return bookingsAtThisTime.length < equipment.capacity
     })
 
@@ -107,4 +125,21 @@ function formatTime(time) {
     const hour = Math.floor(time / 60);
     const minutes = time % 60;
     return `${String(hour).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
+}
+
+function isSlotDuringClass(slot, classBooking) {
+    const classStart = Number(classBooking.startTime.split(':')[0]);
+    const classEnd = new Date(classBooking.endTime);
+    const classEndHour = classEnd.getHours();
+    const classEndMin = classEnd.getMinutes();
+    
+    const [slotHour, slotMin] = slot.startTime.split(':').map(Number);
+    
+    //  if slot starts during class time
+    if (slotHour >= classStart && slotHour < classEndHour) {
+        return true;
+    }
+    
+    // Slot starts at class end hour but before end time
+    return slotHour === classEndHour && slotMin < classEndMin;
 }

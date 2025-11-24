@@ -23,7 +23,7 @@ export default function NewAppointment() {
             userEmail: user.email,
             equipmentId: null, // Reference only - don't duplicate entire object
             equipmentName: null,
-            equipmentLocation: null,
+            location: null,
             
             // Store only the specific selections made at booking time
             materialPreference: false, //boolean, false by default
@@ -193,6 +193,7 @@ export default function NewAppointment() {
                         </div>
                         <DateTimeSelection
                             equipmentId={newAppointmentData.equipmentId}
+                            lab={newAppointmentData.location}
                             submitDateTime={submitDateTime}
                             mode={appointmentCreateMode}
                             />
