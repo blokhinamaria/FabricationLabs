@@ -1,5 +1,5 @@
-import { handleGet } from './handlers/routeGet.js';
-import { handlePut } from './handlers/routePut.js';
+import { handleGet } from '../handlers/routeGet.js';
+import { handlePut } from '../handlers/routePut.js';
 import { handleDelete } from "../handlers/routeDelete.js"
 import { sendResponse } from "../utils/sendResponse.js"
 

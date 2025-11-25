@@ -1,9 +1,7 @@
 import { sendResponse } from '../utils/sendResponse.js'
 import { connectDB } from "../utils/connectDB.js"
-// import { data } from "react-router-dom"
 
 import { ObjectId } from "bson"
-//Order: GET, POST, PUT, DELETE
 
 export async function handleGet(req, res) {
     try {
