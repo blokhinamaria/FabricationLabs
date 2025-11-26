@@ -5,6 +5,7 @@ const AuthContext = createContext(null)
 
 export function AuthProvider( {children} ) {
     const [ user, setUser ] = useState(null);
+    const [ userRole, setUserRole ] = useState(null);
     const [ loading, setLoading ] = useState(true);
     const navigate = useNavigate();
 
@@ -24,12 +25,14 @@ export function AuthProvider( {children} ) {
 
             if (data.authenticated) {
 
-                const redirect = data.user.role === 'admin' ? '/admin-dashboard' : '/dashboard'
+                // const redirect = (data.user.role === 'admin' || data.user.role === 'demo-admin') ? '/admin-dashboard' : '/dashboard'
                                 
                 setUser(data.user)
-                navigate(redirect)
+                setUserRole(data.user.role)
+                navigate(data.redirect)
             } else {
                 setUser(null)
+                setUserRole(null)
                 navigate('/')
             }
         } catch (err) {
@@ -59,7 +62,7 @@ export function AuthProvider( {children} ) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, checkAuth, updateUser, logout }}>
+        <AuthContext.Provider value={{ user, userRole, loading, checkAuth, updateUser, logout }}>
             {children}
         </AuthContext.Provider>
     );

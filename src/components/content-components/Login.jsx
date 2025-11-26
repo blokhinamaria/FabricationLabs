@@ -8,19 +8,27 @@ import './Login.css'
 export default function Login() {
 
 const [ userEmail, setUserEmail] = useState('');
-const [ inputValue, setInputValue ] = useState('');
 const [ errorMessage, setErrorMessage ] = useState('');
 
 const [ authInProgress, setAuthInProgress] = useState(false);
-// const [ message, setMessage ] = useState('');
+const [ demoUserInterface, setDemoUserInterface] = useState(false);
+const [ password, setPassword ] = useState('')
 
 const navigate = useNavigate()
 
 //Form submission
 async function handleSubmit(formData) {
+    
     const email = formData.get('email');
+    console.log(formData)
     setErrorMessage('')
+
     if (email) {
+        const isDemoUser = isDemo(email);
+        if (isDemoUser) {
+            return;
+        }
+
         const isValid = isEmailValid(email);
         if (isValid) {
             setUserEmail(email);
@@ -35,19 +43,43 @@ async function handleSubmit(formData) {
         setErrorMessage('Invalid email')
         return
         }
+    
+    await requestLink(email)
+}
 
+async function requestLink(email, password=null) {
     try {
-        const response = await fetch('/api/request-link', {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ email: email })
-        })
-        const data = await response.json()
-        if (response.ok) {
-            setAuthInProgress(true)
+        if (!password) {
+            const response = await fetch('/api/request-link', {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email })
+            });
+            if (response.ok) {
+                setAuthInProgress(true)
+            } else {
+                throw new Error('Something went wrong')
+            }
         } else {
-            throw new Error('Something went wrong')
-        }
+            const response = await fetch('/api/request-link', {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email, password: password })
+            });
+            if (response.ok) {
+                setAuthInProgress(true)
+                const data = await response.json();
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            } else {
+                const data = await response.json();
+                setErrorMessage(data.error)
+                throw new Error('Something went wrong')
+                
+            }
+        }   
+        
     } catch (err) {
         setErrorMessage('Something went wrong. Please try again')
         console.log(err)
@@ -55,6 +87,7 @@ async function handleSubmit(formData) {
 }
 
 function isEmailValid(email) {
+
     const regex = /^[A-Za-z0-9._%+-]+@(ut\.edu|spartans\.ut\.edu)$/;
     const result = regex.test(email);
         if(!result) {
@@ -67,9 +100,44 @@ function isEmailValid(email) {
         }
 }
 
+function isDemo(email) {
+    const demoRegex = /^demo-(student|faculty|admin)@fabricationlabs\.com$/
+    const result = demoRegex.test(email)
+    if (result) {
+        setAuthInProgress(true);
+        setDemoUserInterface(true);
+        return true;
+    }
+    return false;
+}
+
 function handleTryAgain() {
     navigate('/')
     setAuthInProgress(false)
+    setDemoUserInterface(false)
+}
+
+async function handleDemoSubmit(formData) {
+    setErrorMessage('')
+    const email = formData.get('email')
+    const password = formData.get('password');
+
+    if (!email || !password) {
+        setErrorMessage('All fields are required')
+        return
+    }
+
+    const isDemoUser = isDemo(email)
+
+    if (!isDemoUser) {
+        setErrorMessage('Demo user email required')
+        return
+    }
+
+    await requestLink(email, password)
+
+    
+
 }
 
     return (
@@ -89,8 +157,8 @@ function handleTryAgain() {
                                 id='email'
                                 name='email'
                                 placeholder='email@spartan.ut.edu'
-                                value={inputValue}
-                                onChange={e => setInputValue(e.target.value)}>
+                                value={userEmail}
+                                onChange={e => setUserEmail(e.target.value)}>
                             </input>
                             { errorMessage ? <p aria-live='polite' className='error-message'>{errorMessage}</p> : null}
                         </div>
@@ -99,11 +167,41 @@ function handleTryAgain() {
                     </form>
                 </article>
                 : 
-                <article>
+                (!demoUserInterface ? (<article>
                     <h2>Check <strong>{userEmail}</strong>  and confirm sign in</h2>
                     <p>Not seeing the email confirmation? Check your span email or <a onClick={handleTryAgain}>Try again</a></p>
-                    {/* <Link to='/dashboard'><button onClick={handleClick}>For Development: Skip to Dashboard</button></Link> */}
+                    
                 </article>
+                ) : (
+                    <form id='signIn' action={handleDemoSubmit}>
+                        <div>
+                            <input
+                                aria-label='email'
+                                aria-required={true}
+                                type='email'
+                                id='email'
+                                name='email'
+                                placeholder='email@spartan.ut.edu'
+                                value={userEmail}
+                                onChange={e => setUserEmail(e.target.value)}>
+                            </input>
+                            <input
+                                aria-label='password'
+                                aria-required={true}
+                                type='password'
+                                id='password'
+                                name='password'
+                                placeholder='demo password'
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}>
+                            </input>
+                            { errorMessage ? <p aria-live='polite' className='error-message'>{errorMessage}</p> : null}
+                        </div>
+                        <button type='submit'>Demo Sign In</button>
+                        <button type='button' onClick={() => (setAuthInProgress(false), setDemoUserInterface(false), setUserEmail(''))}>Cancel</button>
+                    
+                    </form>
+                ))
             }
         </main>
     )

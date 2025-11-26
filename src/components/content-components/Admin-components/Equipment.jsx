@@ -12,7 +12,7 @@ export default function Equipment() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        async function fetchEquipment() {
+        async function fetchAllEquipment() {
             try {
                 const response = await fetch(`/api/equipment?role=${user.role}&labs=${user.assignedLabs.join(',')}`)
                 const data = await response.json()
@@ -24,12 +24,12 @@ export default function Equipment() {
             }
         }
 
-        fetchEquipment()
+        fetchAllEquipment()
         
-    })
+    }, [user])
 
-    function handleEdit(item) {
-        navigate('/admin-dashboard/equipment/edit', {state: item})
+    function handleEdit(id) {
+        navigate('/admin-dashboard/equipment/edit', {state: id})
     }
 
     return (
@@ -40,7 +40,7 @@ export default function Equipment() {
                     <div key={item._id}>
                         <h2>{item.name}</h2>
                         <p>{item.available ? 'Available' : 'Unavailable'}</p>
-                        <button onClick={() => handleEdit(item)}>Edit</button>
+                        <button onClick={() => handleEdit(item._id)}>Edit</button>
                     </div>
                 ))}
             </article>

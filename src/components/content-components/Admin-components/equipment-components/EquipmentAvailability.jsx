@@ -1,13 +1,9 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom';
+import {useState } from "react"
 
-
-export default function EquipmentAvailability({passedEquipment}) {
-    const [ equipment, setEquipment] = useState(passedEquipment)
-    console.log(equipment)
-    const [ available, setAvailable ] = useState(equipment.available)
+export default function EquipmentAvailability({equipment, onUpdate}) {
+    const [ available, setAvailable ] = useState(equipment?.available)
     
-    const [ unavailableDates, setUnavailableDates ] = useState(equipment.availabilityExceptions || []);
+    const [ unavailableDates, setUnavailableDates ] = useState(equipment?.availabilityExceptions || []);
     const [ unavailableDateType, setUnavailableDateType ] = useState('single')
 
     const [ formError, setFromError ] = useState('');
@@ -16,9 +12,30 @@ export default function EquipmentAvailability({passedEquipment}) {
     const [ newUnavailableDate, setNewUnavailableDate ] = useState(`${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`)
     const [ newUnavailableStartDate, setNewUnavailableStartDate ] = useState(`${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`)
     const [ newUnavailableEndDate, setNewUnavailableEndDate ] = useState('')
-    
-    const navigate = useNavigate();
 
+    //AVAILABILITY
+    async function handleSubmitAvailability(e) {
+        e.preventDefault();
+        setFromError('')
+        const equipmentUpdates = {}
+
+        const availabilityChanged = available !== equipment.available;
+        if (!availabilityChanged) {
+            setFromError('Availability has not changed')
+            return
+        }
+
+        equipmentUpdates.available = available;
+        console.log(equipmentUpdates);
+        if(equipmentUpdates) {
+            await onUpdate(equipmentUpdates)
+        }
+        return;
+    }
+
+    const [datesUpdated, setDatesUpdated] = useState(false)
+
+    //BLOCKOUT DATES
     function handleAddDate() {
         setFromError('')
         if (unavailableDateType === 'single') {
@@ -40,6 +57,7 @@ export default function EquipmentAvailability({passedEquipment}) {
 
             setUnavailableDates(prev => [...prev, {date: newUnavailableDate}])
             setNewUnavailableDate('')
+            setDatesUpdated(true)
             
         } else if (unavailableDateType === 'range') {
             if (!newUnavailableStartDate || !newUnavailableEndDate) {
@@ -69,6 +87,7 @@ export default function EquipmentAvailability({passedEquipment}) {
             setUnavailableDates(prev => [...prev, {startDate: newUnavailableStartDate, endDate: newUnavailableEndDate}])
             setNewUnavailableStartDate('')
             setNewUnavailableEndDate('')
+            setDatesUpdated(true)
         }
     }
 
@@ -80,24 +99,6 @@ export default function EquipmentAvailability({passedEquipment}) {
         }
     }
 
-    async function handleSubmitAvailability(e) {
-        e.preventDefault();
-
-        const equipmentUpdates = {}
-
-        const availabilityChanged = available !== equipment.available;
-        if (!availabilityChanged) {
-            return
-        }
-
-        equipmentUpdates.available = available;
-        console.log(equipmentUpdates);
-        if(equipmentUpdates) {
-            await updateEquipment(equipmentUpdates)
-        }
-        return;
-    }
-
     async function handleSubmitDates(e) {
         e.preventDefault();
         setFromError('')
@@ -107,22 +108,19 @@ export default function EquipmentAvailability({passedEquipment}) {
         if (unavailableDates.length !==  equipment.availabilityExceptions.length) {
             equipmentUpdates.availabilityExceptions = unavailableDates;
             if (equipmentUpdates) {
-                await updateEquipment(equipmentUpdates);
+                await onUpdate(equipmentUpdates);
                 return;
             }
-        
         }
             
         const currentDates = unavailableDates.map(date => date.date ? date.date : `${date.startDate}-${date.endDate}`).sort().join(',');
         const previousDates = equipment.availabilityExceptions.map(date => date.date ? date.date : `${date.startDate}-${date.endDate}`).sort().join(',');
         const datesChanged = currentDates !== previousDates;
-            console.log(currentDates)
-            console.log(previousDates)
-            console.log(datesChanged)
+
         if (datesChanged) {
             equipmentUpdates.availabilityExceptions = unavailableDates;
             if (equipmentUpdates) {
-                await updateEquipment(equipmentUpdates);
+                await onUpdate(equipmentUpdates);
                 return;
             }
         }
@@ -130,37 +128,6 @@ export default function EquipmentAvailability({passedEquipment}) {
         setFromError('Unavailable Dates were not changed')
 
     }
-
-    async function updateEquipment(differences) {
-        try {
-            const response = await fetch(`/api/equipment?id=${equipment._id}`, {
-                method: "PUT",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(differences)
-            })
-            if (response.ok) {
-                console.log(`success. Response: ${response}`)
-                // navigate('/admin-dashboard/equipment')
-                await fetchEquipment(equipment._id);
-            } else {
-                console.error(`Server error: ${response.statusText}`)
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    async function fetchEquipment(id) {
-            try {
-                const response = await fetch(`/api/equipment?id=${id}`)
-                const data = await response.json()
-                if (response.ok) {
-                    setEquipment(data.equipment)
-                }
-            } catch (err) {
-                console.log(`Failed to fetch equipment: ${err}`)
-            }
-        }        
 
     return (
         <section>
@@ -236,7 +203,7 @@ export default function EquipmentAvailability({passedEquipment}) {
                                             name="date"
                                             value={newUnavailableDate}
                                             onChange={e => setNewUnavailableDate(e.target.value)}
-                                            required />
+                                            />
                                     </div>
                                 ) : (
                                     <>
@@ -266,7 +233,7 @@ export default function EquipmentAvailability({passedEquipment}) {
                             }
                             <button type="button" className="small" onClick={handleAddDate}>+ Add Date</button>
                         {formError ? <p className='error-message'>{formError}</p> : null}
-                    <button type="submit">Save</button>
+                    <button disabled={!datesUpdated} type="submit">Save</button>
                 </form>
         </section>
         

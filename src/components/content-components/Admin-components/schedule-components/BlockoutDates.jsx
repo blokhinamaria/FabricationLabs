@@ -3,7 +3,7 @@ import { useAuth } from "../../../../AuthContext";
 
 export default function BlockoutDates() {
 
-    const { user } = useAuth()
+    const { user, userRole } = useAuth()
 
     const [ blockoutDates, setBlockoutDates ] = useState([]);
     const [ loading, setLoading ] = useState(false);
@@ -117,34 +117,56 @@ export default function BlockoutDates() {
             lab: assignedLabs
         };
 
-        try {
+        if (userRole === 'demo-admin') {
             if (editId) {
-                const response = await fetch(`/api/blockoutdates?id=${editId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                })
-                if (response.ok) {
-                    closeModal();
-                    fetchBlockoutDates();
-                }
+                setBlockoutDates(prev => prev.map(blockoutdate => {
+                    if (blockoutdate._id === editId) {
+                        return data
+                    } else {
+                        return blockoutdate;
+                    }
+                }))
+                closeModal()
             } else {
-                    const response = await fetch(`/api/blockoutdates`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                })
-                if (response.ok) {
-                    closeModal();
-                    fetchBlockoutDates();
+                setBlockoutDates(prev => ([
+                ...prev,
+                data
+                ]))
+                closeModal()
+                return;
+            }
+        }
+        if (userRole === 'admin') {
+                    try {
+                    if (editId) {
+                        const response = await fetch(`/api/blockoutdates?id=${editId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        })
+                        if (response.ok) {
+                            closeModal();
+                            fetchBlockoutDates();
+                        }
+                    } else {
+                            const response = await fetch(`/api/blockoutdates`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        })
+                        if (response.ok) {
+                            closeModal();
+                            fetchBlockoutDates();
+                        }
+                    }
+                    
+                } catch (err) {
+                    setFormError('Failed to save the semester')
+                    console.error(err)
                 }
             }
-            
-        } catch (err) {
-            setFormError('Failed to save the semester')
-            console.error(err)
         }
-    }
+        
 
     function convertDate(dateString) {
         const [year, month, day] = dateString.split('-').map(Number);

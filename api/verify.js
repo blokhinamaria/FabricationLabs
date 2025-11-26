@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 import { sendResponse } from '../utils/sendResponse.js';
+import { connectDB } from '../utils/connectDB.js';
+import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -24,10 +26,45 @@ export default async function handler(req, res) {
 
     // Verify the token
     const payload = jwt.verify(token, process.env.JWT_SECRET);
+
     console.log('Verified user:', payload.email);
 
+    //Check if the user exist in the database
+    const { client, db } = await connectDB()
+    const collection = db.collection('users');
+    
+    let user = await collection.findOne( { email: payload.email })
+    
+    if (!user) {
+
+      let role = 'student';
+    if (payload.email.endsWith('@spartan.ut.edu')) {
+          role = 'student'
+        } else if (payload.email.endsWith('@ut.edu')) {
+          role = 'faculty'
+        }
+        const result = await collection.insertOne({
+          email: payload.email,
+          role: role,
+          fullName: null,
+          classes: [],
+          createdAt: new Date(),
+          isActive: true,
+        });
+              
+              // Fetch the newly created user
+      user = await db.collection('users').findOne({
+        _id: result.insertedId
+      });
+      console.log('Created new user:', user.email);
+    }
+    
+    await client.close()
+
+    const sessionToken = jwt.sign({ email: payload.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
     // Set session cookie
-    res.setHeader('Set-Cookie', cookie.serialize('session', token, {
+    res.setHeader('Set-Cookie', cookie.serialize('session', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // HTTPS only in production
       sameSite: 'lax',

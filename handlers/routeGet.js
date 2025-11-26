@@ -3,53 +3,85 @@ import { connectDB } from "../utils/connectDB.js"
 
 import { ObjectId } from "bson"
 
+import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+
 export async function handleGet(req, res) {
-    try {
-        const { client, db } = await connectDB();
+        
+        const auth = await authenticateUser(req);
+        
+        if (!auth.authenticated) {
+            return sendResponse(res, 401, { error: auth.error });
+        }
+    
+        try {
+            
+            const { client, db } = await connectDB();
 
-        if (req.url.startsWith('/api/appointments')) {
-            const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
+            if (req.url.startsWith('/api/appointments')) {
+                const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
 
-            if (id) {
-                const collection = db.collection('bookings')
-                const appointment = await collection.findOne( { _id: new ObjectId(id)})
+                if (id) {
+                    const collection = db.collection('bookings')
+                    const appointment = await collection.findOne( { _id: new ObjectId(id)})
 
-                await client.close()
+                    await client.close()
 
-                if (appointment) {
-                    return sendResponse(res, 200, ({ success: true, appointment: appointment }))
-                } else {
-                    return sendResponse(res, 200, ({ success: true, appointment: 'No Appointment Found' }))
+                    if (appointment) {
+                        return sendResponse(res, 200, ({ success: true, appointment: appointment }))
+                    } else {
+                        return sendResponse(res, 200, ({ success: true, appointment: 'No Appointment Found' }))
+                    }
                 }
-            }
 
-            const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
+                const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
 
-            if (userId) {
-                const collection = db.collection('bookings')
-                const appointments = await collection.find( { userId: userId }).toArray()
-                await client.close()
+                if (userId) {
+                    let collection;
+                    if (isDemoUser(auth.user.email)) {
+                        collection = db.collection('demo-bookings')
+                    } else {
+                        collection = db.collection('bookings')
+                    }
 
-                if (appointments) {
-                    return sendResponse(res, 200, ({ success: true, appointments: appointments }))
-                } else {
-                    return sendResponse(res, 200, ({ success: true, appointments: 'No Appointments Found' }))
+
+                    const appointments = await collection.find( { userId: userId }).toArray()
+                    await client.close()
+
+                    if (appointments) {
+                        return sendResponse(res, 200, ({ success: true, appointments: appointments }))
+                    } else {
+                        return sendResponse(res, 200, ({ success: true, appointments: 'No Appointments Found' }))
+                    }
                 }
-            }
 
-            //Get all appointments (only for admins)
-            const role = req.query?.role || new URLSearchParams(req.url?.split('?')[1]).get('role');
-            const labsParam = req.query?.labs || new URLSearchParams(req.url?.split('?')[1]).get('labs');
+                //Get all appointments (only for admins)
+                const role = req.query?.role || new URLSearchParams(req.url?.split('?')[1]).get('role');
+                const labsParam = req.query?.labs || new URLSearchParams(req.url?.split('?')[1]).get('labs');
 
-            if (role && role === 'admin') {
-                let assignedLabs = labsParam.split(',');
+                if (role) {
+                    let collection
+                    if (isDemoUser(auth.user.email)) {
+                        collection = db.collection('demo-bookings')
+                    } else {
+                        collection = db.collection('bookings')
+                    }
+                    if (role === 'admin') {
+                        let assignedLabs = labsParam.split(',');
 
-                const collection = db.collection('bookings');
-                const appointments = await collection.find({ location: { $in: assignedLabs }}).toArray()
+                        const appointments = await collection.find({ location: { $in: assignedLabs }}).toArray()
 
-                await client.close()
-                return sendResponse(res, 200, ({success: true, appointments: appointments}))
-            }
+                        await client.close()
+                        return sendResponse(res, 200, ({success: true, appointments: appointments}))
+                    } else if (role === 'demo-admin') {
+                        let assignedLabs = labsParam.split(',');
+
+                        const appointments = await collection.find({ location: { $in: assignedLabs }}).toArray()
+
+                        await client.close()
+                        return sendResponse(res, 200, ({success: true, appointments: appointments}))
+                    }   
+                    
+                }
 
         } else if (req.url.startsWith('/api/equipment')) {
 

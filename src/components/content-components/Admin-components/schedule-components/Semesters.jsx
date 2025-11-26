@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react"
+import { useAuth } from "../../../../AuthContext";
 
 export default function Semesters() {
-
+    const { userRole } = useAuth()
     const [ semesters, setSemesters ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ formData, setFormData ] = useState({
@@ -67,7 +68,7 @@ export default function Semesters() {
 
     function handleEdit(semester) {
         setCreateNew(false);
-        setEditId(semester._id)
+        setEditId(semester._id);
         setFormData({
             name: semester.name,
             startDate: semester.startDate,
@@ -91,35 +92,58 @@ export default function Semesters() {
             endDate: formData.endDate,
             isActive: formData.isActive
         };
-
-        try {
+        if (userRole === 'demo-admin') {
             if (editId) {
-                const response = await fetch(`/api/semesters?id=${editId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                })
-                if (response.ok) {
-                    closeModal();
-                    fetchSemesters();
-                }
+                setSemesters(prev => prev.map(semester => {
+                    if (semester._id === editId) {
+                        return data
+                    } else {
+                        return semester;
+                    }
+                }))
+                closeModal()
             } else {
-                    const response = await fetch(`/api/semesters`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                })
-                if (response.ok) {
-                    closeModal();
-                    fetchSemesters();
+                setSemesters(prev => ([
+                ...prev,
+                data
+                ]))
+                closeModal()
+                return;
+            }
+        }
+        if (userRole === 'admin') {
+            try {
+                    if (editId) {
+                        const response = await fetch(`/api/semesters?id=${editId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        })
+                        if (response.ok) {
+                            closeModal();
+                            fetchSemesters();
+                        }
+                    } else {
+                            const response = await fetch(`/api/semesters`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        })
+                        if (response.ok) {
+                            closeModal();
+                            fetchSemesters();
+                        }
+                    }
+                    
+                } catch (err) {
+                    setFormError('Failed to save the semester')
+                    console.error(err)
                 }
             }
-            
-        } catch (err) {
-            setFormError('Failed to save the semester')
-            console.error(err)
         }
-    }
+        
+
+    console.log(semesters)
 
     function convertDate(dateString) {
         const [year, month, day] = dateString.split('-').map(Number);

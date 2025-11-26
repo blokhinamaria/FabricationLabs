@@ -1,7 +1,9 @@
-export default function EquipmentMaterials() {
+import { useState, useRef } from "react";
 
-    const [ materials, setMaterials ] = useState(equipment?.materials);
-    const groupedByMaterial = {...Object.groupBy(materials, ({material}) => material)}
+export default function EquipmentMaterials({equipment, onUpdate}) {
+
+    const [ materials, setMaterials ] = useState(equipment?.materials || []);
+    const groupedByMaterial = materials.length !== 0 ? {...Object.groupBy(materials, ({material}) => material)} : {}
     const groupedByMaterialAndSize = Object.fromEntries(
         Object.entries(groupedByMaterial).map(([material, sizeColors]) => [
             material,
@@ -11,16 +13,14 @@ export default function EquipmentMaterials() {
             }))
         ])
         );
-    const [ newColorLabel, setNewColorLabel ] = useState('Add New Color')
+    // const [ newColorLabel, setNewColorLabel ] = useState('Add New Color')
     const labelRefs = useRef({});
     const [showAddButtons, setShowAddButtons] = useState({});
     const dialogRef = useRef({});
 
-    const navigate = useNavigate();
-    const [ materialError, setMaterialError ] = useState('')
+    const [ formError, setFormError ] = useState('');
 
-    console.log(materials)
-    
+    const [ materialUpdated, setMaterialUpdated ] = useState(false)
 
     function handleMaterialChange(target, sizeColors) {
         const materialsIds = sizeColors.flatMap(({colors}) => colors.map(color => color.id))
@@ -31,7 +31,7 @@ export default function EquipmentMaterials() {
             return material
         })
         setMaterials(updatedMaterials);
-        setIsUpdated(true)
+        setMaterialUpdated(true)
     }
 
     function handleSizeChange(target, colors) {
@@ -44,7 +44,7 @@ export default function EquipmentMaterials() {
             })
             console.log(updatedMaterials)
             setMaterials(updatedMaterials);
-            setIsUpdated(true)
+            setMaterialUpdated(true)
     }
 
     function handleColorChange(target) {
@@ -55,7 +55,7 @@ export default function EquipmentMaterials() {
                 return material;
             })
         setMaterials(updatedMaterials);
-        setIsUpdated(true)
+        setMaterialUpdated(true)
     }
 
     function handleLableEdit(e, id) {
@@ -71,7 +71,7 @@ export default function EquipmentMaterials() {
 
 
     function handleAddNew(id, array, type) {
-        if(type === 'new-color') {
+        if (type === 'new-color') {
             const text = labelRefs.current[id]?.textContent;
             const material = array[0].material;
             const size = array[0].size;
@@ -119,6 +119,7 @@ export default function EquipmentMaterials() {
 
             labelRefs.current[id].textContent = 'Add new color';
             setShowAddButtons(prev => ({ ...prev, [id]: false }));
+            setMaterialUpdated(true)
             return;
         } else if (type === 'new-size') {
             const text = labelRefs.current[id]?.textContent;
@@ -155,6 +156,7 @@ export default function EquipmentMaterials() {
             );
             } else {
                 setMaterials([...materials, newItem])
+                setMaterialUpdated(true)
             }
 
             
@@ -185,80 +187,81 @@ export default function EquipmentMaterials() {
     }
 
     function handleDelete(material, size, color) {
-    setMaterials(prev => {
+        setMaterials(prev => {
         // If deleting a specific color
-        if (color) {
-            // Check if this is the last color for this size
-            const colorsForThisSize = prev.filter(item =>
-                item.material.toLowerCase() === material.toLowerCase() &&
-                item.size.toLowerCase() === size.toLowerCase() &&
-                item.color
-            );
-
-            if (colorsForThisSize.length === 1) {
-                // Last color - replace with size without color
-                return prev.map(item => {
-                    if (item.material.toLowerCase() === material.toLowerCase() &&
-                        item.size.toLowerCase() === size.toLowerCase() &&
-                        item.color.toLowerCase() === color.toLowerCase()) {
-                        return {
-                            id: `${material}?${size}`,
-                            inStock: true,
-                            material: material,
-                            size: size
-                        };
-                    }
-                    return item;
-                });
-            } else {
-                // Not the last color - just remove it
-                return prev.filter(item => !(
+            if (color) {
+                // Check if this is the last color for this size
+                const colorsForThisSize = prev.filter(item =>
                     item.material.toLowerCase() === material.toLowerCase() &&
                     item.size.toLowerCase() === size.toLowerCase() &&
-                    item.color.toLowerCase() === color.toLowerCase()
-                ));
-            }
-        }
-        
-        // If deleting a size
-        if (size && !color) {
-            // Check if this is the last size for this material
-            const sizesForThisMaterial = prev.filter(item =>
-                item.material.toLowerCase() === material.toLowerCase() &&
-                item.size
-            );
-
-            if (sizesForThisMaterial.length === 1) {
-                // Last size - replace with material without size
-                return prev.map(item => {
-                    if (item.material.toLowerCase() === material.toLowerCase() &&
-                        item.size.toLowerCase() === size.toLowerCase()) {
-                        return {
-                            id: material,
-                            inStock: true,
-                            material: material,
-                            size: ''
-                        };
-                    }
-                    return item;
-                }).filter((item, index, self) => 
-                    // Remove duplicates - keep only one material entry
-                    self.findIndex(i => i.id === item.id) === index
+                    item.color
                 );
-            } else {
-                // Not the last size - remove all items with this size
-                return prev.filter(item => !(
-                    item.material.toLowerCase() === material.toLowerCase() &&
-                    item.size.toLowerCase() === size.toLowerCase()
-                ));
+
+                if (colorsForThisSize.length === 1) {
+                    // Last color - replace with size without color
+                    return prev.map(item => {
+                        if (item.material.toLowerCase() === material.toLowerCase() &&
+                            item.size.toLowerCase() === size.toLowerCase() &&
+                            item.color.toLowerCase() === color.toLowerCase()) {
+                            return {
+                                id: `${material}?${size}`,
+                                inStock: true,
+                                material: material,
+                                size: size
+                            };
+                        }
+                        return item;
+                    });
+                } else {
+                    // Not the last color - just remove it
+                    return prev.filter(item => !(
+                        item.material.toLowerCase() === material.toLowerCase() &&
+                        item.size.toLowerCase() === size.toLowerCase() &&
+                        item.color.toLowerCase() === color.toLowerCase()
+                    ));
+                }
             }
-        }
         
-        // If deleting entire material
-        return prev.filter(item => 
-            item.material.toLowerCase() !== material.toLowerCase()
-        );
-    });
+            // If deleting a size
+            if (size && !color) {
+                // Check if this is the last size for this material
+                const sizesForThisMaterial = prev.filter(item =>
+                    item.material.toLowerCase() === material.toLowerCase() &&
+                    item.size
+                );
+
+                if (sizesForThisMaterial.length === 1) {
+                    // Last size - replace with material without size
+                    return prev.map(item => {
+                        if (item.material.toLowerCase() === material.toLowerCase() &&
+                            item.size.toLowerCase() === size.toLowerCase()) {
+                            return {
+                                id: material,
+                                inStock: true,
+                                material: material,
+                                size: ''
+                            };
+                        }
+                        return item;
+                    }).filter((item, index, self) => 
+                        // Remove duplicates - keep only one material entry
+                        self.findIndex(i => i.id === item.id) === index
+                    );
+                } else {
+                    // Not the last size - remove all items with this size
+                    return prev.filter(item => !(
+                        item.material.toLowerCase() === material.toLowerCase() &&
+                        item.size.toLowerCase() === size.toLowerCase()
+                    ));
+                }
+            }
+            // If deleting entire material
+            return prev.filter(item => 
+                item.material.toLowerCase() !== material.toLowerCase()
+            );
+    }
+    );
+    setMaterialUpdated(true)
 }
 
     const [newMaterial, setNewMaterial] = useState('')
@@ -295,6 +298,7 @@ export default function EquipmentMaterials() {
                 color: color
             }
             setMaterials([...materials, newItem])
+            setMaterialUpdated(true)
             closeModal()
             return;
         } else {
@@ -305,6 +309,7 @@ export default function EquipmentMaterials() {
                 size: size,
             }
             setMaterials([...materials, newItem])
+            setMaterialUpdated(true)
             closeModal()
             return;
         }
@@ -312,10 +317,9 @@ export default function EquipmentMaterials() {
 
     async function handleSubmit(e) {
         e.preventDefault()
-        setMaterialError('')
+        setFormError('')
         const equipmentUpdates = {}
 
-        //Materials updates
         function inStockIds(material) {
             if (material.inStock) {
                 return material.id
@@ -331,30 +335,16 @@ export default function EquipmentMaterials() {
 
         console.log(equipmentUpdates);
         if(equipmentUpdates) {
-            await updateEquipment(equipmentUpdates)
+            await onUpdate(equipmentUpdates)
+            return
         }
-        return;
+        setFormError('Materials were not changed')
+
     }
 
-    async function updateEquipment(differences) {
-        try {
-            const response = await fetch(`/api/equipment?id=${equipment._id}`, {
-                method: "PUT",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(differences)
-            })
-            if (response.ok) {
-                console.log(`success. Response: ${response}`)
-                navigate('/admin-dashboard/equipment')
-
-            } else {
-                console.error(`Server error: ${response.statusText}`)
-            }
-        } catch (err) {
-            console.log(err)
-        }
+    function handleCancel() {
+        setMaterials(equipment.materials)
     }
-
 
     return (
         <section>
@@ -456,6 +446,7 @@ export default function EquipmentMaterials() {
                                                 </label>
                                                 {showAddButtons[material] && <span onClick={() => handleAddNew(material, sizeColor, 'new-size')}>❇️</span>}
                                             </div>
+                                                    {formError && <p className="warning">{formError}</p>}
                             </div>
                         ))}
                         <button
@@ -502,16 +493,11 @@ export default function EquipmentMaterials() {
                                                         onChange={e => setNewMaterialColor(e.target.value)}
                                                     />
                                                 </div>
-                                                <button type="button" onClick={createNewMaterial}>Submit</button>
+                                                <button type="button" onClick={createNewMaterial}>+ Add new material</button>
                                         </dialog>
-                    </div>
-                    <div>
-                        <textarea disabled>
-                            {equipment.fileRequirements}
-                        </textarea>
-                    </div>
-                    <button type='submit' onClick={handleSubmit}>Submit</button>
-                    <button onClick={handleCancel}>Cancel</button>
+                                    </div>
+                    <button type='submit' disabled={!materialUpdated} onClick={handleSubmit}>Save</button>
+                    <button type='button' disabled={!materialUpdated} onClick={handleCancel}>Restore</button>
                 </form>
         </section>
     )

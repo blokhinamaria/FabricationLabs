@@ -2,30 +2,46 @@ import { parseJSONBody } from "../utils/parseJSONBody.js"
 import { sanitizeInput } from "../utils/sanitizeInput.js"
 import { sendResponse } from '../utils/sendResponse.js'
 import { connectDB } from "../utils/connectDB.js"
+import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
 
 export async function handlePost(req, res, collectionName) {
-
-    try {
-        let parsedData 
-        if (req.body) {
-            parsedData = req.body
-        } else {
-            parsedData = await parseJSONBody(req)
+        // Verify the user's session
+        const auth = await authenticateUser(req);
+        if (!auth.authenticated) {
+            return sendResponse(res, 401, { error: auth.error });
         }
-        const sanitizedData = sanitizeInput(parsedData)
 
-        const { client, db } = await connectDB();
-        const collection = db.collection(collectionName);
-            
-        const result = await collection.insertOne({
-                ...sanitizedData,
-                createdAt: new Date()
-        });
+        if (auth.permissions === 'demo-admin') {
+            return sendResponse(res, 403, { error: 'Insufficient permissions' });
+        }
 
-        await client.close();
+        try {
 
-        sendResponse(res, 200, ({ success: true, appointmentId: result.insertedId, message: `New entry added to ${collectionName}` }))
-        console.log(result)
+            let parsedData 
+            if (req.body) {
+                parsedData = req.body
+            } else {
+                parsedData = await parseJSONBody(req)
+            }
+            const sanitizedData = sanitizeInput(parsedData)
+
+            const { client, db } = await connectDB();
+            let collection = db.collection(collectionName);
+                if (isDemoUser(auth.user.email)) {
+                    collection = db.collection(`demo-${collectionName}`);
+                } else {
+                    collection = db.collection(collectionName);
+                }
+
+            const result = await collection.insertOne({
+                    ...sanitizedData,
+                    createdAt: new Date()
+            });
+
+            await client.close();
+
+            sendResponse(res, 200, ({ success: true, appointmentId: result.insertedId, message: `New entry added to ${collectionName}` }))
+            console.log(result)
         
     } catch (err) {
         console.log(`Eroor in routeHandlers, handlePost: ${err}`)

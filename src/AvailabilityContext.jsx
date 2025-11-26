@@ -122,7 +122,7 @@ export function AvailabilityProvider({ children }) {
 
     return (
             <AvailabilityContext.Provider value={value}>
-            {children}
+                {children}
             </AvailabilityContext.Provider>
         );
     }

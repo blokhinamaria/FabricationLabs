@@ -9,8 +9,8 @@
   --white: #fff;
   --white-semi-opaque: rgba(255, 255, 255, 0.9);
   --glass-background: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.4);
-  --drop-shadow: #3D2A231a;
+  --glass-border: hsla(0, 0%, 100%, 0.4);
+  --drop-shadow: #210a431a;
   --light-grey: #CCCCCC;
   --grey: #868684;
   --black: #000000;

@@ -1,57 +1,20 @@
-import jwt from 'jsonwebtoken';
-import cookie from 'cookie';
 import { sendResponse } from '../utils/sendResponse.js';
-import { connectDB } from '../utils/connectDB.js';
+
+import { authenticateUser } from '../utils/checkAuthentication.js';
 
 export default async function handler(req, res) {
-    const cookies = cookie.parse(req.headers.cookie || '');
-    const token = cookies.session;
+    const auth = await authenticateUser(req);
+    console.log(auth);
     
-    if (!token) {
+    if (!auth.authenticated) {
         return sendResponse(res, 401, { authenticated: false });
     }
+
+    const redirect = (auth.permissions === 'admin' || auth.permissions === 'demo-admin') ? '/admin-dashboard' : '/dashboard'
     
-    try {
-        const payload = jwt.verify(token, process.env.JWT_SECRET);
-
-        //Check if the user exist in the database
-        const { client, db } = await connectDB()
-        const collection = db.collection('users');
-
-        let user = await collection.findOne( { email: payload.email })
-
-        let role = 'student';
-        if (user.email.endsWith('@spartan.ut.edu')) {
-            role = 'student'
-        } else if (user.email.endsWith('@ut.edu')) {
-            role = 'faculty'
-        }
-
-        if (!user) {
-            const result = await collection.insertOne({
-                email: payload.email,
-                role: role,
-                fullName: null,
-                classes: [],
-                createdAt: new Date(),
-                isActive: true,
-                assignedLabs: []
-        });
-        
-        // Fetch the newly created user
-        user = await db.collection('users').findOne({
-            _id: result.insertedId
-        });
-        console.log('Created new user:', user.email);
-        }
-
-        await client.close()
-
-        return sendResponse(res, 200, { 
-            authenticated: true, 
-            user: {...user}
-        });
-    } catch (err) {
-        return sendResponse(res, 401, { authenticated: false, error: err });
-    }
+    return sendResponse(res, 200, { 
+        authenticated: true, 
+        redirect: redirect,
+        user: auth.user 
+    });
 }

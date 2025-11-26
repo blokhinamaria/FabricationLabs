@@ -19,7 +19,7 @@ export default function Header() {
 
     function handleLogoClick() {
         if (user) {
-            const dashboard = user.role === 'admin' ? 'admin-dashboard' : 'dashboard'
+            const dashboard = (user.role === 'admin' || user.role === 'demo-admin') ? 'admin-dashboard' : 'dashboard'
             navigate(`/${dashboard}`)
         }
     }
@@ -36,10 +36,10 @@ export default function Header() {
                 
                     <nav id='main-menu' className={isOpen ? 'open' : ''}>
                         <ul>
-                            {user.role === 'admin' && <li><button className='nav' onClick={() => navigate(`/admin-dashboard/equipment`)}>Equipment</button></li>}
-                            {user.role === 'admin' && <li><button className='nav' onClick={() => navigate(`/admin-dashboard/schedule`)}>Schedule</button></li>}
-                            {user.role !== 'admin' && <li><button className='nav' >Appointments</button></li>}
-                            {user.role !== 'admin' && <li><button className='nav' >Profile</button></li>}
+                            {user.role.includes('admin') && <li><button className='nav' onClick={() => navigate(`/admin-dashboard/equipment`)}>Equipment</button></li>}
+                            {user.role.includes('admin') && <li><button className='nav' onClick={() => navigate(`/admin-dashboard/schedule`)}>Schedule</button></li>}
+                            {!user.role.includes('admin') && <li><button className='nav' >Appointments</button></li>}
+                            {!user.role.includes('admin') && <li><button className='nav' >Profile</button></li>}
                             <li><button onClick={logout} className='nav'>Logout</button></li>
                         </ul>
                             <span className='user-type'>{user?.role}</span>
