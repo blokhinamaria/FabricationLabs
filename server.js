@@ -20,7 +20,7 @@ import checkAuthHandler from './api/check-auth.js';
 import logoutHandler from './api/logout.js';
 
 //notifications
-import sendCancelNotice from './api/send-cancel-notice.js';
+import sendEmail from './api/send-email.js';
 
 const PORT = 3001;
 
@@ -46,8 +46,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     //EMAIL NOTIFICATIONS 
-    if (req.url === '/api/send-cancel-notice' && req.method === 'POST') {
-        return await sendCancelNotice(req, res)
+    if (req.url === '/api/send-email' && req.method === 'POST') {
+        return await sendEmail(req, res)
     }
 
     //APPOINTMENTS

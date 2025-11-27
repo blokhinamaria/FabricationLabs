@@ -16,11 +16,14 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
 
     const { shouldDisableDate, loading } = useAvailability();
 
-    const [selectedDate, setSelectedDate] = useState(mode?.prevDate ? dayjs(mode.prevDate) : null);
-    const [availableSlots, setAvailableSlots] = useState([]);
-    const [selectedStartSlot, setSelectedStartSlot] = useState(null);
-    const [isAvailable, setIsAvailable] = useState(true);
+    const [ selectedDate, setSelectedDate] = useState(mode?.prevDate ? dayjs(mode.prevDate) : null);
+    const [ availableSlots, setAvailableSlots] = useState([]);
+    const [ selectedStartSlot, setSelectedStartSlot] = useState(null);
+    const [ endTimeSlots, setEndTimeSlots ] = useState(null);
+    const [ selectedEndSlot, setSelectedEndSlot ] = useState('')
+    const [ isAvailable, setIsAvailable] = useState(true);
     const [ availabilityExceptions, setAvailabilityExceptions ] = useState([]);
+    const [ formError, setFormError] = useState('')
 
     const appointmentId = mode?.appointmentId || null;
 
@@ -115,15 +118,14 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
     const maxDate = minDate.add(30, 'day');
 
     function handleDateSelect(value) {
+        setFormError('')
         setSelectedDate(value);
         setSelectedStartSlot(null);
+        setSelectedEndSlot('');
+        setIsNewSlotSelected(false);
     }
     
     const [ isNewSlotSelected, setIsNewSlotSelected ] = useState(false);
-
-    //class reservation slots 
-    const [ endTimeSlots, setEndTimeSlots ] = useState(null);
-    const [ selectedEndSlot, setSelectedEndSlot ] = useState()
 
     function handleStartSlotSelect(e) {
         e.preventDefault()
@@ -143,13 +145,14 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
 
     function handleSubmit(e) {
         e.preventDefault()
-        if (!selectedStartSlot) return;
+        if (!selectedStartSlot || !selectedEndSlot) {
+            setFormError('Both Start and End time must be set')
+            return;
+        } 
 
         const bookingDate = selectedDate.toDate();
         const [hours, minutes] = selectedStartSlot.startTime.split(':').map(Number);
         bookingDate.setHours(hours, minutes, 0, 0)
-
-        
 
         const endTime = selectedDate.toDate();
         const [endHour, endMinutes] = selectedEndSlot.split(':').map(Number);
@@ -246,13 +249,20 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
                                                 ))}
                                                 </select>
                                                 <p>Max allowed reservations are 3 hours</p>
+                                                {formError && <p className='error-message'>{formError}</p>}
+
                                             </div>
                                         </div>
                                     )
                                 )
                             )
                         }
-                        {isNewSlotSelected && <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>}
+                        {isNewSlotSelected && 
+                        <>
+                            <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>
+                            <p className='error-message'>Please, double check your reservation date and time. Once you submit your reservations, other students appointments for this equipment will be automatically cancelled</p>
+                        </>
+                        }
                     </div>) : (<div className='time-form empty'></div>)
                 }
             </form>

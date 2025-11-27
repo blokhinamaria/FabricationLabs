@@ -1,13 +1,12 @@
 import { Resend } from "resend";
-import cookie from 'cookie';
-import jwt from "jsonwebtoken";
 import { sendResponse } from "../utils/sendResponse.js";
 import { parseJSONBody } from "../utils/parseJSONBody.js";
 import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+import jwt from "jsonwebtoken";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function sendCancelNotice(req, res) {
+export default async function sendEmail(req, res) {
   if (req.method !== 'POST') {
     return sendResponse(res, 405, { error: 'Method not allowed' })
   }
@@ -37,18 +36,22 @@ export default async function sendCancelNotice(req, res) {
           data = await parseJSONBody(req);
         }
 
-        const { email, html } = data;
+        const { email, subject, html } = data;
 
         if (!email) {
-          return sendResponse(res, 400, { error: 'Email is required to send the cancellation notice' })
+          return sendResponse(res, 400, { error: 'Email is required to send email' })
+        }
+
+        if (!subject) {
+          return sendResponse(res, 400, { error: 'Subject is required to send email' })
         }
 
         if (!html) {
-          return sendResponse(res, 400, { error: 'Email body is required to send the cancellation notice' })
+          return sendResponse(res, 400, { error: 'Email body is required to send email' })
         }
 
-        // const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '360m' });
-        // let link = `${process.env.APP_URL}/api/verify?token=${token}`
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '30m' });
+        const link = `${process.env.APP_URL}/api/verify?token=${token}`;
 
         const finalHtml = html.replace('{{VERIFY_LINK}}', link);
 
@@ -56,7 +59,7 @@ export default async function sendCancelNotice(req, res) {
         await resend.emails.send({
           from: 'UTampa Fabrication Labs <no-reply@mariablokhina.com>',
           to: email,
-          subject: `Appointment Cancellation`,
+          subject: subject,
           html: finalHtml,
         });
         return sendResponse(res, 200, { ok: true, message: 'Email notice sent' })

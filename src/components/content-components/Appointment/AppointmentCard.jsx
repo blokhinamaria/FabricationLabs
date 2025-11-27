@@ -193,7 +193,7 @@ export default function AppointmentCard({id, data}) {
                                         {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
                                     </p>
                                 </div>
-                                {!isClassReservation || appointment.status === 'cancelled' && <button onClick={() => handleEdit(appointment._id)} >Edit Instead</button>}
+                                {!isClassReservation || appointment.status !== 'cancelled' && <button onClick={() => handleEdit(appointment._id)} >Edit Instead</button>}
                                 <button onClick={() => handleDelete(appointment._id)}>Delete</button>
                             </dialog>
                         </div>
