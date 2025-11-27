@@ -26,7 +26,6 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
         }
 
         equipmentUpdates.available = available;
-        console.log(equipmentUpdates);
         if(equipmentUpdates) {
             await onUpdate(equipmentUpdates)
         }

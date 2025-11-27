@@ -1,15 +1,19 @@
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import './Appointment.css'
+import { useAuth } from "../../../AuthContext";
 
 export default function AppointmentCardAdmin({id, data}) {
+
+    const { userRole } = useAuth()
 
     const [ appointment, setAppointment ] = useState(data || null);
     const [ loading, setLoading ] = useState(!data);
     const [ error, setError ] = useState(null);
     const [ appointmentStatus, setAppointmentStatus ] = useState(appointment?.status)
-    const navigate = useNavigate();
-    const dialogRef = useRef(null);
+
+    const contactDialogRef = useRef(null);
+    const cancelDialogRef = useRef(null);
 
     const appointmentDate = new Date(appointment?.date);
     const isClassReservation = appointment?.type === 'class-reservation';
@@ -46,18 +50,18 @@ export default function AppointmentCardAdmin({id, data}) {
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
     const openModal = () => {
-        dialogRef.current.showModal()
+        cancelDialogRef.current.showModal()
         setIsDialogOpen(true)
     }
 
     const closeModal = () => {
-        dialogRef.current.close()
+        cancelDialogRef.current.close()
         setIsDialogOpen(false)
     }
 
     //close dialog when clicking outside
     const handleDialogClick = (e) => {
-        if (e.target === dialogRef.current) {
+        if (e.target === cancelDialogRef.current) {
             closeModal();
         }
     }
@@ -65,6 +69,12 @@ export default function AppointmentCardAdmin({id, data}) {
     const [ cancellationReason, setCancellationReason ] = useState('')
 
     async function handleCancel(appointmentId) {
+        if (userRole === 'demo-admin') {
+            setAppointmentStatus('cancelled')
+            closeModal();
+            return;
+        }
+
         try {
             const response = await fetch(`/api/appointments?id=${appointmentId}`, {
                 method: 'PUT',
@@ -170,7 +180,7 @@ export default function AppointmentCardAdmin({id, data}) {
                 <p>{appointment.userName || appointment.userEmail}</p>
             </div>
                         <div className="appointment-button-container">
-                            <button>View Details</button>
+                            <button onClick={() => handleContact()}>Contact User</button>
                             <button 
                                 onClick={openModal}
                                 aria-expanded={isDialogOpen}
@@ -180,7 +190,31 @@ export default function AppointmentCardAdmin({id, data}) {
                                 >
                                     {appointmentStatus !== 'cancelled' ? 'Cancel' : 'Cancelled'}
                             </button>
-                            <dialog id='delete-dialog' ref={dialogRef} onClick={handleDialogClick}>
+                            <dialog id='delete-dialog' ref={contactDialogRef} onClick={handleDialogClick}>
+                                <button onClick={closeModal}>Close</button>
+                                <h4>Are you sure you want to cancel the {appointmentType} for</h4>
+                                <div>  
+                                    <h3>{appointment.equipmentName}</h3>
+                                    <p>on {appointmentDate.toDateString()}</p>
+                                    <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                        {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
+                                    </p>
+                                    <div>
+                                        <label htmlFor="reason">Reason</label>
+                                        <input
+                                            type="text"
+                                            id="reason"
+                                            name="reason"
+                                            placeholder="Reason for appointment cancelation"
+                                            value={cancellationReason}
+                                            onChange={e => setCancellationReason(e.target.value)}
+                                            required />
+                                    </div>
+                                    <p>The user will be notified via email</p>
+                                </div>
+                                <button onClick={() => handleCancel(appointment._id)}>Cancel {appointment.type}</button>
+                            </dialog>
+                            <dialog id='delete-dialog' ref={cancelDialogRef} onClick={handleDialogClick}>
                                 <button onClick={closeModal}>Close</button>
                                 <h4>Are you sure you want to cancel the {appointmentType} for</h4>
                                 <div>  

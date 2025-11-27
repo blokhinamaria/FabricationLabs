@@ -4,6 +4,9 @@ import './Appointment.css'
 
 export default function AppointmentCard({id, data}) {
 
+    console.log(id)
+    console.log(data)
+
     const [ appointment, setAppointment ] = useState(data || null);
     const [ loading, setLoading ] = useState(!data);
     const [ error, setError ] = useState(null);
@@ -26,6 +29,7 @@ export default function AppointmentCard({id, data}) {
             setLoading(true)
             const response = await fetch(`/api/appointments?id=${appointmentId}`)
             const data = await response.json()
+            console.log(data)
             if (response.ok) {
                 setAppointment(data.appointment)
             } else {

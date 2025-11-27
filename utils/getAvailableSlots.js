@@ -1,8 +1,18 @@
 import { connectDB } from './connectDB.js'
 import { sendResponse } from './sendResponse.js'
+
 import { ObjectId } from "bson"
 
+import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+
 export async function getAvailableSlots(req, res) {
+
+    const auth = await authenticateUser(req);
+
+    if (!auth.authenticated) {
+            return sendResponse(res, 401, { error: auth.error });
+        }
+
     
     const equipmentId = req.query?.equipmentId || new URLSearchParams(req.url?.split('?')[1]).get('equipmentId');
     const date = req.query?.date || new URLSearchParams(req.url?.split('?')[1]).get('date');
@@ -42,7 +52,13 @@ export async function getAvailableSlots(req, res) {
     const endOfDay = new Date(selectedDate);
     endOfDay.setUTCHours(23, 59, 59, 999)
 
-    const bookingCollection = db.collection('bookings');
+    let bookingCollection;
+        if (isDemoUser(auth.user.email)) {
+            bookingCollection = db.collection('demo-bookings')
+        } else {
+            bookingCollection = db.collection('bookings')
+        }
+
     const existingBookings = await bookingCollection.find({
         _id: { $ne: new ObjectId(appointmentId) },
         equipmentId: equipmentId,

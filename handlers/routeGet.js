@@ -18,10 +18,17 @@ export async function handleGet(req, res) {
             const { client, db } = await connectDB();
 
             if (req.url.startsWith('/api/appointments')) {
+
+                let collection;
+                    if (isDemoUser(auth.user.email)) {
+                        collection = db.collection('demo-bookings')
+                    } else {
+                        collection = db.collection('bookings')
+                    }
+
                 const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
 
                 if (id) {
-                    const collection = db.collection('bookings')
                     const appointment = await collection.findOne( { _id: new ObjectId(id)})
 
                     await client.close()
@@ -36,15 +43,9 @@ export async function handleGet(req, res) {
                 const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
 
                 if (userId) {
-                    let collection;
-                    if (isDemoUser(auth.user.email)) {
-                        collection = db.collection('demo-bookings')
-                    } else {
-                        collection = db.collection('bookings')
-                    }
-
-
+                    
                     const appointments = await collection.find( { userId: userId }).toArray()
+                    
                     await client.close()
 
                     if (appointments) {
@@ -59,13 +60,9 @@ export async function handleGet(req, res) {
                 const labsParam = req.query?.labs || new URLSearchParams(req.url?.split('?')[1]).get('labs');
 
                 if (role) {
-                    let collection
-                    if (isDemoUser(auth.user.email)) {
-                        collection = db.collection('demo-bookings')
-                    } else {
-                        collection = db.collection('bookings')
-                    }
+                
                     if (role === 'admin') {
+                        
                         let assignedLabs = labsParam.split(',');
 
                         const appointments = await collection.find({ location: { $in: assignedLabs }}).toArray()
@@ -73,9 +70,8 @@ export async function handleGet(req, res) {
                         await client.close()
                         return sendResponse(res, 200, ({success: true, appointments: appointments}))
                     } else if (role === 'demo-admin') {
-                        let assignedLabs = labsParam.split(',');
 
-                        const appointments = await collection.find({ location: { $in: assignedLabs }}).toArray()
+                        const appointments = await collection.find({}).toArray()
 
                         await client.close()
                         return sendResponse(res, 200, ({success: true, appointments: appointments}))
