@@ -9,7 +9,7 @@ import { ObjectId } from "bson"
 export async function handlePut(req, res, collectionName) {
     // Verify the user's session
         const auth = await authenticateUser(req);
-  
+
         if (!auth.authenticated) {
             return sendResponse(res, 401, { error: auth.error });
         }

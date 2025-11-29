@@ -177,6 +177,9 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
         dialogRef.current.close()
         setIsDialogOpen(false)
         setNewMaterialError('')
+        setNewMaterial('')
+        setNewMaterialColor('')
+        setNewMaterialSize('')
     }
 
     //close dialog when clicking outside
@@ -333,7 +336,6 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
             equipmentUpdates.materials = materials.map(material => material)
         }
 
-        console.log(equipmentUpdates);
         if(equipmentUpdates) {
             await onUpdate(equipmentUpdates)
             return

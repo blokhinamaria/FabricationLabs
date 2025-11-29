@@ -1,6 +1,8 @@
 import { useLayoutEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AppProviders } from './AppProviders.jsx'
+import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom';
+import { AppProviders } from './AppProviders.jsx';
+import { AuthProvider } from './AuthContext.jsx';
+import { AvailabilityProvider } from './AvailabilityContext.jsx';
 import Layout from './components/Layout.jsx';
 import Login from './components/content-components/Login.jsx';
 import Dashboard from './components/content-components/Dashboard.jsx';
@@ -29,23 +31,27 @@ function App() {
   return (
     <>
       <Router>
-        <AppProviders>
+        <AuthProvider>
           <Wrapper>
             <Routes>
               <Route path='/' element={<Layout />}>
                 <Route index element={<Login />} />
                 <Route path='dashboard' element={<Dashboard />} />
-                <Route path='dashboard/newappointment' element={<NewAppointment />} />
-                <Route path='dashboard/editappointment' element={<EditAppointment />} />
-                <Route path='dashboard/newreservation' element={<NewReservation />} />
+                <Route element={<AvailabilityProvider><Outlet /></AvailabilityProvider>}>
+                  <Route path='dashboard/newappointment' element={<NewAppointment />} />
+                  <Route path='dashboard/editappointment' element={<EditAppointment />} />
+                  <Route path='dashboard/newreservation' element={<NewReservation />} />
+                </Route>
                 <Route path="admin-dashboard" element={<AdminDashboard />} />
                 <Route path="admin-dashboard/equipment" element={<Equipment />} />
                 <Route path="admin-dashboard/equipment/edit" element={<EditEquipment />} />
-                <Route path="admin-dashboard/schedule" element={<Schedule />} />
+                <Route element={<AvailabilityProvider><Outlet /></AvailabilityProvider>}>
+                  <Route path="admin-dashboard/schedule" element={<Schedule />} />
+                </Route>
             </Route>
             </Routes>
           </Wrapper>
-        </AppProviders>
+        </AuthProvider>
       </Router>
       
     </>

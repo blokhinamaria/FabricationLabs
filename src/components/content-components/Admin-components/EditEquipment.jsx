@@ -42,6 +42,7 @@ export default function EditEquipment() {
             }))
             return;
         }
+        console.log(differences)
         try {
             const response = await fetch(`/api/equipment?id=${equipment._id}`, {
                 method: "PUT",

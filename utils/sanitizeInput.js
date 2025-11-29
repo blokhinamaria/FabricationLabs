@@ -6,7 +6,7 @@ export function sanitizeInput(data) {
     for (const [key, value] of Object.entries(data)) {
         if (typeof value === 'string') {
             sanitizedData[key] = sanitizeHtml(value, {
-            allowedTags: [],
+            allowedTags: ['br', 'p', 'div', 'ul', 'ol', 'li', 'strong', 'b', 'em', 'i'],
             allowedAttributes: {}
         })
         } else {

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import sanitizeHtml from "sanitize-html";
 
 import './MaterialSelection.css'
 
@@ -16,6 +17,13 @@ export default function MaterialSelection({materials = [], fileRequirements, han
             setSelectedMaterials((prev) => prev.filter((material) => material.id !== e.target.value))
         }
     }
+
+    const sanitizedFileText = sanitizeHtml(fileRequirements || '', {
+        allowedTags: ['br', 'p', 'div', 'ul', 'ol', 'li', 'strong', 'b', 'em', 'i'],
+        allowedAttributes: {},
+        allowedSchemes: []
+    });
+
 
     const [ hasReviewedRequirements, setHasReviewedRequirements ] = useState(false);
     const [ errorMessage, setErrorMessage] = useState('');
@@ -52,7 +60,10 @@ export default function MaterialSelection({materials = [], fileRequirements, han
                     <p className="disclaimer">Material availability is not guaranteed </p>
                         <div>
                             <h4>File Requirements</h4>
-                            <p>{fileRequirements}</p>
+                            <div 
+                                dangerouslySetInnerHTML={{ __html: sanitizedFileText }}
+                                style={{ whiteSpace: 'pre-wrap' }}
+                                />
                         </div>
                     <div className="input-group-wrapper">
                         <input

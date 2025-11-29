@@ -13,7 +13,8 @@ export default function EquipmentFileReq({file, onUpdate}) {
         const isChanged = file !== fileText
         if (isChanged) {
             equipmentUpdates.fileRequirements = fileText;
-            await onUpdate()
+            console.log(equipmentUpdates)
+            await onUpdate(equipmentUpdates)
             return
         }
 
@@ -24,13 +25,14 @@ export default function EquipmentFileReq({file, onUpdate}) {
         <section>
             <h2>File Requirements</h2>
             <form onSubmit={handleSubmit}>
-                <textarea
-                    id="file-requirements"
-                    name="file-requirements"
-                    placeholder="Provide file requirement for this type of equipment"
-                    value={fileText}
-                    onChange={(e) => setFileText(e.target.value)}
-                />
+                <div
+                    contentEditable="true"
+                    onInput={(e) => setFileText(e.currentTarget.innerHTML)} 
+                    suppressContentEditableWarning={true}
+                    dangerouslySetInnerHTML={{ __html: fileText }}
+                    style={{ whiteSpace: 'pre-wrap', border: '1px solid #ccc', padding: '10px' }}
+                    >
+                </div>
                 {formError && <p className="warning">{formError}</p>}
                 <button
                 type="submit"
