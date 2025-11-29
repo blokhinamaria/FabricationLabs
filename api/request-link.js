@@ -62,6 +62,13 @@ export default async function handler(req, res) {
       }
       }
     }
+    // Check for valid UTampa email
+    const regex = /^[A-Za-z0-9._%+-]+@(ut\.edu|spartans\.ut\.edu)$/;
+    const result = regex.test(email);
+        if(!result) {
+          console.log('Invalid Utampa email')
+            return sendResponse(res, 400, { error: 'UTampa Email is required' })
+        }
 
     // Create JWT token for magic link
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '360m' });

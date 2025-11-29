@@ -4,7 +4,6 @@ import { authenticateUser } from '../utils/checkAuthentication.js';
 
 export default async function handler(req, res) {
     const auth = await authenticateUser(req);
-    console.log(auth);
     
     if (!auth.authenticated) {
         return sendResponse(res, 401, { authenticated: false });
