@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import './Login.css'
 
-
 export default function Login() {
 
 const [ userEmail, setUserEmail] = useState('');
@@ -20,7 +19,6 @@ const navigate = useNavigate()
 async function handleSubmit(formData) {
     
     const email = formData.get('email');
-    console.log(formData)
     setErrorMessage('')
 
     if (email) {
@@ -48,6 +46,7 @@ async function handleSubmit(formData) {
 }
 
 async function requestLink(email, password=null) {
+    setErrorMessage('')
     try {
         if (!password) {
             const response = await fetch('/api/request-link', {
@@ -112,6 +111,7 @@ function isDemo(email) {
 }
 
 function handleTryAgain() {
+    setErrorMessage('')
     navigate('/')
     setAuthInProgress(false)
     setDemoUserInterface(false)
