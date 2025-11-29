@@ -47,14 +47,18 @@ export default async function handler(req, res) {
         const baseUrl = process.env.APP_URL || `https://${req.headers.host}`;
         const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '360m' });
         const verifyURL = `${baseUrl}/api/verify?token=${token}`;
-        if (typeof res.redirect === 'function') {
-          return res.redirect(302, verifyURL);
-        }
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ 
+        // if (typeof res.redirect === 'function') {
+        //   return res.redirect(302, verifyURL);
+        // }
+        // res.writeHead(200, { 'Content-Type': 'application/json' });
+        // return res.end(JSON.stringify({ 
+        //   success: true, 
+        //   redirect: verifyURL 
+        // }));
+        return sendResponse(res, 200, { 
           success: true, 
           redirect: verifyURL 
-        }));
+        });
       }
       }
     }
