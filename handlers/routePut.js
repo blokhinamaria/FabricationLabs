@@ -39,6 +39,11 @@ export async function handlePut(req, res, collectionName) {
                     collection = db.collection(collectionName);
                 }
 
+            console.log('Request body type:', typeof req.body);
+console.log('Request body:', JSON.stringify(req.body));
+console.log('Sanitized data:', JSON.stringify(sanitizedData));
+console.log('MongoDB driver version:', require('mongodb/package.json').version);
+
             const result = await collection.updateOne(
                 {_id: new ObjectId(id)},
                 { $set: sanitizedData } 
