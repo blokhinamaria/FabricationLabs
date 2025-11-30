@@ -27,7 +27,7 @@ export default function EquipmentFileReq({file, onUpdate}) {
             <form onSubmit={handleSubmit}>
                 <div
                     contentEditable="true"
-                    onInput={(e) => setFileText(e.currentTarget.innerHTML)} 
+                    onDoubleClickCapture={(e) => setFileText(e.currentTarget.innerHTML)} 
                     suppressContentEditableWarning={true}
                     dangerouslySetInnerHTML={{ __html: fileText }}
                     style={{ whiteSpace: 'pre-wrap', border: '1px solid #ccc', padding: '10px' }}
