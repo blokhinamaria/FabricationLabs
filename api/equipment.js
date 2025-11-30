@@ -12,9 +12,9 @@ export default async function handler(req, res) {
             if (req.method === 'GET') {
                 return await handleGet(req, res)
             } else if (req.method === 'PUT') {
-                return await handlePut(req, res)
+                return await handlePut(req, res, 'equipment')
             } else if (req.method === 'DELETE') {
-                return await handleDelete(req, res)
+                return await handleDelete(req, res, 'equipment')
             }  else {
             sendResponse(res, 404, ({ error: 'Method not allowed'}))
             }
