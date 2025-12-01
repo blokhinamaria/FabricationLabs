@@ -115,7 +115,7 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
             }
     }
 
-    const maxDate = minDate.add(30, 'day');
+    const maxDate = minDate.add(60, 'day');
 
     function handleDateSelect(value) {
         setFormError('')

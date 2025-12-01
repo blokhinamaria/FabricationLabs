@@ -42,7 +42,6 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
                 }
                 return material;
             })
-            console.log(updatedMaterials)
             setMaterials(updatedMaterials);
             setMaterialUpdated(true)
     }
@@ -272,7 +271,8 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
     const [newMaterialColor, setNewMaterialColor] = useState('')
     const [ newMaterialError, setNewMaterialError] = useState('')
 
-    function createNewMaterial() {
+    function createNewMaterial(e) {
+        e.preventDefault();
         if (newMaterial.trim().length === 0) {
             setNewMaterialError('Material name required')
             return;
@@ -351,7 +351,6 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
     return (
         <section>
             <form onSubmit={handleSubmit}>
-                    
                     <div>
                         <p>Materials</p>
                         {Object.entries(groupedByMaterialAndSize).map(([material, sizeColor]) => (
@@ -461,9 +460,15 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
                                             >
                                                 + Add New Material
                                         </button>
-                                        <dialog id='new-material-dialog' ref={dialogRef} onClick={(e) => handleDialogClick(e)}>
+                                        
+                                    </div>
+                    <button type='submit' disabled={!materialUpdated} onClick={handleSubmit}>Save</button>
+                    <button type='button' disabled={!materialUpdated} onClick={handleCancel}>Restore</button>
+                </form>
+                <dialog id='new-material-dialog' ref={dialogRef} onClick={(e) => handleDialogClick(e)}>
                                             <button onClick={() => closeModal()}>Cancel</button>
-                                            <h4>Add new material</h4>
+                                            <form  onSubmit={createNewMaterial}>
+                                                <h4>Add new material</h4>
                                                 <div className='input-group-wrapper'>
                                                     <label htmlFor='new-size'>New Material</label>
                                                     <input
@@ -495,12 +500,9 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
                                                         onChange={e => setNewMaterialColor(e.target.value)}
                                                     />
                                                 </div>
-                                                <button type="button" onClick={createNewMaterial}>+ Add new material</button>
+                                                <button type="submit">+ Add new material</button>
+                                            </form>
                                         </dialog>
-                                    </div>
-                    <button type='submit' disabled={!materialUpdated} onClick={handleSubmit}>Save</button>
-                    <button type='button' disabled={!materialUpdated} onClick={handleCancel}>Restore</button>
-                </form>
         </section>
     )
 }
