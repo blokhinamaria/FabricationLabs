@@ -52,14 +52,16 @@ const server = http.createServer(async (req, res) => {
 
     //APPOINTMENTS
     //POST — Create new appointment 
-    else if (req.url === '/api/new-appointment' && req.method === 'POST') {
-        return await handlePost(req, res, 'bookings')
-    } 
+    // else if (req.url === '/api/new-appointment' && req.method === 'POST') {
+    //     return await handlePost(req, res, 'bookings')
+    // } 
 
     //OTHER APOOINTMENT METHODS
     else if (req.url.startsWith('/api/appointments')) {
         if (req.method === 'GET') {
             return await handleGet(req, res)
+        } else if (req.method === 'POST') {
+            return await handlePost(req, res, 'bookings')
         } else if (req.method === 'PUT') {
             return await handlePut(req, res, 'bookings')
         } else if (req.method === 'DELETE') {
@@ -88,7 +90,7 @@ const server = http.createServer(async (req, res) => {
             } else if (req.method === 'PUT') {
                 return await handlePut(req, res, 'semesterPeriods')
             } else if (req.method === 'DELETE') {
-                return await handlePut(req, res, 'semesterPeriods')
+                return await handleDelete(req, res, 'semesterPeriods')
             }
 
         } else if (req.url.startsWith('/api/blockoutdates')) {
@@ -99,7 +101,7 @@ const server = http.createServer(async (req, res) => {
             } else if (req.method === 'PUT') {
                 return await handlePut(req, res, 'blockoutDates')
             } else if (req.method === 'DELETE') {
-                return await handlePut(req, res, 'blockoutDates')
+                return await handleDelete(req, res, 'blockoutDates')
             }
     //USERS
     } else if (req.url.startsWith('/api/users') && req.method === 'PUT') {

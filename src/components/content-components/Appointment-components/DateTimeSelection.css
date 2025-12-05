@@ -1,7 +1,14 @@
 form.date-time-form {
     flex-direction: row;
-    min-height: 520px;
+    /* min-height: 520px; */
     max-width: 100%;
+}
+
+@media (max-width:1024px) {
+    form.date-time-form {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 form.date-time-form > div {

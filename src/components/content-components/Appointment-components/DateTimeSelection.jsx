@@ -74,7 +74,10 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
         fetchEquipment(equipmentId)
     }, [equipmentId])
 
+    const [loadingSlots, setLoadingSlots] = useState(false)
+
     async function fetchAvailableSlots() {
+        setLoadingSlots(true)
             try {
                 const url = appointmentId ?
                     (`/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}&appointmentId=${appointmentId}`
@@ -105,17 +108,20 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
 
             } catch (err) {
                 console.log(`Error fetching slots: ${err}`)
+            } finally {
+                setLoadingSlots(false)
             }
     }
 
     const maxDate = minDate.add(30, 'day');
 
+    const [ isNewSlotSelected, setIsNewSlotSelected ] = useState(false);
+
     function handleDateSelect(value) {
         setSelectedDate(value);
         setSelectedSlot(null);
+        setIsNewSlotSelected(false)
     }
-
-    const [ isNewSlotSelected, setIsNewSlotSelected ] = useState(false);
 
     function handleSlotSelect(e) {
         e.preventDefault()
@@ -169,13 +175,12 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
                             }}
                         />
                     </LocalizationProvider>
-                    {/* <button className='small' onClick={() => setSelectedDate(null)}>Clear</button> */}
                 </div>
                 
                 {selectedDate ?
                     (<div className='time-form'>
                         <h2>Choose a time</h2>
-                        {loading ? 
+                        {loadingSlots ? 
                             <p>Loading available slots...</p>
                             : (
                                 !isAvailable ? (
@@ -207,16 +212,3 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
             
     )
 }
-
-
-                                                    {/*                                                     
-                                                    <input
-                                                        id={slot.startTime}
-                                                        value={slot.startTime}
-                                                        checked={selectedSlot?.startTime === slot?.startTime}
-                                                        type='radio'
-                                                        className={`slot-button ${selectedSlot?.startTime === slot?.startTime ? 'selected' : ''}`}
-                                                        onChange={handleSlotSelect}
-                                                    />
-                                                    <label key={index} htmlFor={slot.startTime}>
-                                                    {convertTime(slot.startTime)}</label> */}

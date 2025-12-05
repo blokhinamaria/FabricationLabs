@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../../../AuthContext";
+import BlockoutDate from "./BlockoutDate";
 
 export default function BlockoutDates() {
 
@@ -18,6 +19,14 @@ export default function BlockoutDates() {
         lab: assignedLabs
     })
     const [formError, setFormError] = useState('')
+    const [success, setSuccess] = useState(false);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setSuccess(false)
+        }, 3000);
+        return () => clearTimeout(timeout);
+    }, [success]);
 
     function resetForm() {
             setFormData({
@@ -36,35 +45,51 @@ export default function BlockoutDates() {
     },[])
     
     async function fetchBlockoutDates() {
-            const response = await fetch('/api/blockoutdates')
-            const data = await response.json()
-
-            if (data.blockouts) {
-                setBlockoutDates(data.blockouts)
+        
+        try {
+            const response = await fetch('/api/blockoutdates');
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch blockout dates');
             }
-            setLoading(false)
+            
+            const data = await response.json();
+            
+            if (data.blockouts) {
+                setBlockoutDates(data.blockouts);
+            } else {
+                console.warn('No blockouts in response:', data); 
+            }
+            
+        } catch (err) {
+            console.error('Fetch blockout dates error:', err);
+            setFormError('Failed to load blockout dates');
+        } finally {
+            setLoading(false); 
         }
+    }
     
     //dialog
-    const dialogRef = useRef();
+    const dialogRef = useRef(null);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-    const openModal = () => {
-        dialogRef.current.showModal()
+    const openModal = (ref) => {
+        ref.current.showModal()
         setIsDialogOpen(true)
     }
 
-    const closeModal = () => {
-        dialogRef.current.close()
-        setIsDialogOpen(false)
-        resetForm();
-    }
+    const closeModal = (ref) => {
+        if (ref?.current) {
+            ref.current.close();
+            setIsDialogOpen(false);
+            resetForm();
+    }}
 
     //close dialog when clicking outside
-    const handleDialogClick = (e) => {
-        if (e.target === dialogRef.current) {
-            closeModal();
+    const handleDialogClick = (e, ref) => {
+        if (e.target === ref.current) {
+            closeModal(ref);
         }
     }
 
@@ -73,7 +98,7 @@ export default function BlockoutDates() {
 
     function handleCreateNew() {
         setCreateNew(true)
-        openModal()
+        openModal(dialogRef)
     }
 
     function handleEdit(blockoutDate) {
@@ -88,7 +113,7 @@ export default function BlockoutDates() {
             lab: blockoutDate.lab
             })
         setBlackoutType(blockoutDate.type)
-        openModal()
+        openModal(dialogRef)
     }
 
     function handleLabChange(target) {
@@ -102,12 +127,8 @@ export default function BlockoutDates() {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        setFormError(''); 
         
-        // if (!formData.name || (!formData.date || !formData.startDate || !formData.endDate)) {
-        //     setFormError('All fields are required')
-        //     return 
-        // }
-
         const data = {
             name: formData.name,
             date: formData.date || '',
@@ -117,56 +138,72 @@ export default function BlockoutDates() {
             lab: assignedLabs
         };
 
+        // Demo admin 
         if (userRole === 'demo-admin') {
             if (editId) {
-                setBlockoutDates(prev => prev.map(blockoutdate => {
-                    if (blockoutdate._id === editId) {
-                        return data
-                    } else {
-                        return blockoutdate;
-                    }
-                }))
-                closeModal()
+                setBlockoutDates(prev => prev.map(blockoutdate => 
+                    blockoutdate._id === editId ? { ...data, _id: editId } : blockoutdate
+                ));
             } else {
-                setBlockoutDates(prev => ([
-                ...prev,
-                data
-                ]))
-                closeModal()
-                return;
+                setBlockoutDates(prev => [...prev, { ...data, _id: Date.now().toString() }]);
             }
+            setSuccess(true);
+            closeModal(dialogRef);
+            return; 
         }
-        if (userRole === 'admin') {
-                    try {
-                    if (editId) {
-                        const response = await fetch(`/api/blockoutdates?id=${editId}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
-                        })
-                        if (response.ok) {
-                            closeModal();
-                            fetchBlockoutDates();
-                        }
-                    } else {
-                            const response = await fetch(`/api/blockoutdates`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
-                        })
-                        if (response.ok) {
-                            closeModal();
-                            fetchBlockoutDates();
-                        }
-                    }
-                    
-                } catch (err) {
-                    setFormError('Failed to save the semester')
-                    console.error(err)
-                }
-            }
-        }
+
+    if (userRole === 'admin') {
+        setLoading(true); 
         
+        try { 
+            let response;
+            
+            if (editId) {
+                response = await fetch(`/api/blockoutdates?id=${editId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } else {
+                response = await fetch('/api/blockoutdates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            }
+
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Failed to save blockout date');
+            }
+
+            // Success
+            setSuccess(true);
+            closeModal(dialogRef);
+            await fetchBlockoutDates();
+            
+        } catch (err) {
+            console.error('Submit error:', err);
+            setFormError(err.message || 'Failed to save the blockout date');
+        } finally {
+            setLoading(false);
+        }
+    }
+}   
+
+    async function onUpdate(id) {
+        if (userRole === 'demo-admin') {
+            setBlockoutDates(prev => prev.filter(date => date._id !== id))
+            setSuccess(true);
+            return; 
+        }
+
+        setSuccess(true);
+        await fetchBlockoutDates();
+    }
+
 
     function convertDate(dateString) {
         const [year, month, day] = dateString.split('-').map(Number);
@@ -176,32 +213,33 @@ export default function BlockoutDates() {
     if (loading) return (<p>loading...</p>)
 
     return (
-        <article>
-            <h1>Blockout Dates</h1>
-            <h2>For {user.assignedLabs.join('&')}</h2>
+        <>
+        
+        <section className="appointment-list">
             {blockoutDates.length === 0 ? (<p>No blockout dates found</p>
                 ) : (
                     blockoutDates.map(date => (
-                        <div key={date._id}>
-                            <h3>{date.name}</h3>
-                            <p>From {convertDate(date.startDate).toDateString()}</p>
-                            <p>Till {convertDate(date.endDate).toDateString()}</p>
-                            <button className="small" onClick={() => handleEdit(date)}>Edit</button>
-                        </div>
+                        <BlockoutDate 
+                            date={date}
+                            handleEdit={handleEdit}
+                            onUpdate={onUpdate}
+                        />
                         
                     )))}
+            </section>
             <button onClick={handleCreateNew}
                     aria-expanded={isDialogOpen}
-                    aria-controls="delete-dialog"
+                    aria-controls="add-new-blockout"
                     aria-haspopup="dialog"
             >
                 + Add Blockout Dates</button>
-            <dialog id='add-new-blockout' ref={dialogRef} onClick={handleDialogClick}>
-                <button onClick={closeModal}
-                >Close</button>
-                    <h4>{createNew ? 'Add New Blockout Date' : 'Edit Blockout Date'}</h4>
+            <dialog id='add-new-blockout' ref={dialogRef} onClick={(e) => handleDialogClick(e, dialogRef)}>
+                <div className="dialog-close-button-wrapper">
+                    <button onClick={() => closeModal(dialogRef)} className="dialog-close-button">Close <img src="/icons/close_small_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg"/></button>
+                </div>
+                    <h3>{createNew ? 'Add New Blockout Date' : 'Edit Blockout Date'}</h3>
                         <form onSubmit={handleSubmit}>
-                            <div>
+                            <div className="input-group-wrapper column">
                                 <label htmlFor="blockoutDateName">Name</label>
                                 <input
                                     type="text"
@@ -212,7 +250,7 @@ export default function BlockoutDates() {
                                     onChange={e => setFormData({...formData, name: e.target.value})}
                                     required />
                             </div>
-                            <div className="type-selector">
+                            <div className="input-group-wrapper">
                                 <input
                                     type="radio"
                                     id="single"
@@ -223,7 +261,8 @@ export default function BlockoutDates() {
                                 <label htmlFor="single">
                                 Single Day
                                 </label>
-                                
+                            </div>
+                            <div className="input-group-wrapper">
                                 <input
                                     type="radio"
                                     value="range"
@@ -234,10 +273,11 @@ export default function BlockoutDates() {
                                 <label htmlFor="range">
                                     Date Range
                                 </label>
-                            </div>
+                            </div>  
+                            
                             {
                                 blackoutType === 'single' ? (
-                                    <div>
+                                    <div className="input-group-wrapper column">
                                         <label htmlFor="startDate">Choose Date</label>
                                         <input
                                             type="date"
@@ -249,7 +289,7 @@ export default function BlockoutDates() {
                                     </div>
                                 ) : (
                                     <>
-                                        <div>
+                                        <div className="input-group-wrapper column">
                                             <label htmlFor="startDate">Choose Staring Date</label>
                                             <input
                                                 type="date"
@@ -259,7 +299,7 @@ export default function BlockoutDates() {
                                                 onChange={e => setFormData({...formData, startDate: e.target.value})}
                                                 required />
                                         </div>
-                                        <div>
+                                        <div className="input-group-wrapper column">
                                             <label htmlFor="endDate">Choose Ending Date</label>
                                             <input
                                                 type="date"
@@ -274,7 +314,7 @@ export default function BlockoutDates() {
                             }
                             {user.assignedLabs.length > 1 && (
                                 <div className="lab-selector">
-                                    <div>
+                                    <div className="input-group-wrapper">
                                         <input
                                             type="checkbox"
                                             id="fablab"
@@ -286,27 +326,28 @@ export default function BlockoutDates() {
                                             FabLab
                                         </label>
                                     </div>
-                                    <div>
+                                    <div className="input-group-wrapper">
                                         <input
                                         type="checkbox"
                                         id="woodshop"
                                         value="Woodshop"
                                         checked={assignedLabs.includes('Woodshop')}
                                         onChange={(e) => handleLabChange(e.target)}
-                                    />
-                                    <label htmlFor="woodshop">
-                                        Woodshop
-                                    </label>
+                                        />
+                                        <label htmlFor="woodshop">
+                                            Woodshop
+                                        </label>
                                     </div>
-                                    
-                                    
                                 </div>
                             )}
                             {formError && <p>{formError}</p>}
                             <button type='submit'>{createNew ? 'Create' : 'Save Changes'}</button>
                         </form>
                 </dialog>
-        </article>
-
+                <div id='success' className={!success && 'hidden'}>
+                    Changes Saved
+                </div>
+        
+        </>                    
     )
 }

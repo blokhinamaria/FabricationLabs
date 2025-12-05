@@ -1,0 +1,112 @@
+section.appointment-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    text-align: start;
+    width: 305px;
+    
+    padding: calc(var(--gap-small) - 10px);
+    background-color: var(--glass-background);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-outside);
+    box-shadow: 0 4px 6px var(--drop-shadow); 
+    backdrop-filter: blur(5px);
+}
+
+section.appointment-overview > :not(hr) {
+    padding: 10px;
+}
+
+section.appointment-overview > .hover {
+    border: 1px solid transparent;
+}
+
+section.appointment-overview > .hover:hover {
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 6px var(--drop-shadow); 
+    border-radius: var(--border-radius-inside);
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+}
+
+section.appointment-overview.edit-appointment {
+    width: 100%;
+}
+
+div.appointment-overview-group {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    text-align: start;
+    gap: 10px;
+    position: relative;
+}
+
+div.appointment-icon-text {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dropdown-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.appointment-button-container {
+    display: flex;
+    gap: 10px;
+    justify-content: stretch;
+}
+
+.appointment-button-container.column {
+    flex-direction: column;
+}
+
+section.appointment-overview.deleted {
+    opacity: 0.4;
+}
+
+article.edit-appointment {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    justify-content: center;
+}
+
+dialog:open {
+    background-color: var(--dialog-background-color);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-inside);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: var(--gap-small);
+    width: 100%;
+    max-width: 450px;
+}
+
+dialog::backdrop {
+    background-color: var(--dialog-backdrop-color);
+}
+
+dialog > .dialog-close-button-wrapper {
+    display: flex;
+    justify-content: end;
+}
+
+dialog button.dialog-close-button {
+    width: max-content;
+    font-size: 0.875rem;
+}
+
+dialog h2 {
+    margin: 0;
+}
+
+dialog h4 {
+    margin: 0;
+}

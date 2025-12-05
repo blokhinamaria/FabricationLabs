@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import './Appointment.css'
 import { useAuth } from "../../../AuthContext";
+import Tooltip from '@mui/material/Tooltip';
 
 export default function AppointmentCardAdmin({id, data}) {
 
@@ -14,6 +15,8 @@ export default function AppointmentCardAdmin({id, data}) {
     const [message, setMessage ] = useState('')
     const [subject, setSubject] = useState('')
 
+    const userEmailRef = useRef(null);
+    const [ copied, setCopied ] = useState(false);
     const contactDialogRef = useRef(null);
     const cancelDialogRef = useRef(null);
 
@@ -45,9 +48,20 @@ export default function AppointmentCardAdmin({id, data}) {
         }
     }
 
-    function handleContact() {
-        console.log('contact')
-    }
+    async function handleCopyClick (e) {
+        e.stopPropagation();
+        setIsEmailVisible(true)
+        if (userEmailRef.current) {
+            const textToCopy = userEmailRef.current.textContent;
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }
+    };
 
     const [isContactDialogOpen, setIsContactDialogOpen] = useState(false)
     const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false)
@@ -165,24 +179,25 @@ export default function AppointmentCardAdmin({id, data}) {
     if (!appointment) return <p>No appointment found</p>
 
     return (
-        <div
-            className={`appointment-card appointment-overview-details ${appointmentStatus === 'cancelled' ? ('deleted') : null}` }
-        >   
-            {appointmentStatus === 'cancelled' &&
-                <div className="error-message">
-                    <p>Cancelled</p>
-                </div>}
-            <p>{appointment.type === 'class-reservation' ? "Class" : "Individual"}</p>
+        <section className={`appointment-overview ${appointmentStatus === 'cancelled' ? ('deleted') : null}` }>   
+            <div className="appointment-overview-group">
+                {appointmentStatus === 'cancelled' &&
+                <p className="error-message">Cancelled</p>}
+                <p>{appointment.type === 'class-reservation' ? "Class" : "Individual"}</p>
+            </div>
             {!dateVisible ? (
-                <div className="appointment-icon-text" onClick={() => setDateVisible(prev => !prev)}>
+                <div  className="appointment-overview-group hover" onClick={() => setDateVisible(prev => !prev)}>
+                    <div className="appointment-icon-text">
                         <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
                         <p>
                             {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                             {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
                         </p>
+                    </div>
+                    <img className="dropdown-icon" src="/icons/keyboard_arrow_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" />
                 </div>
             ) : (
-                <div className="appointment-overview-details" onClick={() => setDateVisible(prev => !prev)}>
+                <div className="appointment-overview-group hover" onClick={() => setDateVisible(prev => !prev)}>
                     <div className="appointment-icon-text">
                         <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
                         <p>
@@ -194,47 +209,56 @@ export default function AppointmentCardAdmin({id, data}) {
                         <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
                         <p>{appointmentDate.toDateString()}</p>
                     </div>
+                    <img className="dropdown-icon" src="/icons/keyboard_arrow_up_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" />
                 </div>
             )}
             
             <h3>{appointment.equipmentName}</h3>
             {appointment.materialPreference &&
                 <div className="appointment-icon-text">
-                    <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
-                    <p>
+                    <img src="/icons/stacks_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" alt="Clock" width="24" height="24" />
+                    <div>
+                        <em>
                         Preferred Materials
                         
-                    </p>
+                    </em>
                     {appointment.materialSelections.map(material => (
                                 <p key={material.id}>{material.material} {material.size} {material.color}</p>
                             ))}
+                    </div>
+                    
                 </div>
             }
             {appointment.userName ? (
                 !isEmailVisible ? 
-                (<div className="appointment-icon-text" onClick={() => setIsEmailVisible(prev => !prev)}>
-                    <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
-                    <p>{appointment.userName || appointment.userEmail}</p>
+                (<div  className="appointment-overview-group hover" onClick={() => setIsEmailVisible(prev => !prev)}>
+                    <div className="appointment-icon-text">
+                        <img src="/icons/person_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" alt="Calendar" width="24" height="24" />
+                        <p>{appointment.userName}</p>
+                    </div>
+                    <img className="dropdown-icon" src="/icons/keyboard_arrow_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" />
                 </div>
                 ) : (
-                    <div onClick={() => setIsEmailVisible(prev => !prev)}>
+                    <div  className="appointment-overview-group hover" onClick={() => setIsEmailVisible(prev => !prev)}>
                         <div className="appointment-icon-text">
-                            <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
-                            <p>{appointment.userName || appointment.userEmail}</p>
+                            <img src="/icons/person_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" alt="Calendar" width="24" height="24" />
+                            <p>{appointment.userName}</p>
                         </div>
-                        <div className="appointment-icon-text">
-                            <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
-                            <p>{appointment.userEmail}</p>
+                        <div className="appointment-icon-text" onClick={handleCopyClick}>
+                            <img src="/icons/mail_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" alt="Calendar" width="24" height="24" />
+                            <Tooltip title={copied ? ('Copied') : "Click to copy the email"} arrow placement="right">
+                                <p ref={userEmailRef} className="text-to-copy">{appointment.userEmail}</p>
+                            </Tooltip>
                         </div>
+                        <img className="dropdown-icon" src="/icons/keyboard_arrow_up_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" />
                     </div>
                 )) : (
                     <div className="appointment-icon-text">
-                            <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
+                            <img src="/icons/mail_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" alt="Calendar" width="24" height="24" />
                             <p>{appointment.userEmail}</p>
                         </div>
                 )
             }
-            
                         <div className="appointment-button-container">
                             <button 
                                 onClick={() => (openModal(contactDialogRef), setIsContactDialogOpen(true))}
@@ -243,13 +267,22 @@ export default function AppointmentCardAdmin({id, data}) {
                                 aria-haspopup="dialog"
                                 disabled={appointmentStatus === 'cancelled'}
                                 >
-                                    Contact user
+                                    Contact User
                             </button>
                             <dialog id='contact-dialog' ref={contactDialogRef} onClick={(e) => (handleDialogClick(e, contactDialogRef), setIsContactDialogOpen(false))}>
-                                <button onClick={() => (closeModal(contactDialogRef), setIsContactDialogOpen(false))}>Close</button>
-                                <h4>Contact User: {appointment.userName || appointment.userEmail}</h4>
-                                <h4>What is your message?</h4>
+                                <div className="dialog-close-button-wrapper">
+                                    <button onClick={() => (closeModal(contactDialogRef), setIsContactDialogOpen(false))} className="dialog-close-button">Close <img src="/icons/close_small_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg"/></button>
+                                </div>
+                                <div>
+                                    <h2>Contact User</h2>
+                                {appointment.userName ? (
+                                    <h3>{appointment.userName}<br/>{appointment.userEmail}</h3>
+                                ) : (
+                                    <h3>{appointment.userEmail}</h3>
+                                )}
+                                </div>
                                 <form onSubmit={handleSendMessage}>
+                                    <h4>What is your message?</h4>
                                     <div>
                                         <label htmlFor="subject">Subject</label>
                                         <input
@@ -282,8 +315,6 @@ export default function AppointmentCardAdmin({id, data}) {
                                     <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                                         {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
                                     </p>
-
-                                    
                                 </div>
                                 
                             </dialog>
@@ -299,14 +330,17 @@ export default function AppointmentCardAdmin({id, data}) {
                             </button>
                             
                             <dialog id='cancel-dialog' ref={cancelDialogRef} onClick={(e) => (handleDialogClick(e, cancelDialogRef), setIsCancelDialogOpen(false))}>
-                                <button onClick={() => (closeModal(cancelDialogRef), setIsCancelDialogOpen(false))}>Close</button>
-                                <h4>Are you sure you want to cancel the {appointmentType} for</h4>
-                                <div>  
-                                    <h3>{appointment.equipmentName}</h3>
-                                    <p>on {appointmentDate.toDateString()}</p>
-                                    <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                <div className="dialog-close-button-wrapper">
+                                    <button onClick={() => (closeModal(cancelDialogRef), setIsCancelDialogOpen(false))} className="dialog-close-button">Close <img src="/icons/close_small_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg"/></button>
+                                </div>
+                                    <div>  
+                                        <h4>Are you sure you want to cancel the {appointmentType} for</h4>
+                                        <h3>{appointment.equipmentName}</h3>
+                                        <p>on {appointmentDate.toDateString()}</p>
+                                        <p>at {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                                         {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
                                     </p>
+                                    </div>
                                     <div>
                                         <label htmlFor="reason">Reason</label>
                                         <input
@@ -319,10 +353,10 @@ export default function AppointmentCardAdmin({id, data}) {
                                             required />
                                     </div>
                                     <p>The user will be notified via email</p>
-                                </div>
-                                <button onClick={() => handleCancel(appointment._id)}>Cancel {appointment.type}</button>
+                                
+                                <button onClick={() => handleCancel(appointment._id)}>Cancel {appointmentType}</button>
                             </dialog>
                         </div>
-        </div>
+        </section>
     )
 }

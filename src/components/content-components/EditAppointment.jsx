@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ObjectId } from "bson";
-import AppointmentSummary from "./Appointment/AppointmentSummary";
-import EquipmentSelection from "./Appointment-components/EquipmentSelection";
-import DateTimeSelection from "./Appointment-components/DateTimeSelection";
+import AppointmentCardSummary from "./Appointment-cards/AppointmentCardSummary.jsx";
+import EquipmentSelection from "./Appointment-components/EquipmentSelection.jsx";
+import DateTimeSelection from "./Appointment-components/DateTimeSelection.jsx";
 
 export default function EditAppointment() {
     const location = useLocation();
@@ -16,6 +16,12 @@ export default function EditAppointment() {
     const [error, setError] = useState('')
     const [step, setStep] = useState('overview')
     const [isUpdated, setIsUpdated ] = useState(false)
+
+    //appointment data
+    const [appointmentType, setAppointmentType] = useState(appointment?.type === 'class-reservation' ? 'Class Reservation' : 'Appointment');
+    const [isClassReservation, setIsClassReservation] = useState(appointment?.type === 'class-reservation');
+    const [appointmentDate, setAppointmentDate] = useState(new Date(appointment?.date))
+    const [reservationEnd, setReservationEnd] = useState(appointment?.type === 'class-reservation' && appointment.endTime ? appointment.endTime : null)
 
     //populate the form with appointment data
     const [classNumber, setClassNumber] = useState('')
@@ -33,6 +39,10 @@ export default function EditAppointment() {
             const data = await response.json();
             if (response.ok) {
                 setAppointment(data.appointment)
+                setAppointmentType(data.appointment.type === 'class-reservation' ? 'Class Reservation' : 'Appointment')
+                setIsClassReservation(data.appointment.type === 'class-reservation')
+                setAppointmentDate(new Date(data.appointment.date))
+                setReservationEnd(appointment?.type === 'class-reservation' && appointment.endTime ? appointment.endTime : null)
                 setClassNumber(data.appointment.classNumber)
                 setNotes(data.appointment.notes)
             } else {
@@ -198,44 +208,74 @@ export default function EditAppointment() {
     return (
         <main>
             {step === 'overview' && 
-                <article className="edit-appointment appointment-card">
+                <article className="edit-appointment">
                     <h2>Edit Appointment</h2>
-                    <AppointmentSummary
-                        appointment={appointment}
-                        handleClickItem={handleClickItem}
-                        mode={'edit'}/>
-                    <form onSubmit={e => handleSubmit(e)} style={{ marginBlock: '24px'}}>
-                        <div>
-                            <label htmlFor='classNumber'>Class</label>
-                            <input
-                                type="text"
-                                id="classNumber"
-                                name="classNumber"
-                                placeholder="ART XXX"
-                                value={classNumber}
-                                onChange={(e) => {
-                                    setClassNumber(e.target.value);
-                                    setIsUpdated(true);
-                                }}/>
+                    <section className="appointment-overview edit-appointment">
+                        {/* Equipment+Materials section */}
+                        <div className="appointment-overview-group hover" onClick={() => handleClickItem('equipment')}>
+                            <div>
+                                <p>{appointmentType} for</p>
+                                <h3>{appointment?.equipmentName}</h3>           
+                            </div>                     
+                            { appointment.materialPreference ? (
+                                <div> 
+                                    <p>Preferred  Materials</p>
+                                        {appointment.materialSelections.map(material => (
+                                            <p key={material.id}><strong>{material.material} {material.size} {material.color}</strong></p>
+                                        ))}
+                                </div>
+                                ) : null}
                         </div>
-                        <div>
-                            <label htmlFor='details'>Additional details</label>
-                            <textarea
-                                id="details"
-                                name="details"
-                                placeholder="Provide details of what you need to do so we can better prepare for your visit"
-                                value={notes}
-                                onChange={(e) => {
-                                    setNotes(e.target.value);
-                                    setIsUpdated(true);
-                                }}
-                                />
+                        
+                        {/* Date+Time name */}
+                        {appointment?.date && (
+                            <div className='appointment-overview-group hover' onClick={() => handleClickItem('time')}>
+                                    <p>{appointmentType} at</p>
+                                    <div className="appointment-icon-text">
+                                        <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
+                                        <p>{appointmentDate.toDateString()}</p>
+                                    </div>
+                                    <div className="appointment-icon-text">
+                                        <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
+                                        <p>{appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}{isClassReservation && `–${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}</p>
+                                        
+                                    </div>
+                                </div>
+                                
+                        )}
+                        <form className="appointment-overview-group" onSubmit={e => handleSubmit(e)}>
+                            <div className="input-group-wrapper column">
+                                <label htmlFor='classNumber'>Class</label>
+                                <input
+                                    type="text"
+                                    id="classNumber"
+                                    name="classNumber"
+                                    placeholder="ART XXX"
+                                    value={classNumber}
+                                    onChange={(e) => {
+                                        setClassNumber(e.target.value);
+                                        setIsUpdated(true);
+                                    }}/>
+                            </div>
+                            <div className="input-group-wrapper column"> 
+                                <label htmlFor='details'>Additional details</label>
+                                <textarea
+                                    id="details"
+                                    name="details"
+                                    placeholder="Provide details of what you need to do so we can better prepare for your visit"
+                                    value={notes}
+                                    onChange={(e) => {
+                                        setNotes(e.target.value);
+                                        setIsUpdated(true);
+                                    }}
+                                    />
+                            </div>
+                        </form>
+                        <div className='appointment-button-container column'>
+                            <button disabled={!isUpdated} onClick={e => handleSubmit(e)}>Submit</button>
+                            <button onClick={handleCancel}>Cancel</button>
                         </div>
-                    </form>
-                    <div className="button-group">
-                        <button disabled={!isUpdated} onClick={e => handleSubmit(e)}>Submit</button>
-                        <button onClick={handleCancel}>Cancel</button>
-                    </div>
+                    </section>
                     
                 </article>
             }
@@ -243,7 +283,7 @@ export default function EditAppointment() {
             <div className="appointment-booking-grid">
                 <div className="appointment-sidebar appointment-card">
                     <button onClick={() => setStep('overview')}>Go back</button>
-                    <AppointmentSummary
+                    <AppointmentCardSummary
                         appointment={appointment}
                         handleClickItem={handleClickItem}
                         mode={'edit'}/>
@@ -261,7 +301,7 @@ export default function EditAppointment() {
                 <div className="appointment-booking-grid">
                     <div className="appointment-sidebar appointment-card">
                         <button onClick={() => setStep('overview')}>Go back</button>
-                        <AppointmentSummary
+                        <AppointmentCardSummary
                             appointment={appointment}
                             handleClickItem={handleClickItem}
                             mode={'edit'}/>

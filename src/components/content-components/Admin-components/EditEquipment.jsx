@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import EquipmentAvailability from './equipment-components/EquipmentAvailability.jsx';
 import EquipmentMaterials from './equipment-components/EquipmentMaterials.jsx';
 import EquipmentFileReq from './equipment-components/EquipmentFileReq.jsx';
 import { useAuth } from '../../../AuthContext.jsx';
+import './Equipment.css'
+
 
 export default function EditEquipment() {
     const { userRole } = useAuth();
@@ -15,6 +17,8 @@ export default function EditEquipment() {
     const [ equipment, setEquipment] = useState({})
 
     const [ loading, setLoading ] = useState(false);
+    const [ success, setSuccess ] = useState(false);
+    const timeoutRef = useRef(null);
     
     useEffect(() => {
         setLoading(true)
@@ -40,9 +44,11 @@ export default function EditEquipment() {
                 ...prev,
                 ...differences
             }))
+            openAndAutoClose();
             return;
         }
-        console.log(differences)
+        
+        
         try {
             const response = await fetch(`/api/equipment?id=${equipment._id}`, {
                 method: "PUT",
@@ -51,6 +57,7 @@ export default function EditEquipment() {
             })
             if (response.ok) {
                 console.log(`success. Response: ${response}`)
+                openAndAutoClose();
                 await fetchEquipment(equipment._id);
             } else {
                 console.error(`Server error: ${response.statusText}`)
@@ -64,29 +71,76 @@ export default function EditEquipment() {
         navigate('/admin-dashboard/equipment')
     }
 
+    const openModal = () => {
+        setSuccess(true)
+    }
+
+    const closeModal = () => {
+        setSuccess(false)
+    }
+
+    const openAndAutoClose = () => {
+        // Clear any existing timeout
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+
+        openModal();
+        
+        // Store the timeout ID
+        timeoutRef.current = setTimeout(() => {
+            closeModal();
+            timeoutRef.current = null;
+        }, 3000);
+    };
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+            };
+    }, []);
+
+    // //close dialog when clicking outside
+    // const handleDialogClick = (e) => {
+    //     if (e.target === dialogRef.current) {
+    //         closeModal();
+    //     }
+    // }
+
     if (loading) return (<main><p>Loading...</p></main>)
 
     return (
         <main> 
-            <h2>Edit Equipment</h2>
-            <button onClick={handleCancel}>Go Back</button>
-            <article className="edit-appointment appointment-card">
-                <h2>{equipment.name}</h2>
-                <EquipmentAvailability
-                    equipment={equipment}
-                    onUpdate={updateEquipment}
+            
+            <article className="edit-appointment">
+                <div className='edit-equipment-header'>
+                    <button className='back-button small' onClick={handleCancel}>Go Back</button>
+                    <h2>Edit Equipment</h2>
+                </div>
+                <section className='appointment-overview edit-equipment-wrapper'>
+                    <h1>{equipment.name}</h1>
+                    <EquipmentAvailability
+                        equipment={equipment}
+                        onUpdate={updateEquipment}
                     />
-
-                <EquipmentMaterials
-                    equipment={equipment}
-                    onUpdate={updateEquipment}
-                />
-
-                <EquipmentFileReq
-                    file={equipment.fileRequirements}
-                    onUpdate={updateEquipment}
-                />
+                    <hr></hr>
+                    <EquipmentMaterials
+                        equipment={equipment}
+                        onUpdate={updateEquipment}
+                    />
+                    <hr></hr>
+                    <EquipmentFileReq
+                        file={equipment.fileRequirements}
+                        onUpdate={updateEquipment}
+                    />
+                </section>
             </article>
+            <div id='success' className={!success && 'hidden'}>
+                Changes Saved
+            </div>
         </main>  
     )
 }

@@ -149,7 +149,6 @@ async function handleDemoSubmit(formData) {
                 <article>
                     <h2>Please sign in with your UTampa Email to start</h2>
                     <form id='signIn' action={handleSubmit}>
-                        <div>
                             <input
                                 aria-label='email'
                                 aria-required={true}
@@ -161,7 +160,6 @@ async function handleDemoSubmit(formData) {
                                 onChange={e => setUserEmail(e.target.value)}>
                             </input>
                             { errorMessage ? <p aria-live='polite' className='error-message'>{errorMessage}</p> : null}
-                        </div>
                         <button type='submit'>Sign In</button>
                     
                     </form>
@@ -185,6 +183,9 @@ async function handleDemoSubmit(formData) {
                                 value={userEmail}
                                 onChange={e => setUserEmail(e.target.value)}>
                             </input>
+                        </div>
+
+                        <div>
                             <input
                                 aria-label='password'
                                 aria-required={true}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../../../AuthContext";
+import Semester from "./Semester";
 
 export default function Semesters() {
     const { userRole } = useAuth()
@@ -12,6 +13,7 @@ export default function Semesters() {
         isActive: true
     })
     const [formError, setFormError] = useState('')
+    const [success, setSuccess] = useState(false);
 
     function resetForm() {
             setFormData({
@@ -25,36 +27,52 @@ export default function Semesters() {
     useEffect(() => {
         fetchSemesters();
     },[])
+    
     async function fetchSemesters() {
-            const response = await fetch('/api/semesters')
-            const data = await response.json()
 
-            if (data.semesters) {
-                setSemesters(data.semesters)
+        try {
+            const response = await fetch('/api/semesters')
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch semesters dates');
             }
-            setLoading(false)
+            
+            const data = await response.json();
+            
+            if (data.semesters) {
+                setSemesters(data.semesters);
+            } else {
+                console.warn('No semesters found in response:', data); 
+            }
+            
+        } catch (err) {
+            console.error('Fetch semesters error:', err);
+            setFormError('Failed to load semesters');
+        } finally {
+            setLoading(false); 
         }
+    }
     
     //dialog
     const dialogRef = useRef();
 
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-    const openModal = () => {
-        dialogRef.current.showModal()
+    const openModal = (ref) => {
+        ref.current.showModal()
         setIsDialogOpen(true)
     }
 
-    const closeModal = () => {
-        dialogRef.current.close()
+    const closeModal = (ref) => {
+        ref.current.close()
         setIsDialogOpen(false)
         resetForm();
     }
 
     //close dialog when clicking outside
-    const handleDialogClick = (e) => {
-        if (e.target === dialogRef.current) {
-            closeModal();
+    const handleDialogClick = (e, ref) => {
+        if (e.target === ref.current) {
+            closeModal(ref);
         }
     }
 
@@ -63,7 +81,7 @@ export default function Semesters() {
 
     function handleCreateNew() {
         setCreateNew(true)
-        openModal()
+        openModal(dialogRef)
     }
 
     function handleEdit(semester) {
@@ -75,7 +93,7 @@ export default function Semesters() {
             endDate: semester.endDate,
             isActive: semester.isActive
             })
-        openModal()
+        openModal(dialogRef)
     }
 
     async function handleSubmit(e) {
@@ -92,6 +110,7 @@ export default function Semesters() {
             endDate: formData.endDate,
             isActive: formData.isActive
         };
+
         if (userRole === 'demo-admin') {
             if (editId) {
                 setSemesters(prev => prev.map(semester => {
@@ -101,13 +120,13 @@ export default function Semesters() {
                         return semester;
                     }
                 }))
-                closeModal()
+                closeModal(dialogRef)
             } else {
                 setSemesters(prev => ([
                 ...prev,
                 data
                 ]))
-                closeModal()
+                closeModal(dialogRef)
                 return;
             }
         }
@@ -119,55 +138,65 @@ export default function Semesters() {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(data)
                         })
-                        if (response.ok) {
-                            closeModal();
-                            fetchSemesters();
-                        }
-                    } else {
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            throw new Error(errorData.message || 'Failed to save semester');
+                        
+                    }} else {
                             const response = await fetch(`/api/semesters`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(data)
                         })
-                        if (response.ok) {
-                            closeModal();
-                            fetchSemesters();
-                        }
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            throw new Error(errorData.message || 'Failed to save semester');
                     }
+                
+                }
+                closeModal(dialogRef);
+                setSuccess(true);
+                fetchSemesters();
                     
                 } catch (err) {
                     setFormError('Failed to save the semester')
                     console.error(err)
+                } finally {
+                    setLoading(false);
                 }
             }
         }
-        
 
-    console.log(semesters)
 
-    function convertDate(dateString) {
-        const [year, month, day] = dateString.split('-').map(Number);
-        return new Date(year, month - 1, day);
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setSuccess(false)
+        }, 3000);
+        return () => clearTimeout(timeout);
+    }, [success]);
+
+    async function onUpdate(id) {
+        if (userRole === 'demo-admin') {
+            setSemesters(prev => prev.filter(date => date._id !== id))
+            setSuccess(true);
+            return; 
+        }
+        setSuccess(true);
+        await fetchSemesters();
     }
 
     if (loading) return (<p>loading...</p>)
 
     return (
-        <article>
-            <h1>Semester Dates</h1>
+        <section className="appointment-list"> 
             {semesters.length === 0 ? (<p>No semester periods found</p>
                 ) : (
                     semesters.map(semester => (
-                        <div key={semester._id}>
-                            <h3>{semester.name}</h3>
-                            <p>From {convertDate(semester.startDate).toDateString()}</p>
-                            <p>Till {convertDate(semester.endDate).toDateString()}</p>
-                            <p>Status: {semester.isActive ? 'Active' : 'Blocked'}
-                            </p>
-                            <p>{semester.isActive ? 'Users can schedule appointments' : 'Users can NOT schedule appointments'}
-                                </p>
-                            <button className="small" onClick={() => handleEdit(semester)}>Edit</button>
-                        </div>
+                        <Semester 
+                            semester={semester}
+                            handleEdit={handleEdit}
+                            onUpdate={onUpdate}
+                        />
                         
                     )))}
             <button onClick={handleCreateNew}
@@ -177,9 +206,10 @@ export default function Semesters() {
             >
                 + Add Semester</button>
             <dialog id='add-new-semester' ref={dialogRef} onClick={handleDialogClick}>
-                <button onClick={closeModal}
-                >Close</button>
-                    <h4>{createNew ? 'Add New Semester' : 'Edit Semester'}</h4>
+                <div className="dialog-close-button-wrapper">
+                    <button onClick={() => closeModal(dialogRef)} className="dialog-close-button">Close <img src="/icons/close_small_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg"/></button>
+                </div>
+                    <h3>{createNew ? 'Add New Semester' : 'Edit Semester'}</h3>
                         <form onSubmit={handleSubmit}>
                             <div>
                                 <label htmlFor="semesterName">Name</label>
@@ -212,7 +242,7 @@ export default function Semesters() {
                                     onChange={e => setFormData({...formData, endDate: e.target.value})}
                                     required />
                             </div>
-                            <div>
+                            <div className="input-group-wrapper">
                                 <input
                                     type="checkbox"
                                     id="active"
@@ -227,7 +257,10 @@ export default function Semesters() {
                             <button type='submit'>{createNew ? 'Create' : 'Save Changes'}</button>
                         </form>
                 </dialog>
-        </article>
+                <div id='success' className={!success && 'hidden'}>
+                    Changes Saved
+                </div>
+        </section>
 
     )
 }

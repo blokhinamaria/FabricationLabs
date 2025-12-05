@@ -1,4 +1,6 @@
 import { useState, useRef } from "react";
+import { Tooltip } from "@mui/material";
+ 
 
 export default function EquipmentMaterials({equipment, onUpdate}) {
 
@@ -19,6 +21,7 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
     const dialogRef = useRef({});
 
     const [ formError, setFormError ] = useState('');
+    const [loading, setLoading ] = useState(false)
 
     const [ materialUpdated, setMaterialUpdated ] = useState(false)
 
@@ -318,31 +321,50 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
         }
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault()
-        setFormError('')
-        const equipmentUpdates = {}
+async function handleSubmit(e) {
+    e.preventDefault();
+    setFormError('');
 
-        function inStockIds(material) {
-            if (material.inStock) {
-                return material.id
-            }
+    function inStockIds(material) {
+        if (material.inStock) {
+            return material.id;
         }
-        const prevInStockIds = equipment.materials.map(material => inStockIds(material)).sort().join(',')
-        const curentInStockIds = materials.map(material => inStockIds(material)).sort().join(',')
-        const materialsStockChanged = prevInStockIds !== curentInStockIds;
-
-        if (materialsStockChanged) {
-            equipmentUpdates.materials = materials.map(material => material)
-        }
-
-        if(equipmentUpdates) {
-            await onUpdate(equipmentUpdates)
-            return
-        }
-        setFormError('Materials were not changed')
-
     }
+
+    const prevInStockIds = equipment.materials
+        .map(material => inStockIds(material))
+        .filter(Boolean)
+        .sort()
+        .join(',');
+    
+    const currentInStockIds = materials
+        .map(material => inStockIds(material))
+        .filter(Boolean)
+        .sort()
+        .join(',');
+    
+    const materialsStockChanged = prevInStockIds !== currentInStockIds;
+
+    if (!materialsStockChanged) {
+        setFormError('Materials were not changed');
+        return; 
+    }
+
+    // Materials changed - update them
+    const equipmentUpdates = {
+        materials: materials
+    };
+
+    setLoading(true);
+    try {
+        await onUpdate(equipmentUpdates);
+    } catch (err) {
+        console.log(err);
+        setFormError('Something went wrong. Please try again');
+    } finally {
+        setLoading(false);
+    }
+}
 
     function handleCancel() {
         setMaterials(equipment.materials)
@@ -352,7 +374,7 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
         <section>
             <form onSubmit={handleSubmit}>
                     <div>
-                        <p>Materials</p>
+                        <h2>Materials</h2>
                         {Object.entries(groupedByMaterialAndSize).map(([material, sizeColor]) => (
                             <div key={material}>
                                 <div className='input-group-wrapper'>
@@ -365,10 +387,13 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
                                         onChange={e => handleMaterialChange(e.target, sizeColor)}
                                     />
                                     <label htmlFor={material}>{material}</label>
-                                    <span onClick={() => handleDelete(material)}>🗑️</span>
+                                    <Tooltip title="Delete Material" arrow placement="right">
+                                        <img src="/icons/delete_forever_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" onClick={() => handleDelete(material)}></img>
+                                    </Tooltip>
                                 </div>
-                                {sizeColor[0].size && sizeColor.map(({size, colors}) => (
-                                    <div style={{marginInlineStart: '20px', textAlign: 'start'}} key={size}>
+                                <div style={{marginInlineStart: '20px', textAlign: 'start'}}>
+                                    {sizeColor[0].size && sizeColor.map(({size, colors}) => (
+                                    <div  key={size}>
                                         <div  className='input-group-wrapper'>
                                             <input
                                                 type='checkbox'
@@ -379,7 +404,9 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
                                                 onChange={(e) => handleSizeChange(e.target, colors)}
                                             />
                                             <label htmlFor={size}>{size}</label>
-                                            <span onClick={() => handleDelete(material, size)}>🗑️</span>
+                                            <Tooltip title="Delete Size" arrow placement="right">
+                                                <img src="/icons/delete_forever_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" onClick={() => handleDelete(material, size)}></img>
+                                            </Tooltip>
                                         </div>
                                         <div style={{marginInlineStart: '40px', textAlign: 'start'}}>
                                             {colors[0].color && colors.map(color => (
@@ -393,7 +420,9 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
                                                         onChange={e => handleColorChange(e.target)}
                                                     />
                                                     <label htmlFor={color.id}>{color.color}</label>
-                                                    <span onClick={() => handleDelete(color.material, color.size, color.color)}>🗑️</span>
+                                                    <Tooltip title="Delete Color" arrow placement="right">
+                                                        <img src="/icons/delete_forever_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" onClick={() => handleDelete(color.material, color.size, color.color)}></img>
+                                                    </Tooltip>
                                                 </div>
                                             ))}
                                             <div className='input-group-wrapper'>
@@ -447,62 +476,64 @@ export default function EquipmentMaterials({equipment, onUpdate}) {
                                                 </label>
                                                 {showAddButtons[material] && <span onClick={() => handleAddNew(material, sizeColor, 'new-size')}>❇️</span>}
                                             </div>
-                                                    {formError && <p className="warning">{formError}</p>}
+                                </div>
+                                {formError && <p className="warning">{formError}</p>}
                             </div>
                         ))}
                         <button
-                                            className='small' 
-                                            onClick={openModal}
-                                            aria-expanded={isDialogOpen}
-                                            aria-controls="new-size-dialog"
-                                            aria-haspopup="dialog"
-                                            type="button"
-                                            >
-                                                + Add New Material
-                                        </button>
-                                        
-                                    </div>
-                    <button type='submit' disabled={!materialUpdated} onClick={handleSubmit}>Save</button>
+                            className='small' 
+                            onClick={openModal}
+                            aria-expanded={isDialogOpen}
+                            aria-controls="new-size-dialog"
+                            aria-haspopup="dialog"
+                            type="button"
+                            >
+                            + Add New Material
+                        </button>              
+                    </div>
+                    <button type='submit' disabled={!materialUpdated} onClick={handleSubmit}>{loading ? "Saving" : 'Save'}</button>
                     <button type='button' disabled={!materialUpdated} onClick={handleCancel}>Restore</button>
                 </form>
                 <dialog id='new-material-dialog' ref={dialogRef} onClick={(e) => handleDialogClick(e)}>
-                                            <button onClick={() => closeModal()}>Cancel</button>
-                                            <form  onSubmit={createNewMaterial}>
-                                                <h4>Add new material</h4>
-                                                <div className='input-group-wrapper'>
-                                                    <label htmlFor='new-size'>New Material</label>
-                                                    <input
-                                                        type='text'
-                                                        id='new-size'
-                                                        name='new-size'
-                                                        value={newMaterial}
-                                                        onChange={e => setNewMaterial(e.target.value)}
-                                                    />
-                                                </div>
-                                                {newMaterialError && <p>{newMaterialError}</p>}
-                                                <div className='input-group-wrapper'>
-                                                    <label htmlFor='new-size'>New Size</label>
-                                                    <input
-                                                        type='text'
-                                                        id='new-size'
-                                                        name='new-size'
-                                                        value={newMaterialSize}
-                                                        onChange={e => setNewMaterialSize(e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className='input-group-wrapper'>
-                                                    <label htmlFor='new-size'>New Color</label>
-                                                    <input
-                                                        type='text'
-                                                        id='new-size'
-                                                        name='new-size'
-                                                        value={newMaterialColor}
-                                                        onChange={e => setNewMaterialColor(e.target.value)}
-                                                    />
-                                                </div>
-                                                <button type="submit">+ Add new material</button>
-                                            </form>
-                                        </dialog>
+                    <div className="dialog-close-button-wrapper">
+                        <button  onClick={() => closeModal()} className="dialog-close-button">Close <img src="/icons/close_small_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg"/></button>
+                    </div>
+                    <form  onSubmit={createNewMaterial}>
+                        <h3>Add new material</h3>
+                        <div className='input-group-wrapper column'>
+                            <label htmlFor='new-size'>New Material</label>
+                            <input
+                                type='text'
+                                id='new-size'
+                                name='new-size'
+                                value={newMaterial}
+                                onChange={e => setNewMaterial(e.target.value)}
+                            />
+                            </div>
+                            {newMaterialError && <p>{newMaterialError}</p>}
+                            <div className='input-group-wrapper column'>
+                                <label htmlFor='new-size'>New Size</label>
+                                <input
+                                    type='text'
+                                    id='new-size'
+                                    name='new-size'
+                                    value={newMaterialSize}
+                                    onChange={e => setNewMaterialSize(e.target.value)}
+                                />
+                            </div>
+                            <div className='input-group-wrapper column'>
+                                <label htmlFor='new-size'>New Color</label>
+                                <input
+                                    type='text'
+                                    id='new-size'
+                                    name='new-size'
+                                    value={newMaterialColor}
+                                    onChange={e => setNewMaterialColor(e.target.value)}
+                                />
+                            </div>
+                            <button type="submit">+ Add new material</button>
+                        </form>
+                    </dialog>
         </section>
     )
 }

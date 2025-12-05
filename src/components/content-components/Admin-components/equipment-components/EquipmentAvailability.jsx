@@ -1,3 +1,4 @@
+import { Tooltip } from "@mui/material";
 import {useState } from "react"
 
 export default function EquipmentAvailability({equipment, onUpdate}) {
@@ -7,6 +8,7 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
     const [ unavailableDateType, setUnavailableDateType ] = useState('single')
 
     const [ formError, setFromError ] = useState('');
+    const [loading, setLoading ] = useState(false)
     
     const today = new Date();
     const [ newUnavailableDate, setNewUnavailableDate ] = useState(`${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`)
@@ -26,8 +28,15 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
         }
 
         equipmentUpdates.available = available;
-        if(equipmentUpdates) {
+        setLoading(true)
+        try {
             await onUpdate(equipmentUpdates)
+            
+        } catch (err) {
+            console.log(err) 
+            setFromError('Something went wrong. Please try again')
+        } finally {
+            setLoading(false)
         }
         return;
     }
@@ -96,42 +105,63 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
         } else {
             setUnavailableDates((prev) => prev.filter(date => date.date !== dateToDelete.date))
         }
+        setDatesUpdated(true)
     }
 
     async function handleSubmitDates(e) {
         e.preventDefault();
-        setFromError('')
+        setFromError('');
 
-        const equipmentUpdates = {}
+        const equipmentUpdates = {};
         
-        if (unavailableDates.length !==  equipment.availabilityExceptions.length) {
+        // Check if lengths are different
+        if (unavailableDates.length !== equipment.availabilityExceptions.length) {
             equipmentUpdates.availabilityExceptions = unavailableDates;
-            if (equipmentUpdates) {
+            setLoading(true);
+            try {
                 await onUpdate(equipmentUpdates);
-                return;
+            } catch (err) {
+                console.log(err);
+                setFromError('Something went wrong. Please try again');
+            } finally {
+                setLoading(false);
             }
+            return;
         }
             
-        const currentDates = unavailableDates.map(date => date.date ? date.date : `${date.startDate}-${date.endDate}`).sort().join(',');
-        const previousDates = equipment.availabilityExceptions.map(date => date.date ? date.date : `${date.startDate}-${date.endDate}`).sort().join(',');
+        // Check if dates content changed
+        const currentDates = unavailableDates.map(date => 
+            date.date ? date.date : `${date.startDate}-${date.endDate}`
+        ).sort().join(',');
+        
+        const previousDates = equipment.availabilityExceptions.map(date => 
+            date.date ? date.date : `${date.startDate}-${date.endDate}`
+        ).sort().join(',');
+        
         const datesChanged = currentDates !== previousDates;
 
-        if (datesChanged) {
-            equipmentUpdates.availabilityExceptions = unavailableDates;
-            if (equipmentUpdates) {
-                await onUpdate(equipmentUpdates);
-                return;
-            }
+        if (!datesChanged) {
+            setFromError('Unavailable Dates were not changed');
+            return;
         }
 
-        setFromError('Unavailable Dates were not changed')
-
+        // Dates changed - update
+        equipmentUpdates.availabilityExceptions = unavailableDates;
+        setLoading(true);
+        try {
+            await onUpdate(equipmentUpdates);
+        } catch (err) {
+            console.log(err);
+            setFromError('Something went wrong. Please try again');
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
-        <section>
+        <section className="equipment-availability-group">
             <form onSubmit={handleSubmitAvailability}>
-                <p>Availability</p>
+                <h2>Availability</h2>
                         <div className='input-group-wrapper'>
                             <input
                                 type='radio'
@@ -152,24 +182,34 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
                                 onChange={() => setAvailable(false)}/>
                             <label htmlFor='unavailable'>Permanently Unavailable</label>
                         </div>
-                    <button type="submit" disabled={available === equipment.available}>Save</button>
+                    <button type="submit" disabled={available === equipment.available}>{loading? "Saving" : 'Save'}</button>
             </form>
             <hr></hr>
             <form onSubmit={handleSubmitDates}>  
                 <h2>Unavailable Dates</h2>
-                        {unavailableDates && (
+                        {unavailableDates.length > 0 ? (
                             unavailableDates.map(date => (
-                                <div key={date.date || date.startDate}>
-                                    <p>{date.date || date.startDate}</p>
-                                    <p>{date.endDate}</p>
-                                    <span onClick={() => handleDelete(date)}>Delete</span>
+                                <div className='input-group-wrapper' key={date.date || date.startDate}>
+                                    {date.date ? (
+                                        <p>{new Date(date.date + 'T00:00:00').toDateString()}</p>
+                                    ) : (
+                                        <>
+                                            <p>{new Date((date.date || date.startDate) + 'T00:00:00').toDateString()}</p>
+                                            –
+                                            <p>{new Date(date.endDate + 'T00:00:00').toDateString()}</p>
+                                        </>
+                                    )}
+                                    <Tooltip title="Delete Date" arrow>
+                                        <img src="/icons/delete_forever_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" onClick={() => handleDelete(date)}></img>
+                                    </Tooltip>
                                 </div>
                             ))
+                            ) : (
+                                <p>No Dates</p>
                             )
                         }
-                        
-                        <p>+ Add unavailable dates</p>
-                            <div className="type-selector">
+                        <h4>+ Add unavailable dates</h4>
+                            <div className='input-group-wrapper'>
                                 <input
                                     type="radio"
                                     id="single"
@@ -180,7 +220,8 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
                                 <label htmlFor="single">
                                 Single Day
                                 </label>
-                                
+                            </div>
+                            <div className='input-group-wrapper'>
                                 <input
                                     type="radio"
                                     value="range"
@@ -191,7 +232,7 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
                                 <label htmlFor="range">
                                     Date Range
                                 </label>
-                            </div>
+                            </div>                            
                             {
                                 unavailableDateType === 'single' ? (
                                     <div>
@@ -230,9 +271,9 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
                                     </>
                                 )
                             }
-                            <button type="button" className="small" onClick={handleAddDate}>+ Add Date</button>
+                            <button type="button" onClick={handleAddDate}>+ Add Date</button>
                         {formError ? <p className='error-message'>{formError}</p> : null}
-                    <button disabled={!datesUpdated} type="submit">Save</button>
+                    <button disabled={!datesUpdated} type="submit">{loading ? "Saving" : 'Save'}</button>
                 </form>
         </section>
         

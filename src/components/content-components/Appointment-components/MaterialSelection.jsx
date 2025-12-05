@@ -40,7 +40,7 @@ export default function MaterialSelection({materials = [], fileRequirements, han
 
     return (
         <section className="material-selection">
-            <h4>Select Preferred Materials (optional)</h4>
+            <h2>Select Preferred Materials (optional)</h2>
             <form className="material-form" onSubmit={handleSubmit}>
                 {availableMaterials.map((material) => (
                     <div className="input-group-wrapper" key={material.id}>
@@ -59,7 +59,7 @@ export default function MaterialSelection({materials = [], fileRequirements, han
                 ))}
                     <p className="disclaimer">Material availability is not guaranteed </p>
                         <div>
-                            <h4>File Requirements</h4>
+                            <h2>File Requirements</h2>
                             <div 
                                 dangerouslySetInnerHTML={{ __html: sanitizedFileText }}
                                 style={{ whiteSpace: 'pre-wrap' }}

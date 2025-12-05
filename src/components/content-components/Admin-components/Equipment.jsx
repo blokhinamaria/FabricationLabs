@@ -35,14 +35,28 @@ export default function Equipment() {
     return (
         <main>
             <h1>{userAssignedLabs} Equipment</h1>
-            <article>   
-                {equipment.map(item => (
-                    <div key={item._id}>
-                        <h2>{item.name}</h2>
-                        <p>{item.available ? 'Available' : 'Unavailable'}</p>
-                        <button onClick={() => handleEdit(item._id)}>Edit</button>
-                    </div>
-                ))}
+            <article className="upcoming-appointments">
+                <div className="appointment-list">
+                    {equipment.map(item => (
+                        <section key={item._id} className="appointment-overview">
+                            <h3>{item.name}</h3>
+                            <div className='appointment-overview-group'>
+                                <div className="appointment-icon-text">
+                                    <img src={item.available ? '/icons/check_circle_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg' : '/icons/cancel_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg'} />
+                                    <p>Status: {item.available ? 'Available' : 'Unavailable'}</p>
+                                </div>
+                                <div className="appointment-icon-text">
+                                    <img src='/icons/location_on_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg' />
+                                    <p>Location: {item.location}</p>
+                                </div>
+                            </div>
+                            <div className='appointment-button-group'>
+                                <button onClick={() => handleEdit(item._id)}>Edit</button>
+                            </div>
+                        </section>
+                    ))}
+                </div>
+                
             </article>
         </main>
         

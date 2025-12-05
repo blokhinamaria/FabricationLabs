@@ -1,13 +1,13 @@
 import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../AuthContext.jsx";
 import { ObjectId } from "bson";
 
 import EquipmentSelection from "./Appointment-components/EquipmentSelection.jsx";
-import AppointmentSummary from "./Appointment/AppointmentSummary.jsx";
+import AppointmentCardSummary from "./Appointment-cards/AppointmentCardSummary.jsx";
 import DateTimeSelectionReservation from "./Appointment-components/DateTimeSelectionReservation.jsx";
 import Details from "./Appointment-components/Details.jsx";
-import AppointmentCard from "./Appointment/AppointmentCard.jsx";
+import AppointmentCard from "./Appointment-cards/AppointmentCard.jsx";
 
 import './NewAppointment.css'
 
@@ -155,7 +155,7 @@ export default function NewReservation() {
     async function bookAppointment(appointmentData = newAppointmentData) {
     
         try {
-            const response = await fetch('/api/new-appointment', {
+            const response = await fetch('/api/appointments', {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(appointmentData)
@@ -175,11 +175,7 @@ export default function NewReservation() {
         }
     }
 
-    const navigate = useNavigate()
 
-    function handleCancel() {
-        navigate('/dashboard')
-    }
 
     return (
         <main>
@@ -191,9 +187,8 @@ export default function NewReservation() {
             {step === 'time' && 
                 (   
                     <div className="appointment-booking-grid">  
-                        <div className="appointment-sidebar appointment-card">
-                            <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
-                            <button onClick={handleCancel}>Cancel</button>
+                        <div className="appointment-sidebar">
+                            <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                         </div>
                         <DateTimeSelectionReservation
                             equipmentId={newAppointmentData.equipmentId}
@@ -202,15 +197,13 @@ export default function NewReservation() {
                             mode={appointmentCreateMode}
                             />
                     </div>
-                    
                 )}
                 
             {step === 'details' && 
                 (   
                     <div className="appointment-booking-grid">  
-                        <div className="appointment-sidebar appointment-card">
-                            <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
-                            <button onClick={handleCancel}>Cancel</button>
+                        <div className="appointment-sidebar">
+                            <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                         </div>
                         <Details submitDetails={submitDetails}/>
                     </div>

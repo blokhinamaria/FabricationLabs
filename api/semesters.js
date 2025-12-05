@@ -1,6 +1,7 @@
 import { getSemesters } from "../utils/getSemesters.js"
 import { handlePost } from "../handlers/routePost.js";
 import { handlePut } from "../handlers/routePut.js";
+import { handleDelete } from "../handlers/routeDelete.js";
 import { sendResponse } from "../utils/sendResponse.js"
 
 export default async function handler(req, res) {
@@ -16,6 +17,8 @@ export default async function handler(req, res) {
                     return await handlePost(req, res, 'semesterPeriods')
                 } else if (req.method === 'PUT') {
                     return await handlePut(req, res, 'semesterPeriods')
+                } else if (req.method === 'DELETE') {
+                    return await handleDelete(req, res, 'semesterPeriods')
                 }
             } else {
             sendResponse(res, 404, ({ error: 'Method not allowed'}))

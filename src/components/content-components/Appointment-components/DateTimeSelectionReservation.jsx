@@ -81,7 +81,10 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
         }
     }, [selectedDate] )
 
+    const [ loadingSlots, setLoadingSlots] = useState(false)
+    
     async function fetchAvailableSlots() {
+        setLoadingSlots(true)
             try {
                 const url = appointmentId ?
                     (`/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}&appointmentId=${appointmentId}`
@@ -112,10 +115,14 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
 
             } catch (err) {
                 console.log(`Error fetching slots: ${err}`)
+            } finally {
+                setLoadingSlots(false)
             }
     }
 
     const maxDate = minDate.add(60, 'day');
+
+    const [ isNewSlotSelected, setIsNewSlotSelected ] = useState(false);
 
     function handleDateSelect(value) {
         setFormError('')
@@ -124,8 +131,6 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
         setSelectedEndSlot('');
         setIsNewSlotSelected(false);
     }
-    
-    const [ isNewSlotSelected, setIsNewSlotSelected ] = useState(false);
 
     function handleStartSlotSelect(e) {
         e.preventDefault()
@@ -202,7 +207,7 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
                 {selectedDate ?
                     (<div className='time-form'>
                         <h2>Choose a time</h2>
-                        {loading ? 
+                        {loadingSlots ? 
                             <p>Loading available slots...</p>
                             : (
                                 !isAvailable ? (

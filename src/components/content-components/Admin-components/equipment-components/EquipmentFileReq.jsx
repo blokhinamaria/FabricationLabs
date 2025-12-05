@@ -5,8 +5,10 @@ export default function EquipmentFileReq({file, onUpdate}) {
 
     const [ fileText, setFileText] = useState(file)
     const [ formError, setFormError ] = useState('')
+    const [ loading, setLoading] = useState(false)
 
     const dialogRef = useRef(null)
+    const fileRequirementsRef = useRef(null);
 
     const sanitizedFileText = sanitizeHtml(file || '', {
             allowedTags: ['br', 'p', 'div', 'ul', 'ol', 'li', 'strong', 'b', 'em', 'i'],
@@ -34,35 +36,45 @@ export default function EquipmentFileReq({file, onUpdate}) {
     }
 
     async function handleSubmit(e) {
-        e.preventDefault()
-        const newText = sanitizeHtml(e.target.firstChild.innerHTML || '', {
+        e.preventDefault();
+        
+        const newText = sanitizeHtml(fileRequirementsRef.current.innerHTML || '', {
             allowedTags: ['br', 'p', 'div', 'ul', 'ol', 'li', 'strong', 'b', 'em', 'i'],
             allowedAttributes: {},
             allowedSchemes: []
         });
 
-        console.log(newText)
+        setFormError('');
         
-        setFormError('')
-        const equipmentUpdates = {}
+        const isChanged = file !== newText;
         
-        const isChanged = file !== newText
-        if (isChanged) {
-            equipmentUpdates.fileRequirements = newText;
-            console.log(equipmentUpdates)
-            setFileText(newText)
-            await onUpdate(equipmentUpdates)
-            closeModal();
-            return
+        if (!isChanged) {
+            setFormError('File requirements match the original');
+            return; 
         }
 
-        setFormError('File requirements match the original')
+        // Content changed - update it
+        const equipmentUpdates = {
+            fileRequirements: newText
+        };
+
+        setLoading(true); 
+        try {
+            await onUpdate(equipmentUpdates);
+            setFileText(newText); 
+            closeModal()
+        } catch (err) {
+            console.log(err);
+            setFormError('Something went wrong. Please try again');
+        } finally {
+            setLoading(false); 
+        }
     }
 
     return (
         <section>
             <h2>File Requirements</h2>
-            <div 
+            <div className='file-requirements-text'
                 dangerouslySetInnerHTML={{ __html: sanitizedFileText }}
                 style={{ whiteSpace: 'pre-wrap' }}
                 />
@@ -75,9 +87,14 @@ export default function EquipmentFileReq({file, onUpdate}) {
                 Edit
             </button>
             <dialog id='delete-dialog' ref={dialogRef} onClick={handleDialogClick}>
-                <button onClick={closeModal}>Close</button>
+                <div className="dialog-close-button-wrapper">
+                    <button  onClick={closeModal} className="dialog-close-button">Close <img src="/icons/close_small_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg"/></button>
+                </div>
                 <form onSubmit={handleSubmit}>
+                    <h3>Edit File Requirements</h3>
                     <div
+                        ref={fileRequirementsRef}
+                        className="file-requirements-text"
                         contentEditable="true"
                         suppressContentEditableWarning={true}
                         dangerouslySetInnerHTML={{ __html: fileText }}
@@ -88,7 +105,7 @@ export default function EquipmentFileReq({file, onUpdate}) {
                     <button
                     type="submit"
                     // disabled={file === fileText}
-                    >Save</button>
+                    >{loading ? "Saving" : 'Save'}</button>
                 </form>
             </dialog>
             

@@ -4,9 +4,6 @@ import './Appointment.css'
 
 export default function AppointmentCard({id, data}) {
 
-    console.log(id)
-    console.log(data)
-
     const [ appointment, setAppointment ] = useState(data || null);
     const [ loading, setLoading ] = useState(!data);
     const [ error, setError ] = useState(null);
@@ -142,38 +139,42 @@ export default function AppointmentCard({id, data}) {
     if (!appointment) return <p>No appointment found</p>
 
     return (
-        <div
-            className={`appointment-card appointment-overview-details ${appointmentStatus === 'deleted' ? ('deleted') : null}` }
+        <section
+            className={`appointment-overview ${appointmentStatus === 'deleted' ? ('deleted') : ''}` }
         >   
-            {appointmentStatus === 'cancelled' ? (
-                <div className="error-message">
-                    <p>Cancelled</p>
-                </div>
+            <div className="appointment-overview-group">
+                {appointmentStatus === 'cancelled' ? (
+                    <p className="error-message">Cancelled</p>
                 ) : (
                     <p>{appointmentStatus === 'deleted' ? ('Deleted') : daysLeft()}</p>
                 )}
-            <h3>{appointment.equipmentName}</h3>
-            <div className="appointment-icon-text">
-                <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
-                <p>{appointmentDate.toDateString()}</p>
+                <h3>{appointment.equipmentName}</h3>
             </div>
-            <div className="appointment-icon-text">
-                <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
-                <p>
-                    {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-                    {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
-                </p>
+            <div className="appointment-overview-group">
+                <div className="appointment-icon-text">
+                    <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
+                    <p>{appointmentDate.toDateString()}</p>
+                </div>
+                <div className="appointment-icon-text">
+                    <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
+                    <p>
+                        {appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                        {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
+                    </p>
+                </div>
             </div>
-            <div className="appointment-icon-text">
-                <img src="/icons/location_on_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Location Pin" width="24" height="24" />
-                <div>
-                    <p><strong>{appointment.location}</strong></p>
-                    {address()}
+            <div className="appointment-overview-group"> 
+                <div className="appointment-icon-text">
+                    <img src="/icons/location_on_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Location Pin" width="24" height="24" />
+                    <div>
+                        <p><strong>{appointment.location}</strong></p>
+                        {address()}
+                    </div>
                 </div>
             </div>
             {
-                    appointmentStatus === 'deleted' ? null : (
-                        <div className="appointment-button-container">
+                appointmentStatus === 'deleted' ? null : (
+                    <div className="appointment-button-container">
                             <button onClick={() => handleEdit(appointment._id)} disabled={isClassReservation || appointment.status === 'cancelled'}>Edit</button>
                             <button 
                                 onClick={openModal}
@@ -199,6 +200,6 @@ export default function AppointmentCard({id, data}) {
                         </div>
                     )
                 }
-        </div>
+        </section>
     )
 }

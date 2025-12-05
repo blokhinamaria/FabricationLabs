@@ -93,7 +93,7 @@ export default function Details({submitDetails}) {
             <h2>Confirm your details</h2>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor='name'>Full Name*</label>
+                        <label htmlFor='name'>Full Name</label>
                         <input
                             type="text"
                             id="name"
@@ -106,7 +106,7 @@ export default function Details({submitDetails}) {
                         {nameErrorMessage ? <p aria-live='polite' className='error-message'>{nameErrorMessage}</p> : null}
                     </div>
                     <div>
-                        <label htmlFor='classNumber'>Class</label>
+                        <label htmlFor='classNumber'>Class*</label>
                         <input
                             type="text"
                             id="classNumber"
@@ -117,7 +117,7 @@ export default function Details({submitDetails}) {
                         {classErrorMessage ? <p aria-live='polite' className='error-message'>{classErrorMessage}</p> : null}
                     </div>
                     <div>
-                        <label htmlFor='details'>Additional details</label>
+                        <label htmlFor='details'>Additional details*</label>
                         <textarea
                             id="details"
                             name="details"
@@ -126,6 +126,7 @@ export default function Details({submitDetails}) {
                             onChange={(e) => setNotes(e.target.value)}/>
                         {notesErrorMessage ? <p aria-live='polite' className='error-message'>{notesErrorMessage}</p> : null}
                     </div>
+                    <p className="disclaimer">* Optional Fields </p>
                     <div className='input-group-wrapper'>
                         <input
                             id='terms'

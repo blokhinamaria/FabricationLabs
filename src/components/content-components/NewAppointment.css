@@ -9,6 +9,15 @@
     align-items: start;
 }
 
+@media (max-width: 768px) {
+    .appointment-booking-grid {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
 .appointment-sidebar {
     grid-area: sidebar;
 }
@@ -26,9 +35,9 @@
     max-width: 100%;
 }
 
-.appointment-booking-grid > form {
+/* .appointment-booking-grid > form {
     grid-area: main;
     width: 100%;
     max-width: none;
     justify-content: center;
-}
+} */

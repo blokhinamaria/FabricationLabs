@@ -1,6 +1,5 @@
 import { useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom';
-import { AppProviders } from './AppProviders.jsx';
 import { AuthProvider } from './AuthContext.jsx';
 import { AvailabilityProvider } from './AvailabilityContext.jsx';
 import Layout from './components/Layout.jsx';

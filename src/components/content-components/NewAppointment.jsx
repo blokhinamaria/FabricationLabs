@@ -4,10 +4,10 @@ import { useAuth } from "../../AuthContext";
 import { ObjectId } from "bson";
 
 import EquipmentSelection from "./Appointment-components/EquipmentSelection.jsx";
-import AppointmentSummary from "./Appointment/AppointmentSummary.jsx";
+import AppointmentCardSummary from "./Appointment-cards/AppointmentCardSummary.jsx";
 import DateTimeSelection from "./Appointment-components/DateTimeSelection.jsx";
 import Details from "./Appointment-components/Details.jsx";
-import AppointmentCard from "./Appointment/AppointmentCard.jsx";
+import AppointmentCard from "./Appointment-cards/AppointmentCard.jsx";
 
 import './NewAppointment.css'
 
@@ -151,7 +151,7 @@ export default function NewAppointment() {
     async function bookAppointment(appointmentData = newAppointmentData) {
     
         try {
-            const response = await fetch('/api/new-appointment', {
+            const response = await fetch('/api/appointments', {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(appointmentData)
@@ -171,12 +171,6 @@ export default function NewAppointment() {
         }
     }
 
-    const navigate = useNavigate()
-
-    function handleCancel() {
-        navigate('/dashboard')
-    }
-
     return (
         <main>
             {(step === 'equipment' || step === 'materials')  && 
@@ -187,9 +181,8 @@ export default function NewAppointment() {
             {step === 'time' && 
                 (   
                     <div className="appointment-booking-grid">  
-                        <div className="appointment-sidebar appointment-card">
-                            <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
-                            <button onClick={handleCancel}>Cancel</button>
+                        <div className="appointment-sidebar">
+                            <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                         </div>
                         <DateTimeSelection
                             equipmentId={newAppointmentData.equipmentId}
@@ -204,9 +197,8 @@ export default function NewAppointment() {
             {step === 'details' && 
                 (   
                     <div className="appointment-booking-grid">  
-                        <div className="appointment-sidebar appointment-card">
-                            <AppointmentSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
-                            <button onClick={handleCancel}>Cancel</button>
+                        <div className="appointment-sidebar">
+                            <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                         </div>
                         <Details submitDetails={submitDetails}/>
                     </div>
@@ -216,7 +208,7 @@ export default function NewAppointment() {
                 <section>
                     <h2>Appointment created</h2>
                     <AppointmentCard id={appointmentId} />
-                    <Link to='/dashboard' ><button style={{ marginTop: '50px'}}>Back to dashboard</button></Link>
+                    <Link to='/dashboard'><button style={{ marginTop: '50px'}}>Back to dashboard</button></Link>
                 </section>
             }
         </main>

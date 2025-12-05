@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "../../AuthContext";
 
-import AppointmentCardAdmin from "./Appointment/AppointmentCardAdmin.jsx";
+import AppointmentCardAdmin from "./Appointment-cards/AppointmentCardAdmin.jsx";
 
 export default function AdminDashboard() {
     

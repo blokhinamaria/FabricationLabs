@@ -45,7 +45,7 @@ export default async function handler(req, res) {
           }
         // Redirect to verify for demo users
         const baseUrl = process.env.APP_URL || `https://${req.headers.host}`;
-        const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '360m' });
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '30m' });
         const verifyURL = `${baseUrl}/api/verify?token=${token}`;
         // if (typeof res.redirect === 'function') {
         //   return res.redirect(302, verifyURL);
@@ -71,7 +71,7 @@ export default async function handler(req, res) {
         }
 
     // Create JWT token for magic link
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '360m' });
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '30m' });
     const link = `${process.env.APP_URL}/api/verify?token=${token}`;
 
     // Send email via Resend
