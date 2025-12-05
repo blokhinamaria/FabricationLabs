@@ -1,5 +1,4 @@
-
-
+@import url('https://fonts.googleapis.com/css2?family=Zalando+Sans:ital,wdth,wght@0,100,200..900;0,125,200..900;1,100,200..900;1,125,200..900&display=swap');
 
 *,
 *::before,
@@ -179,9 +178,11 @@ a:hover, a:focus {
 }
 
 h1 {
-  font-family: "Zalando Sans Expanded", sans-serif;
+  font-family: "Zalando Sans", sans-serif;
   font-weight: 600;
   font-size: 3rem;
+  font-variation-settings:
+    "wdth" 125;
 }
 
 @media (max-width: 425px) {

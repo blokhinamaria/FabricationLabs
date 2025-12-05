@@ -126,9 +126,9 @@ export default function EditAppointment() {
     }
 
     function submitDateTime(selectedDate, selectedTime) {
-        const appointementDate = new Date(appointment.date)
+        const prevAppointementDate = new Date(appointment.date)
 
-        const dateChanged = selectedDate.getTime() !== appointementDate.getTime()
+        const dateChanged = selectedDate.getTime() !== prevAppointementDate.getTime()
 
         const timeChanged = selectedTime.startTime !== appointment.startTime
 
@@ -144,12 +144,16 @@ export default function EditAppointment() {
                 updates.endTime = selectedTime.endTime
             }
             setAppointment(prev => ({...prev, ...updates}))
+            setAppointmentDate(new Date(selectedDate))
             setUpdatedData(prev => ({...prev, ...updates}))
             setIsUpdated(true);
+            
         }
 
         setStep("overview");
     }
+
+    console.log(appointmentDate)
 
     //STEP 3: Details
 
@@ -209,7 +213,7 @@ export default function EditAppointment() {
         <main>
             {step === 'overview' && 
                 <article className="edit-appointment">
-                    <h2>Edit Appointment</h2>
+                    <h2>Modify Appointment</h2>
                     <section className="appointment-overview edit-appointment">
                         {/* Equipment+Materials section */}
                         <div className="appointment-overview-group hover" onClick={() => handleClickItem('equipment')}>
@@ -238,7 +242,6 @@ export default function EditAppointment() {
                                     <div className="appointment-icon-text">
                                         <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
                                         <p>{appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}{isClassReservation && `–${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}</p>
-                                        
                                     </div>
                                 </div>
                                 

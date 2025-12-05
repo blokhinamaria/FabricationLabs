@@ -175,7 +175,7 @@ export default function AppointmentCard({id, data}) {
             {
                 appointmentStatus === 'deleted' ? null : (
                     <div className="appointment-button-container">
-                            <button onClick={() => handleEdit(appointment._id)} disabled={isClassReservation || appointment.status === 'cancelled'}>Edit</button>
+                            <button onClick={() => handleEdit(appointment._id)} disabled={isClassReservation || appointment.status === 'cancelled'}>Modify</button>
                             <button 
                                 onClick={openModal}
                                 aria-expanded={isDialogOpen}
@@ -185,7 +185,9 @@ export default function AppointmentCard({id, data}) {
                                     Delete
                             </button>
                             <dialog id='delete-dialog' ref={dialogRef} onClick={handleDialogClick}>
-                                <button onClick={closeModal}>Close</button>
+                                <div className="dialog-close-button-wrapper">
+                                    <button onClick={closeModal} className="dialog-close-button">Close <img src="/icons/close_small_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg"/></button>
+                                </div>
                                 <h4>Are you sure you want to delete the {appointmentType} for</h4>
                                 <div>  
                                     <h3>{appointment.equipmentName}</h3>
@@ -194,7 +196,7 @@ export default function AppointmentCard({id, data}) {
                                         {isClassReservation && ` to ${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}
                                     </p>
                                 </div>
-                                {!isClassReservation || appointment.status !== 'cancelled' && <button onClick={() => handleEdit(appointment._id)} >Edit Instead</button>}
+                                {!isClassReservation && appointment.status !== 'cancelled' && <button onClick={() => handleEdit(appointment._id)}>Modify</button>}
                                 <button onClick={() => handleDelete(appointment._id)}>Delete</button>
                             </dialog>
                         </div>
