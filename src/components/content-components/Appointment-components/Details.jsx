@@ -152,7 +152,7 @@ export default function Details({submitDetails}) {
                             aria-required={true}
                         />
                         <label htmlFor='terms'>
-                            I have read and agree to the Terms and Conditions.
+                            I have read and agree to <a className='highlight' href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank">the Terms and Conditions</a>
                         </label>
                     </div>
                     <div className='input-group-wrapper'> 
@@ -165,7 +165,7 @@ export default function Details({submitDetails}) {
                                 aria-required={true}
                             />
                             <label htmlFor='policy'>
-                                I have read and understood the UTampa Fabrication Lab and Woodshop policy and guidelines.
+                                I have read and understood <a className='highlight' href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank">the University of Tampa Fabrication Lab and Woodshop Policy and Guidelines</a>
                             </label>
                     </div>
                     {termErrorMessage ? <p aria-live='polite' className='error-message'>{termErrorMessage}</p> : null}

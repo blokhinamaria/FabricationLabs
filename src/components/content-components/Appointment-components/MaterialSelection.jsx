@@ -25,7 +25,7 @@ export default function MaterialSelection({materials = [], fileRequirements, han
     });
 
 
-    const [ hasReviewedRequirements, setHasReviewedRequirements ] = useState(false);
+    const [ hasReviewedRequirements, setHasReviewedRequirements ] = useState(sanitizedFileText ? false : true);
     const [ errorMessage, setErrorMessage] = useState('');
 
     function handleSubmit(e) {
@@ -40,9 +40,11 @@ export default function MaterialSelection({materials = [], fileRequirements, han
 
     return (
         <section className="material-selection">
-            <h2>Select Preferred Materials*</h2>
             <form className="material-form" onSubmit={handleSubmit}>
-                {availableMaterials.map((material) => (
+                {availableMaterials.length > 0 &&
+                    <>
+                    <h2>Select Preferred Materials*</h2>
+                    {availableMaterials.map((material) => (
                     <div className="input-group-wrapper" key={material.id}>
                         <input
                             id={material.id}
@@ -58,13 +60,15 @@ export default function MaterialSelection({materials = [], fileRequirements, han
                     </div>
                 ))}
                     <p className="disclaimer">*Material selection is optional. Material availability is not guaranteed </p>
-                        <div>
-                            <h2>File Requirements</h2>
-                            <div 
-                                dangerouslySetInnerHTML={{ __html: sanitizedFileText }}
-                                style={{ whiteSpace: 'pre-wrap' }}
-                                />
-                        </div>
+                </>}
+                
+                {sanitizedFileText &&
+                    <>
+                    <h2>File Requirements</h2>
+                    <div 
+                        dangerouslySetInnerHTML={{ __html: sanitizedFileText }}
+                        style={{ whiteSpace: 'pre-wrap' }}
+                        />
                     <div className="input-group-wrapper">
                         <input
                                 id='fileRequirements'
@@ -79,6 +83,8 @@ export default function MaterialSelection({materials = [], fileRequirements, han
                         </label>
                     </div>
                     { errorMessage !== '' ? (<p aria-live='polite' className="error-message">{errorMessage}</p>) : null}
+                </>}
+                
                 <button type="submit" disabled={!hasReviewedRequirements}>Submit</button>
             </form>
         </section>

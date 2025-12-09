@@ -54,18 +54,21 @@ export default function EquipmentSelection({submitEquipment, mode}) {
     }
 
     //select equipment
-        const [ isEquipmentSelected, setIsEquipmentSelected ] = useState(false);
-        const [ sameEquipment, setSameEquipment ] = useState(false);
+    const [ isEquipmentSelected, setIsEquipmentSelected ] = useState(false);
+    const [ sameEquipment, setSameEquipment ] = useState(false);
 
-        function handleEquipmentSelection(equipment) {
-            setIsEquipmentSelected(true);
-            setSelectedEquipment(equipment);
-            if (equipment._id === mode.prevEquipmentId) {
-                setSameEquipment(true);
-            } else {
-                setSameEquipment(false);
-            }
+    function handleEquipmentSelection(equipment) {
+        setIsEquipmentSelected(true);
+        setSelectedEquipment(equipment);
+        if (equipment._id === mode.prevEquipmentId) {
+            setSameEquipment(true);
+        } else {
+            setSameEquipment(false);
         }
+        if (equipment.materials.length === 0 && equipment.fileRequirements === '') {
+            submitEquipment(equipment);
+        } 
+    }
     
     // select materials and submit equipment (from Material Selection Component)
         function handleSubmitMaterials(selectedMaterials) {
@@ -86,7 +89,7 @@ export default function EquipmentSelection({submitEquipment, mode}) {
             {mode.status === 'create' && (
                 <>
                     <h1>Schedule an appointment with FabLabs Staff</h1>
-                    <p style={{marginBottom: '50px'}} className="limit-width">Before scheduling an appointment, read through the University of Tampa Fabrication Lab and Woodshop policy and guidelines</p>
+                    <p style={{marginBottom: '50px'}} className="limit-width">Before scheduling an appointment, read through <a className='highlight' href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank">the University of Tampa Fabrication Lab and Woodshop Policy and Guidelines</a></p>
                 </>
             )}
             { !isEquipmentSelected ?

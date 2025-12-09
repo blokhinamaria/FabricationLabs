@@ -100,7 +100,7 @@ function App() {
 
                   <Route path="admin-dashboard/equipment/edit" element={
                       <ProtectedRoute allowedRoles={['admin', 'demo-admin']}>
-                        <Equipment />
+                        <EditEquipment />
                       </ProtectedRoute>
                     } />
                   
@@ -111,7 +111,7 @@ function App() {
                       </ProtectedRoute>
                       } /> 
                   </Route>
-                  
+
                 </Route>
               </Routes>
             </Suspense>

@@ -118,6 +118,12 @@ button.small {
   width: max-content;
 }
 
+button.back-button {
+  flex: 2;
+  text-wrap: nowrap;
+  font-size: 0.85rem;
+}
+
 button:hover, button:focus {
   background-color: var(--accent1-opaque);
   border: 1px solid var(--accent1);
@@ -171,12 +177,15 @@ a {
   cursor: pointer;
   color: var(--black);
   text-decoration: none;
-
 }
 
 a:hover, a:focus {
   color: var(--link-hover);
 }
+
+a.highlight {
+  text-decoration: underline;
+} 
 
 h1 {
   font-family: "Zalando Sans", sans-serif;

@@ -61,7 +61,7 @@ export default async function handler(req, res) {
     
     await client.close()
 
-    const sessionToken = jwt.sign({ email: payload.email }, process.env.JWT_SECRET, { expiresIn: '30m' });
+    const sessionToken = jwt.sign({ email: payload.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     // Set session cookie
     res.setHeader('Set-Cookie', cookie.serialize('session', sessionToken, {
