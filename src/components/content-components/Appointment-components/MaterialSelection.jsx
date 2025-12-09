@@ -40,7 +40,7 @@ export default function MaterialSelection({materials = [], fileRequirements, han
 
     return (
         <section className="material-selection">
-            <h2>Select Preferred Materials (optional)</h2>
+            <h2>Select Preferred Materials*</h2>
             <form className="material-form" onSubmit={handleSubmit}>
                 {availableMaterials.map((material) => (
                     <div className="input-group-wrapper" key={material.id}>
@@ -57,7 +57,7 @@ export default function MaterialSelection({materials = [], fileRequirements, han
                         </label>
                     </div>
                 ))}
-                    <p className="disclaimer">Material availability is not guaranteed </p>
+                    <p className="disclaimer">*Material selection is optional. Material availability is not guaranteed </p>
                         <div>
                             <h2>File Requirements</h2>
                             <div 

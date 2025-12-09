@@ -28,16 +28,21 @@ export default function Details({submitDetails}) {
             setNameErrorMessage('Provide your full name')
             return
         } else {
-            const isValid = validateFullName(userFullName)
+            const isValid = validateFullName(userFullName.trim())
             if (!isValid) {
                 return
             }
         }
         
-        // if (!classNumber || classNumber.trim() === '') {
-        //     setClassErrorMessage('Provide the class number related to your project')
-        //     return 
-        // }
+        if (!classNumber || classNumber.trim() === '') {
+            setClassErrorMessage('Provide the class number related to your project')
+            return 
+        } else {
+            const isValid = validateClassNumber(classNumber.trim().toUpperCase())
+            if (!isValid) {
+                return
+            }
+        }
 
         // if (!notes || notes.trim() === '') {
         //     setNotesErrorMessage('Provide a few details about your needs')
@@ -80,10 +85,20 @@ export default function Details({submitDetails}) {
         const result = regex.test(name);
         if (!result) {
             setNameErrorMessage('Provide valid full name')
-            // document.getElementById('email').classList.add('invalid');
             return false
         } else {
-            // document.getElementById('email').classList.remove('invalid');
+            return true
+        }
+    }
+
+    function validateClassNumber(number) {
+        setClassErrorMessage('')
+        const regex = /^[A-Z]{3,4} \d{3}$/;
+        const result = regex.test(number);
+        if (!result) {
+            setClassErrorMessage('Class number must be in format: ART 123')
+            return false
+        } else {
             return true
         }
     }
@@ -106,14 +121,14 @@ export default function Details({submitDetails}) {
                         {nameErrorMessage ? <p aria-live='polite' className='error-message'>{nameErrorMessage}</p> : null}
                     </div>
                     <div>
-                        <label htmlFor='classNumber'>Class*</label>
+                        <label htmlFor='classNumber'>Class Number*</label>
                         <input
                             type="text"
                             id="classNumber"
                             name="classNumber"
                             placeholder="ART XXX"
                             value={classNumber}
-                            onChange={(e) => setClassNumber(e.target.value)}/>
+                            onChange={(e) => setClassNumber(e.target.value.toUpperCase())}/>
                         {classErrorMessage ? <p aria-live='polite' className='error-message'>{classErrorMessage}</p> : null}
                     </div>
                     <div>
@@ -137,7 +152,7 @@ export default function Details({submitDetails}) {
                             aria-required={true}
                         />
                         <label htmlFor='terms'>
-                            I have read and agree to the Terms and Conditions
+                            I have read and agree to the Terms and Conditions.
                         </label>
                     </div>
                     <div className='input-group-wrapper'> 
@@ -150,7 +165,7 @@ export default function Details({submitDetails}) {
                                 aria-required={true}
                             />
                             <label htmlFor='policy'>
-                                I have read and understood the UTampa Fabrication Lab and Woodshop policy and guidelines
+                                I have read and understood the UTampa Fabrication Lab and Woodshop policy and guidelines.
                             </label>
                     </div>
                     {termErrorMessage ? <p aria-live='polite' className='error-message'>{termErrorMessage}</p> : null}

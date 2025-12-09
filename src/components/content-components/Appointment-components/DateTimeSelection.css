@@ -1,7 +1,8 @@
 form.date-time-form {
-    flex-direction: row;
-    /* min-height: 520px; */
-    max-width: 100%;
+    max-width: none;
+    flex-direction: row;    
+    /* flex-wrap: wrap; */
+    justify-content: center;
 }
 
 @media (max-width:1024px) {
@@ -11,12 +12,9 @@ form.date-time-form {
     }
 }
 
-form.date-time-form > div {
-    width: 100%;
-}
-
 div.time-form, div.calendar-form {
     max-width: 500px;
+    width: 100%;
 }
 
 div.time-form.empty {
@@ -40,9 +38,14 @@ div.time-grid > .input-group-wrapper {
     justify-content: center;
 }
 
-button.date-time-confirm {
+div.date-time-confirm {
     margin-top: calc(var(--gap-small) * 2);
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--gap-small);
 }
 
 button.time-picker {

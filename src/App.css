@@ -170,6 +170,7 @@ a {
   font-weight: 400;
   cursor: pointer;
   color: var(--black);
+  text-decoration: none;
 
 }
 
@@ -301,6 +302,10 @@ form {
   /* margin: auto; */
 }
 
+form > button[type='submit'] {
+  margin-block-start: var(--gap-small);
+}
+
 textarea {
   display: block;
   width: 100%;
@@ -370,7 +375,6 @@ hr {
 .appointment-buttons {
   width: 100%;
 }
-
 
 div#success {
   width: 100%;

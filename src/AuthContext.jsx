@@ -23,10 +23,7 @@ export function AuthProvider( {children} ) {
         )
             const data = await response.json()
 
-            if (data.authenticated) {
-
-                // const redirect = (data.user.role === 'admin' || data.user.role === 'demo-admin') ? '/admin-dashboard' : '/dashboard'
-                                
+            if (data.authenticated) {                                
                 setUser(data.user)
                 setUserRole(data.user.role)
                 navigate(data.redirect)

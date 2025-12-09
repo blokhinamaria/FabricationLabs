@@ -204,7 +204,11 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
                                 )
                             )
                         }
-                        {isNewSlotSelected && <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>}
+                        {isNewSlotSelected && 
+                            <div className='date-time-confirm'>
+                                <button onClick={handleSubmit}>Confirm</button>
+                            </div>
+                        }
                     </div>) : (<div className='time-form empty'></div>)
                 }
                 

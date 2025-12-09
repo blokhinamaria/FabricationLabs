@@ -14,7 +14,7 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
     const today = dayjs();
     const minDate = today.hour() >= 16 ? today.add(1, 'day') : today
 
-    const { shouldDisableDate, loading } = useAvailability();
+    const { shouldDisableDate } = useAvailability();
 
     const [ selectedDate, setSelectedDate] = useState(mode?.prevDate ? dayjs(mode.prevDate) : null);
     const [ availableSlots, setAvailableSlots] = useState([]);
@@ -201,7 +201,6 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
                             }}
                         />
                     </LocalizationProvider>
-                    {/* <button className='small' onClick={() => setSelectedDate(null)}>Clear</button> */}
                 </div>
                 
                 {selectedDate ?
@@ -238,6 +237,8 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
                                                 ))}
                                                 </select>
                                             </div>
+                                            {selectedStartSlot?.startTime && 
+                                            
                                             <div className='input-group-wrapper column'>
                                                 <label htmlFor='slot-end'>Select the End Time</label>
                                                 <select
@@ -254,19 +255,20 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
                                                 ))}
                                                 </select>
                                                 <p>Max allowed reservations are 3 hours</p>
-                                                {formError && <p className='error-message'>{formError}</p>}
-
                                             </div>
+}
+                                            
+                                            {formError && <p className='error-message'>{formError}</p>}
                                         </div>
                                     )
                                 )
                             )
                         }
                         {isNewSlotSelected && 
-                        <>
-                            <button className='date-time-confirm' onClick={handleSubmit}>Confirm</button>
+                        <div className='date-time-confirm'>
+                            <button onClick={handleSubmit}>Confirm</button>
                             <p className='error-message'>Please, double check your reservation date and time. Once you submit your reservations, other students appointments for this equipment will be automatically cancelled</p>
-                        </>
+                        </div>
                         }
                     </div>) : (<div className='time-form empty'></div>)
                 }

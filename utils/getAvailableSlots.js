@@ -67,8 +67,6 @@ export async function getAvailableSlots(req, res) {
     }).toArray();
     await client.close();
 
-    console.log(existingBookings)
-
     // 5. Generate all possible time slots
     const daySlots = generateTimeSlots(availability.openTime, availability.closeTime, availability.slotDuration);
 
