@@ -16,10 +16,15 @@ export default function AdminDashboard() {
         return aDate - bDate;
     }
 
-    useEffect(() => {
+    const [ showCancelledButton, setShowCancelledButton ] = useState(false)
 
-        if(user) {
-            async function fetchUserAppointments() {
+    useEffect(() => {
+        if(user) {   
+            fetchAppointments()
+        }
+    }, [user])
+
+    async function fetchAppointments() {
                 const response = await fetch(`/api/appointments?role=${user.role}&labs=${user.assignedLabs.join(',')}`);
                 const data = await response.json()
                 
@@ -30,19 +35,18 @@ export default function AdminDashboard() {
                     return appointmentTime > today;
                 })
 
+                setShowCancelledButton(filterBookingsByDate.some(booking => booking.status === 'cancelled'))
+
                 const sortedBookings = filterBookingsByDate.sort((a, b) => sortBookings(a,b))
                 const groupedBookings = {...Object.groupBy(sortedBookings, ({date}) => {
                         return new Date(date).toDateString();
                     })}
                 setBookingGroups(groupedBookings)
                 setDisplayGroups(groupedBookings)
-
+                
             }
-            fetchUserAppointments()
-        }
-    }, [user])
 
-    const userAssignedLabs = user.assignedLabs.join('&')
+    const userAssignedLabs = user.assignedLabs.join('&');
 
     const [ showCancelled, setShowCancelled ] = useState(true);
     
@@ -65,14 +69,14 @@ export default function AdminDashboard() {
     return (
         <main>
             <h1>{userAssignedLabs} Upcoming Bookings</h1>
-            <button onClick={toggleCancelled}>{showCancelled ? 'Hide Cancelled' : 'Show Cancelled'}</button>
+            {showCancelledButton && <button onClick={toggleCancelled}>{showCancelled ? 'Hide Cancelled' : 'Show Cancelled'}</button>}
             <article style={{ marginTop: "50px"}} className="upcoming-appointments">
                 {Object.entries(displayGroups).map(([date, group]) => (
                     <section key={date}>
                         <h2>{date}</h2>
                         <div className="appointment-list">
                                 {group.map((booking) => (
-                                    <AppointmentCardAdmin key={booking._id} data={booking}/>
+                                    <AppointmentCardAdmin key={booking._id} data={booking} fetchAppointments={fetchAppointments}/>
                             ))}
                         </div>
                     </section>

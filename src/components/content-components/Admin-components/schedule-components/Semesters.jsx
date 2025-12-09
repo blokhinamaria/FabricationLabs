@@ -40,7 +40,7 @@ export default function Semesters() {
             const data = await response.json();
             
             if (data.semesters) {
-                setSemesters(data.semesters);
+                setSemesters(sortDates(data.semesters));
             } else {
                 console.warn('No semesters found in response:', data); 
             }
@@ -51,6 +51,19 @@ export default function Semesters() {
         } finally {
             setLoading(false); 
         }
+    }
+
+    function sortDates(datesArray) {
+        return datesArray.sort((dateA, dateB) => {
+            const dateAStart = dateA.date 
+                ? new Date(dateA.date).getTime() 
+                : new Date(dateA.startDate).getTime();
+            const dateBStart = dateB.date 
+                ? new Date(dateB.date).getTime() 
+                : new Date(dateB.startDate).getTime();
+            
+            return dateAStart - dateBStart; // ← Return a number, not boolean
+        });
     }
     
     //dialog
@@ -193,11 +206,12 @@ export default function Semesters() {
                 ) : (
                     semesters.map(semester => (
                         <Semester 
+                            key={semester._id}
                             semester={semester}
                             handleEdit={handleEdit}
                             onUpdate={onUpdate}
                         />
-                        
+                    
                     )))}
             <button onClick={handleCreateNew}
                     aria-expanded={isDialogOpen}

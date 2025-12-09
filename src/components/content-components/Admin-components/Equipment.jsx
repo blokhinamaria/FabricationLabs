@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "../../../AuthContext"
 import { useNavigate } from "react-router-dom"
+import { CheckCircleIcon, LocationIcon, XCircleIcon } from "../../icons"
 
 export default function Equipment() {
 
@@ -42,11 +43,11 @@ export default function Equipment() {
                             <h3>{item.name}</h3>
                             <div className='appointment-overview-group'>
                                 <div className="appointment-icon-text">
-                                    <img src={item.available ? '/icons/check_circle_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg' : '/icons/cancel_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg'} />
+                                    {item.available ? <CheckCircleIcon /> : <XCircleIcon />}
                                     <p>Status: {item.available ? 'Available' : 'Unavailable'}</p>
                                 </div>
                                 <div className="appointment-icon-text">
-                                    <img src='/icons/location_on_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg' />
+                                    <LocationIcon />
                                     <p>Location: {item.location}</p>
                                 </div>
                             </div>

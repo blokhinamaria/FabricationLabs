@@ -30,3 +30,11 @@ section.edit-equipment-wrapper > h1 {
 .file-requirements-text {
     text-align: start;
 }
+
+.date-passed {
+    color: var(--grey);
+}
+
+.date-new {
+    text-decoration: underline solid 2px var(--accent1);
+}

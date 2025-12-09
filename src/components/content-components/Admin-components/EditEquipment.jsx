@@ -103,13 +103,6 @@ export default function EditEquipment() {
             };
     }, []);
 
-    // //close dialog when clicking outside
-    // const handleDialogClick = (e) => {
-    //     if (e.target === dialogRef.current) {
-    //         closeModal();
-    //     }
-    // }
-
     if (loading) return (<main><p>Loading...</p></main>)
 
     return (

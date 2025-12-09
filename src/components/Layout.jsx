@@ -2,10 +2,8 @@ import  { Outlet } from 'react-router-dom';
 
 import Header from './layout-components/Header';
 import Footer from './layout-components/Footer';
-
-// import { useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import LoadingFallback from './layout-components/LoadingFallback';
 
 export default function Layout() {
 
@@ -13,18 +11,19 @@ export default function Layout() {
 
     if (loading) {
         return (
-            <>
-                <Header />
-                    <main>Loading...</main>
-                <Footer />
-            </>
-        )
+        <>
+            <Header isLoading={true} />
+                <LoadingFallback/>
+            <Footer />
+        </>
+    );
     }
+    
 
     return (
         <>
             <Header />
-            <Outlet />
+                <Outlet />
             <Footer />
         </>
     )

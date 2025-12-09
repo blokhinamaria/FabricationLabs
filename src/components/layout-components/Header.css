@@ -23,6 +23,7 @@ header {
 }
 
 header > .logo-container {
+  /* For text */
   display: flex;
   flex-direction: column;
   text-align: start;
@@ -30,6 +31,18 @@ header > .logo-container {
   font-family: "Zalando Sans Expanded", sans-serif;
   font-weight: 800;
   font-size: 1.2rem;
+  
+  padding: calc(var(--gap-small) - 10px);
+  border: 1px solid transparent;
+}
+
+
+header > .logo-container:hover {
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 6px var(--drop-shadow); 
+  border-radius: var(--border-radius-inside);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
 }
 
 header nav {

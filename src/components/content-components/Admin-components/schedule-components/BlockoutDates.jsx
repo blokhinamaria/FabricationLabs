@@ -21,6 +21,9 @@ export default function BlockoutDates() {
     const [formError, setFormError] = useState('')
     const [success, setSuccess] = useState(false);
 
+    const today = new Date()
+    const minDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`
+
     useEffect(() => {
         const timeout = setTimeout(() => {
             setSuccess(false)
@@ -56,7 +59,7 @@ export default function BlockoutDates() {
             const data = await response.json();
             
             if (data.blockouts) {
-                setBlockoutDates(data.blockouts);
+                setBlockoutDates(sortDates(data.blockouts));
             } else {
                 console.warn('No blockouts in response:', data); 
             }
@@ -67,6 +70,19 @@ export default function BlockoutDates() {
         } finally {
             setLoading(false); 
         }
+    }
+
+    function sortDates(datesArray) {
+        return datesArray.sort((dateA, dateB) => {
+            const dateAStart = dateA.date 
+                ? new Date(dateA.date).getTime() 
+                : new Date(dateA.startDate).getTime();
+            const dateBStart = dateB.date 
+                ? new Date(dateB.date).getTime() 
+                : new Date(dateB.startDate).getTime();
+            
+            return dateAStart - dateBStart; // ← Return a number, not boolean
+        });
     }
     
     //dialog
@@ -83,6 +99,7 @@ export default function BlockoutDates() {
         if (ref?.current) {
             ref.current.close();
             setIsDialogOpen(false);
+            setEditId(null)
             resetForm();
     }}
 
@@ -97,11 +114,13 @@ export default function BlockoutDates() {
     const [ editId, setEditId ] = useState('');
 
     function handleCreateNew() {
+        resetForm();
         setCreateNew(true)
         openModal(dialogRef)
     }
 
     function handleEdit(blockoutDate) {
+        setFormError('')
         setCreateNew(false);
         setEditId(blockoutDate._id)
         setFormData({
@@ -128,7 +147,101 @@ export default function BlockoutDates() {
     async function handleSubmit(e) {
         e.preventDefault();
         setFormError(''); 
-        
+
+        const currentBlockoutDates = editId
+            ? blockoutDates.filter(date => date._id !== editId)
+            : blockoutDates
+
+        if (!formData.name) {
+            setFormError('Blockout Date Name Required')
+            return
+        }
+
+        if (blackoutType === 'single') {
+            if (!formData.date) {
+                setFormError('Must provide the date')
+                return
+            }
+            const alreadySet = currentBlockoutDates.some(date => 
+                date.date === formData.date
+            )
+            if (alreadySet) {
+                setFormError('The provided date is already set as unavailable')
+                return
+            }
+
+            const fallsInRange = currentBlockoutDates.some(date => {
+            if (date.startDate && date.endDate) {
+                const checkDate = new Date(formData.date);
+                const startDate = new Date(date.startDate);
+                const endDate = new Date(date.endDate);
+                return checkDate >= startDate && checkDate <= endDate;
+                }
+                return false;
+            });
+
+            if (fallsInRange) {
+                setFormError('The provided date falls within an already blocked date range');
+                return;
+            }
+            
+        } else if (blackoutType === 'range') {
+            if (!formData.startDate || !formData.endDate) {
+                setFormError('Must provide both dates')
+                return
+            }
+
+            const order = new Date(formData.startDate).getTime() > new Date(formData.endDate).getTime()
+            if (!order) {
+                setFormError('End date must be after the start date')
+                return
+            }
+
+            const exactRangeMatch = currentBlockoutDates.some(date => 
+                date.startDate === formData.startDate && 
+                date.endDate === formData.endDate
+            );
+
+            if (exactRangeMatch) {
+                setFormError('This date range is already set as unavailable');
+                return;
+            }
+
+            const containsSingleDate = currentBlockoutDates.some(date => {
+                if (date.date) {
+                    const checkDate = new Date(date.date);
+                    const newStart = new Date(formData.startDate);
+                    const newEnd = new Date(formData.endDate);
+                    return checkDate >= newStart && checkDate <= newEnd;
+                }
+                return false;
+                });
+
+            if (containsSingleDate) {
+                setFormError('This range includes dates already marked as unavailable');
+                return;
+            }
+
+            const overlapsRange = currentBlockoutDates.some(date => {
+                if (date.startDate && date.endDate) {
+                    const existingStart = new Date(date.startDate);
+                    const existingEnd = new Date(date.endDate);
+                    const newStart = new Date(formData.startDate);
+                    const newEnd = new Date(formData.endDate);
+                    
+                    return (
+                        (newStart <= existingEnd && newEnd >= existingStart)
+                    );
+                }
+                return false;
+            });
+
+            if (overlapsRange) {
+                setFormError('This range overlaps with an existing date range');
+                return;
+            }
+        }
+
         const data = {
             name: formData.name,
             date: formData.date || '',
@@ -136,7 +249,7 @@ export default function BlockoutDates() {
             endDate: formData.endDate || '',
             type: blackoutType,
             lab: assignedLabs
-        };
+        }; 
 
         // Demo admin 
         if (userRole === 'demo-admin') {
@@ -149,6 +262,7 @@ export default function BlockoutDates() {
             }
             setSuccess(true);
             closeModal(dialogRef);
+            resetForm();
             return; 
         }
 
@@ -183,7 +297,7 @@ export default function BlockoutDates() {
             setSuccess(true);
             closeModal(dialogRef);
             await fetchBlockoutDates();
-            
+            resetForm();
         } catch (err) {
             console.error('Submit error:', err);
             setFormError(err.message || 'Failed to save the blockout date');
@@ -204,29 +318,26 @@ export default function BlockoutDates() {
         await fetchBlockoutDates();
     }
 
-
-    function convertDate(dateString) {
-        const [year, month, day] = dateString.split('-').map(Number);
-        return new Date(year, month - 1, day);
-    }
+    // function convertDate(dateString) {
+    //     const [year, month, day] = dateString.split('-').map(Number);
+    //     return new Date(year, month - 1, day);
+    // }
 
     if (loading) return (<p>loading...</p>)
 
     return (
-        <>
-        
         <section className="appointment-list">
             {blockoutDates.length === 0 ? (<p>No blockout dates found</p>
                 ) : (
                     blockoutDates.map(date => (
                         <BlockoutDate 
+                            key={date._id}
                             date={date}
                             handleEdit={handleEdit}
                             onUpdate={onUpdate}
                         />
                         
                     )))}
-            </section>
             <button onClick={handleCreateNew}
                     aria-expanded={isDialogOpen}
                     aria-controls="add-new-blockout"
@@ -248,7 +359,7 @@ export default function BlockoutDates() {
                                     placeholder="Spring Break"
                                     value={formData.name}
                                     onChange={e => setFormData({...formData, name: e.target.value})}
-                                    required />
+                                    />
                             </div>
                             <div className="input-group-wrapper">
                                 <input
@@ -283,9 +394,10 @@ export default function BlockoutDates() {
                                             type="date"
                                             id="date"
                                             name="date"
+                                            min={minDate}
                                             value={formData.date}
                                             onChange={e => setFormData({...formData, date: e.target.value})}
-                                            required />
+                                            />
                                     </div>
                                 ) : (
                                     <>
@@ -295,9 +407,10 @@ export default function BlockoutDates() {
                                                 type="date"
                                                 id="startDate"
                                                 name="startDate"
+                                                min={minDate}
                                                 value={formData.startDate}
                                                 onChange={e => setFormData({...formData, startDate: e.target.value})}
-                                                required />
+                                                />
                                         </div>
                                         <div className="input-group-wrapper column">
                                             <label htmlFor="endDate">Choose Ending Date</label>
@@ -305,9 +418,10 @@ export default function BlockoutDates() {
                                                 type="date"
                                                 id="endDate"
                                                 name="endDate"
+                                                min={formData.startDate || minDate}
                                                 value={formData.endDate}
                                                 onChange={e => setFormData({...formData, endDate: e.target.value})}
-                                                required />
+                                                />
                                         </div>
                                     </>
                                 )
@@ -340,14 +454,14 @@ export default function BlockoutDates() {
                                     </div>
                                 </div>
                             )}
-                            {formError && <p>{formError}</p>}
+                            {formError && <p className="error-message">{formError}</p>}
                             <button type='submit'>{createNew ? 'Create' : 'Save Changes'}</button>
                         </form>
                 </dialog>
                 <div id='success' className={!success && 'hidden'}>
                     Changes Saved
                 </div>
-        
-        </>                    
+                            
+        </section>                    
     )
 }

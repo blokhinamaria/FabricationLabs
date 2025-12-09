@@ -6,35 +6,25 @@ import { ProtectedRoute } from './ProtectedRoute.jsx';
 import './App.css'
 
 import Layout from './components/Layout.jsx';
+import LoadingFallback from './components/layout-components/LoadingFallback.jsx';
 import Login from './components/content-components/Login.jsx';
 
 // students + faculty
 const Dashboard = lazy(() => import('./components/content-components/Dashboard.jsx'))
 const NewAppointment = lazy(() => import('./components/content-components/NewAppointment.jsx'))
 const EditAppointment = lazy(() => import('./components/content-components/EditAppointment.jsx'))
-// import Dashboard from './components/content-components/Dashboard.jsx';
-// import NewAppointment from './components/content-components/NewAppointment.jsx';
-// import EditAppointment from './components/content-components/EditAppointment.jsx';
 
 //faculty
 const NewReservation = lazy(() => import('./components/content-components/NewReservation.jsx'))
-// import NewReservation from  './components/content-components/NewReservation.jsx';
 
 //admin
 const AdminDashboard = lazy(() => import('./components/content-components/AdminDashboard.jsx'))
 const Equipment = lazy(() => import('./components/content-components/Admin-components/Equipment.jsx'))
 const EditEquipment = lazy(() => import('./components/content-components/Admin-components/EditEquipment.jsx'))
 const Schedule = lazy(() => import('./components/content-components/Admin-components/Schedule.jsx'))
-// import AdminDashboard from './components/content-components/AdminDashboard.jsx';
-// import Equipment from './components/content-components/Admin-components/Equipment.jsx';
-// import EditEquipment from './components/content-components/Admin-components/EditEquipment.jsx';
-// import Schedule from './components/content-components/Admin-components/Schedule.jsx';
 
 function App() {
 
-  const LoadingFallBack = () => {
-    return <div>Loading...</div>
-  }
 
   //Scroll to the top of the page when the route changes
   const Wrapper = ({children}) => {
@@ -51,7 +41,7 @@ function App() {
       <Router>
         <AuthProvider>
           <Wrapper>
-            <Suspense fallback={<LoadingFallBack/>}>
+            <Suspense fallback={<LoadingFallback/>}>
               <Routes>
                 <Route path='/' element={<Layout />}>
                   <Route index element={<Login />} />

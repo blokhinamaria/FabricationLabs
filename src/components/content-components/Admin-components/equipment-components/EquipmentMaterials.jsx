@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { Tooltip } from "@mui/material";
+import { AddIcon, CloseSmallIcon, DeleteIcon } from "../../../icons";
  
 
 export default function EquipmentMaterials({equipment, onUpdate}) {
@@ -358,6 +359,7 @@ async function handleSubmit(e) {
     setLoading(true);
     try {
         await onUpdate(equipmentUpdates);
+        setMaterialUpdated(false)
     } catch (err) {
         console.log(err);
         setFormError('Something went wrong. Please try again');
@@ -366,8 +368,10 @@ async function handleSubmit(e) {
     }
 }
 
-    function handleCancel() {
+    function handleRestore() {
         setMaterials(equipment.materials)
+        setMaterialUpdated(false)
+        setFormError('')
     }
 
     return (
@@ -388,7 +392,7 @@ async function handleSubmit(e) {
                                     />
                                     <label htmlFor={material}>{material}</label>
                                     <Tooltip title="Delete Material" arrow placement="right">
-                                        <img src="/icons/delete_forever_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" onClick={() => handleDelete(material)}></img>
+                                        <DeleteIcon onClick={() => handleDelete(material)} />
                                     </Tooltip>
                                 </div>
                                 <div style={{marginInlineStart: '20px', textAlign: 'start'}}>
@@ -405,7 +409,7 @@ async function handleSubmit(e) {
                                             />
                                             <label htmlFor={size}>{size}</label>
                                             <Tooltip title="Delete Size" arrow placement="right">
-                                                <img src="/icons/delete_forever_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" onClick={() => handleDelete(material, size)}></img>
+                                                <DeleteIcon onClick={() => handleDelete(material, size)} />
                                             </Tooltip>
                                         </div>
                                         <div style={{marginInlineStart: '40px', textAlign: 'start'}}>
@@ -421,7 +425,7 @@ async function handleSubmit(e) {
                                                     />
                                                     <label htmlFor={color.id}>{color.color}</label>
                                                     <Tooltip title="Delete Color" arrow placement="right">
-                                                        <img src="/icons/delete_forever_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg" onClick={() => handleDelete(color.material, color.size, color.color)}></img>
+                                                        <DeleteIcon onClick={() => handleDelete(color.material, color.size, color.color)} />
                                                     </Tooltip>
                                                 </div>
                                             ))}
@@ -447,7 +451,11 @@ async function handleSubmit(e) {
                                                     >
                                                         Add new color                                   
                                                 </label>
-                                                {showAddButtons[colors[0].id] && <span onClick={() => handleAddNew(colors[0].id, colors, 'new-color')}>❇️</span>}
+                                                {showAddButtons[colors[0].id] && <span onClick={() => handleAddNew(colors[0].id, colors, 'new-color')}>
+                                                        <Tooltip title={"Add Color"} arrow placement='right'>
+                                                            <AddIcon/>
+                                                        </Tooltip>
+                                                    </span>}
                                             </div>
                                         </div>
                                     </div>
@@ -474,10 +482,13 @@ async function handleSubmit(e) {
                                                     >
                                                         Add new size                                   
                                                 </label>
-                                                {showAddButtons[material] && <span onClick={() => handleAddNew(material, sizeColor, 'new-size')}>❇️</span>}
+                                                {showAddButtons[material] && <span onClick={() => handleAddNew(material, sizeColor, 'new-size')}>
+                                                        <Tooltip title={"Add Size"} arrow placement='right'>
+                                                            <AddIcon/>
+                                                        </Tooltip>
+                                                    </span>}
                                             </div>
                                 </div>
-                                {formError && <p className="warning">{formError}</p>}
                             </div>
                         ))}
                         <button
@@ -491,12 +502,13 @@ async function handleSubmit(e) {
                             + Add New Material
                         </button>              
                     </div>
+                    {formError && <p className="error-message">{formError}</p>}
                     <button type='submit' disabled={!materialUpdated} onClick={handleSubmit}>{loading ? "Saving" : 'Save'}</button>
-                    <button type='button' disabled={!materialUpdated} onClick={handleCancel}>Restore</button>
+                    <button type='button' disabled={!materialUpdated} onClick={handleRestore}>Restore</button>
                 </form>
                 <dialog id='new-material-dialog' ref={dialogRef} onClick={(e) => handleDialogClick(e)}>
                     <div className="dialog-close-button-wrapper">
-                        <button  onClick={() => closeModal()} className="dialog-close-button">Close <img src="/icons/close_small_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg"/></button>
+                        <button  onClick={() => closeModal()} className="dialog-close-button">Close <CloseSmallIcon/></button>
                     </div>
                     <form  onSubmit={createNewMaterial}>
                         <h3>Add new material</h3>
