@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "../../../AuthContext"
 import { useNavigate } from "react-router-dom"
-import { CheckCircleIcon, LocationIcon, XCircleIcon } from "../../icons"
+import { CheckCircleIcon, LocationIcon, XCircleIcon } from "../../Icons.jsx"
 
 export default function Equipment() {
 

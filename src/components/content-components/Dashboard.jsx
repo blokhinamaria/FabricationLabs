@@ -11,44 +11,51 @@ export default function Dashboard() {
     const [ upcomingAppointments, setUpcomingAppointments ] = useState([]);
     const [ upcomingReservations, setUpcomingReservations ] = useState([]);
 
+    const [ loading, setLoading ] = useState();
+
     useEffect(() => {
 
         if(user) {
             async function fetchUserAppointments() {
-                const response = await fetch(`/api/appointments?userId=${user._id}`, 
-                    {
-                    credentials: 'include'
+                try {
+                    setLoading(true);
+                    const response = await fetch(`/api/appointments?userId=${user._id}`, 
+                    { credentials: 'include' });
+                    if (response.ok) {
+                        const data = await response.json()
+                    
+                    const today = new Date();
+                    const filterAppointmentsByDate = data.appointments.filter((appointment) => {
+                        const appointmentTime = new Date(appointment.date)
+                        return appointmentTime > today;
+                    })
+
+                    const filterAppointments = filterAppointmentsByDate.filter(appointment => (appointment?.type === 'individual-appointment' || !appointment?.type))
+                    
+                    const sortedAppointments = filterAppointments.sort((a, b) => {
+                        const aDate = new Date(a.date)
+                        const bDate = new Date(b.date)
+                        return aDate - bDate;
+                    }
+                    )
+                    
+                    setUpcomingAppointments(sortedAppointments)
+
+                    const filteredReservations = filterAppointmentsByDate.filter(appointment => appointment?.type === 'class-reservation')
+
+                    const sortedReservations = filteredReservations.sort((a, b) => {
+                        const aDate = new Date(a.date)
+                        const bDate = new Date(b.date)
+                        return aDate - bDate;
+                    }
+                    )
+                    setUpcomingReservations(sortedReservations)
+                    }
+                } catch (err) {
+                    console.log(`Error fetching booking information: ${err}`)
+                } finally {
+                    setLoading(false)
                 }
-                );
-                const data = await response.json()
-                
-                const today = new Date();
-                const filterAppointmentsByDate = data.appointments.filter((appointment) => {
-                    const appointmentTime = new Date(appointment.date)
-                    return appointmentTime > today;
-                })
-
-                const filterAppointments = filterAppointmentsByDate.filter(appointment => (appointment?.type === 'individual-appointment' || !appointment?.type))
-                
-                const sortedAppointments = filterAppointments.sort((a, b) => {
-                    const aDate = new Date(a.date)
-                    const bDate = new Date(b.date)
-                    return aDate - bDate;
-                }
-                )
-                
-                setUpcomingAppointments(sortedAppointments)
-
-                const filteredReservations = filterAppointmentsByDate.filter(appointment => appointment?.type === 'class-reservation')
-
-                const sortedReservations = filteredReservations.sort((a, b) => {
-                    const aDate = new Date(a.date)
-                    const bDate = new Date(b.date)
-                    return aDate - bDate;
-                }
-                )
-                setUpcomingReservations(sortedReservations)
-
             }
             fetchUserAppointments()
         }
@@ -63,6 +70,8 @@ export default function Dashboard() {
     function handleNewAppointment() {
         navigate('/dashboard/newappointment')
     }
+
+    if (loading) return (<main>Loading Your Dashboard...</main>)
 
     return (
         <main>
@@ -98,7 +107,7 @@ export default function Dashboard() {
                             )}
                     </>
                     ) : (
-                        <h3>You have no Upcoming Appointments</h3>
+                        <h3>You Have No Upcoming Appointments</h3>
                     )}
             </article>
         </main>
