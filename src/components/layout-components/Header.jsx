@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import './Header.css'
 import { useAuth } from '../../AuthContext';
 import logo from '/FabLab_logo.png'
-import { HumburgerIcon } from '../icons';
+import { HumburgerIcon } from '../Icons.jsx';
 
 export default function Header({isLoading = false} ) {
     const { user, logout } = useAuth();
