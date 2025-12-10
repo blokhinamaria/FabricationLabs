@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Tooltip } from "@mui/material";
-import { AddIcon, CloseSmallIcon, DeleteIcon } from "../../../icons";
- 
+import { AddIcon, CloseSmallIcon, DeleteIcon } from "../../../Icons.jsx";
+
 
 export default function EquipmentMaterials({equipment, onUpdate}) {
 

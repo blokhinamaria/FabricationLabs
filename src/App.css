@@ -30,9 +30,9 @@
   --border-radius-outside: 18px;
   --max-width: 450px;
 
-  --background-color: #c2b6ca;
+  --background-color: #97bbeb;
   --footer-background-color: var(--glass-background);
-  --dialog-background-color: #b8adda;
+  --dialog-background-color: var(--background-color);
   --dialog-backdrop-color: var(--black-opaque);
 }
 

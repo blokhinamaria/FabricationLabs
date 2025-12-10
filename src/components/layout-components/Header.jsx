@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import './Header.css'
 import { useAuth } from '../../AuthContext';
 import logo from '/FabLab_logo.png'
+import { HumburgerIcon } from '../icons';
 
 export default function Header({isLoading = false} ) {
     const { user, logout } = useAuth();
@@ -44,11 +45,14 @@ export default function Header({isLoading = false} ) {
 
     const isAdmin = user.role === 'admin' || user.role === 'demo-admin';
 
+    console.log(isOpen)
+
     return (
         <header>
             <div className='logo-container' onClick={handleLogoClick}>
                 <img className='header-logo' src={logo} />
             </div>
+                <HumburgerIcon id='hamburger' onClick={menuToggle}/>
             <nav id='main-menu' className={isOpen ? 'open' : ''}>
                 <ul>
                     {isAdmin ? (

@@ -1,6 +1,6 @@
 import { Tooltip } from "@mui/material";
 import {useState } from "react"
-import { DeleteIcon } from "../../../icons";
+import { DeleteIcon } from "../../../Icons.jsx";
 
 export default function EquipmentAvailability({equipment, onUpdate}) {
     const [ available, setAvailable ] = useState(equipment?.available)
