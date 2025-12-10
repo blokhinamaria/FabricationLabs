@@ -175,7 +175,10 @@ export default function AppointmentCard({id, data}) {
             {
                 appointmentStatus === 'deleted' ? null : (
                     <div className="appointment-button-container">
-                            <button onClick={() => handleEdit(appointment._id)} disabled={isClassReservation || appointment.status === 'cancelled'}>Modify</button>
+                            <button onClick={() => handleEdit(appointment._id)} 
+                                disabled={
+                                    // isClassReservation || 
+                                    appointment.status === 'cancelled'}>Modify</button>
                             <button 
                                 onClick={openModal}
                                 aria-expanded={isDialogOpen}

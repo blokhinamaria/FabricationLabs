@@ -31,6 +31,21 @@ export async function getAvailableSlots(req, res) {
         return sendResponse(res, 400, ({ available: false, slots: []}));
     }
 
+    const isToday = checkToday(selectedDate);
+    if (isToday) {
+        const today = new Date();
+        const currentHour = today.getHours()
+        const currentMinutes = today.getMinutes()
+        
+        if (currentMinutes < 25) {
+            availability.openTime = `${String(currentHour).padStart(2, '0')}:30`
+        } else if (currentMinutes > 55) {
+            availability.openTime = `${String(currentHour + 1).padStart(2, '0')}:30`
+        } else {
+            availability.openTime = `${String(currentHour + 1).padStart(2, '0')}:00`
+        }  
+    }
+    
      // 3. Fetch equipment details (for capacity and exceptions)
     const equipmentCollection = db.collection('equipment');
     const equipment = await equipmentCollection.findOne( {_id: new ObjectId(equipmentId)} );
@@ -156,4 +171,11 @@ function isSlotDuringClass(slot, classBooking) {
     
     // Slot starts at class end hour but before end time
     return slotHour === classEndHour && slotMin < classEndMin;
+}
+
+function checkToday(date) {
+    const today = new Date();
+    const todayDateSting = today.toISOString().split('T')[0]
+    const dateSting = date.toISOString().split('T')[0]
+    return todayDateSting === dateSting;
 }

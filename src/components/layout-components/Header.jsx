@@ -45,8 +45,6 @@ export default function Header({isLoading = false} ) {
 
     const isAdmin = user.role === 'admin' || user.role === 'demo-admin';
 
-    console.log(isOpen)
-
     return (
         <header>
             <div className='logo-container' onClick={handleLogoClick}>
@@ -78,7 +76,7 @@ export default function Header({isLoading = false} ) {
                             <li>
                                 <button 
                                     className='nav' 
-                                    disabled
+                                    // disabled
                                     title="Coming soon"
                                 >
                                     Appointments
@@ -87,7 +85,7 @@ export default function Header({isLoading = false} ) {
                             <li>
                                 <button 
                                     className='nav' 
-                                    disabled
+                                    // disabled
                                     title="Coming soon"
                                 >
                                     Profile
