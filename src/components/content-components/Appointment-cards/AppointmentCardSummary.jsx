@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { AlarmIcon, CalendarIcon } from '../../Icons.jsx';
 
 export default function AppointmentSummary({appointment, handleClickItem, mode='create'}) {
 
@@ -38,11 +39,11 @@ export default function AppointmentSummary({appointment, handleClickItem, mode='
                 <div className='appointment-overview-group hover' onClick={() => handleClickItem('time')}>
                         <p>{appointmentType} at</p>
                         <div className="appointment-icon-text">
-                            <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
+                            <CalendarIcon />
                             <p>{appointmentDate.toDateString()}</p>
                         </div>
                         <div className="appointment-icon-text">
-                            <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
+                            <AlarmIcon />
                             <p>{appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}{isClassReservation && `–${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}</p>
                             
                         </div>

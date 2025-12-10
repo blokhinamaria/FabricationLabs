@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import './Appointment.css'
-import { AlarmIcon, ArrowDownIcon, ArrowUpIcon, CalendarIcon, CloseSmallIcon, ExpandCircleDownIcon, ExpandCircleUpIcon, MailIcon, PersonIcon, StackIcon } from '../../icons';
+import { AlarmIcon, ArrowDownIcon, ArrowUpIcon, CalendarIcon, CloseSmallIcon, ExpandCircleDownIcon, ExpandCircleUpIcon, MailIcon, PersonIcon, StackIcon } from '../../Icons.jsx';
 import { useAuth } from "../../../AuthContext";
 import Tooltip from '@mui/material/Tooltip';
 
