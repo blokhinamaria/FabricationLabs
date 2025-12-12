@@ -69,18 +69,18 @@ export default function NewReservation() {
             prevMaterialSelections: newAppointmentData.materialSelections,
         })
         } else if (step === 'time') {
-            setAppointmentCreateMode({
-            status: 'edit',
-            prevDate: newAppointmentData.date,
-            prevTime: newAppointmentData.startTime,
-            prevEndTime: newAppointmentData.endTime
-        })
-            setNewAppointmentData((prev) => ({
-                ...prev,
-                date: null,
-                startTime: null, 
-                endTime: null, 
-            }))
+        //     setAppointmentCreateMode({
+        //     status: 'edit',
+        //     prevDate: newAppointmentData.date,
+        //     prevTime: newAppointmentData.startTime,
+        //     prevEndTime: newAppointmentData.endTime
+        // })
+        //     setNewAppointmentData((prev) => ({
+        //         ...prev,
+        //         date: null,
+        //         startTime: null, 
+        //         endTime: null, 
+        //     }))
         }
         
     }

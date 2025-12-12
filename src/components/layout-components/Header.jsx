@@ -77,7 +77,7 @@ export default function Header({isLoading = false} ) {
                                 <li>
                                     <button 
                                         className='nav' 
-                                        // disabled
+                                        disabled
                                         title="Coming soon"
                                     >
                                         Appointments
@@ -86,7 +86,7 @@ export default function Header({isLoading = false} ) {
                                 <li>
                                     <button 
                                         className='nav' 
-                                        // disabled
+                                        disabled
                                         title="Coming soon"
                                     >
                                         Profile
@@ -107,8 +107,8 @@ export default function Header({isLoading = false} ) {
                         </li>
                     </ul>
                 </nav>
-                <span className='user-type'>Faculty</span>
-                {/* <span className='user-type'>{user.role}</span> */}
+                {/* <span className='user-type'>Faculty</span> */}
+                <span className='user-type'>{user.role}</span>
             </div>
         </header>
     )

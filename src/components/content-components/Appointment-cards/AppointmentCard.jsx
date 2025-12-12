@@ -177,7 +177,7 @@ export default function AppointmentCard({id, data}) {
                     <div className="appointment-button-container">
                             <button onClick={() => handleEdit(appointment._id)} 
                                 disabled={
-                                    // isClassReservation || 
+                                    isClassReservation || 
                                     appointment.status === 'cancelled'}>Modify</button>
                             <button 
                                 onClick={openModal}
