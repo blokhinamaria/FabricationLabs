@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import { convertTime } from '../../../func/convertTime.js';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'; 
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -10,6 +10,10 @@ import dayjs from 'dayjs';
 import './DateTimeSelection.css'
 
 export default function DateTimeSelectionReservation({equipmentId, lab, submitDateTime, mode}) {
+
+    useLayoutEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, []);
 
     const today = dayjs();
     const minDate = today.hour() >= 16 ? today.add(1, 'day') : today
@@ -267,7 +271,7 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
                         {isNewSlotSelected && 
                         <div className='date-time-confirm'>
                             <button onClick={handleSubmit}>Confirm</button>
-                            <p className='error-message'>Please, double check your reservation date and time. Once you submit your reservations, other students appointments for this equipment will be automatically cancelled</p>
+                            <p className='error-message'>Please carefully verify your reservation date and time. Once you submit your reservation, any other students’ bookings for this equipment at that same date and time will be automatically cancelled.</p>
                         </div>
                         }
                     </div>) : (<div className='time-form empty'></div>)

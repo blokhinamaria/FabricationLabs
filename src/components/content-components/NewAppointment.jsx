@@ -173,6 +173,7 @@ export default function NewAppointment() {
 
     return (
         <main>
+            <h1>New Appointment</h1>
             {(step === 'equipment' || step === 'materials')  && 
                 <EquipmentSelection
                     submitEquipment={submitEquipment}

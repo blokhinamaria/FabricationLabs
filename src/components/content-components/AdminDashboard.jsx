@@ -5,7 +5,7 @@ import AppointmentCardAdmin from "./Appointment-cards/AppointmentCardAdmin.jsx";
 
 export default function AdminDashboard() {
     
-    const { user } = useAuth()
+    const { user, loading } = useAuth()
 
     const [ bookingGroups, setBookingGroups ] = useState({});
     const [ displayGroups, setDisplayGroups ] = useState({});
@@ -23,6 +23,8 @@ export default function AdminDashboard() {
             fetchAppointments()
         }
     }, [user])
+
+    if (loading) return (<main>Loading Your Dashboard...</main>)
 
     async function fetchAppointments() {
                 const response = await fetch(`/api/appointments?role=${user.role}&labs=${user.assignedLabs.join(',')}`);
@@ -46,7 +48,7 @@ export default function AdminDashboard() {
                 
             }
 
-    const userAssignedLabs = user.assignedLabs.join('&');
+    const userAssignedLabs = user.assignedLabs.join(' & ');
 
     const [ showCancelled, setShowCancelled ] = useState(true);
     

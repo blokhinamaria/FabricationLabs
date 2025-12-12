@@ -179,6 +179,7 @@ export default function NewReservation() {
 
     return (
         <main>
+            <h1>New Class Reservation</h1>
             {(step === 'equipment' || step === 'materials')  && 
                 <EquipmentSelection
                     submitEquipment={submitEquipment}

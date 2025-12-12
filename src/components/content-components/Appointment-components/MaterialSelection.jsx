@@ -1,9 +1,13 @@
-import { useState } from "react"
+import { useState, useLayoutEffect } from "react"
 import sanitizeHtml from "sanitize-html";
 
 import './MaterialSelection.css'
 
 export default function MaterialSelection({materials = [], fileRequirements, handleSubmitMaterials, prevMaterialSelections = []}) {
+
+    useLayoutEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, []);
 
     const availableMaterials = materials?.filter(material => material.inStock)
 

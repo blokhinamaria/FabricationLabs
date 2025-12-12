@@ -1,9 +1,13 @@
-import { useState, useEffect} from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import MaterialSelection from "./MaterialSelection" 
 
 import './EquipmentSelection.css'
 
 export default function EquipmentSelection({submitEquipment, mode}) {
+
+    useLayoutEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, []);
     
     const [ equipment, setEquipment ] = useState([]);
     const [ selectedEquipment, setSelectedEquipment ] = useState(null);
@@ -88,8 +92,7 @@ export default function EquipmentSelection({submitEquipment, mode}) {
         <article>
             {mode.status === 'create' && (
                 <>
-                    <h1>Schedule an appointment with FabLabs Staff</h1>
-                    <p style={{marginBottom: '50px'}} className="limit-width">Before scheduling an appointment, read through <a className='highlight' href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank">the University of Tampa Fabrication Lab and Woodshop Policy and Guidelines</a></p>
+                    <p style={{marginBottom: '50px'}} className="limit-width">Before booking, read through <a className='highlight' href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank">the University of Tampa Fabrication Lab and Woodshop Policy and Guidelines</a></p>
                 </>
             )}
             { !isEquipmentSelected ?
@@ -99,7 +102,7 @@ export default function EquipmentSelection({submitEquipment, mode}) {
                         <h2>Choose the technology or activity below to start</h2>
                     )  : (
                         <>
-                            <h2>Choose a new equipment or confirm your equipment selection below</h2>
+                            <h2 className='limit-width'>Choose a new equipment or confirm your equipment selection below</h2>
                         </>
                     )}     
                         <div className='button-group'>

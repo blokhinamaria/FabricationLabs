@@ -18,6 +18,7 @@ header {
     gap: 30px;
 
     position: sticky;
+    top: 20px;
     z-index: 3;
 }
 
@@ -51,8 +52,15 @@ header nav {
   border: 0
 }
 
-header > * {
+header * {
   cursor: pointer;
+}
+
+header > div {
+  display: flex;
+  justify-content: space-between;
+    align-items: center;
+    gap: 40px;
 }
 
 header nav ul {
@@ -67,6 +75,8 @@ header nav ul {
 
 header span.user-type {
   font-family: "Zalando Sans Expanded", sans-serif;
+  font-variation-settings:
+    "wdth" 125;
   font-weight: 800;
   font-size: 1rem;
   text-transform: uppercase;
@@ -84,6 +94,12 @@ img.header-logo {
 @media (max-width: 768px) {
   #hamburger {
     display: block;
+  }
+
+  header > div {
+    flex-direction: column-reverse;
+    align-items: end;
+    gap: 20px;
   }
 
   nav {
@@ -106,7 +122,7 @@ img.header-logo {
     flex-direction: column;
   }
   nav.open {
-    height: 300px;
+    height: max-content;
     width: 100%;
     max-width: 450px;
     padding: 20px;

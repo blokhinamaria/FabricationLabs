@@ -103,7 +103,7 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
                 return
             }
 
-            const order = new Date(newUnavailableStartDate).getTime() > new Date(newUnavailableEndDate).getTime()
+            const order = new Date(newUnavailableStartDate).getTime() < new Date(newUnavailableEndDate).getTime()
             if (!order) {
                 setFormError('End date must be after the start date')
                 return

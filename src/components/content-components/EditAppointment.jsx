@@ -211,9 +211,10 @@ export default function EditAppointment() {
 
     return (
         <main>
+            <h1>Modify Appointment</h1>
             {step === 'overview' && 
                 <article className="edit-appointment">
-                    <h2>Modify Appointment</h2>
+                    
                     <section className="appointment-overview edit-appointment">
                         {/* Equipment+Materials section */}
                         <div className="appointment-overview-group hover" onClick={() => handleClickItem('equipment')}>

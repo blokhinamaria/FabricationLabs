@@ -1,13 +1,13 @@
-import './LoadingFallback.css'
+import Header from './Header.jsx'
+import Footer from './Footer.jsx'
 
 export default function LoadingFallback() {
-    <main className="loading-container">
-        <div className="loading-content">
-            <div className="spinner-container">
-                <div className="spinner"></div>
-                <div className="spinner-ring"></div>
-            </div>
-            <p className="loading-text">Loading your workspace...</p>
-        </div>
-    </main>
+    <>
+        <Header isLoading={true} />
+            <main>
+                Loading Your Workspace...
+            </main>
+        <Footer />
+    </>
+    
 }

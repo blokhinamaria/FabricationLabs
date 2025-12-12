@@ -1,7 +1,11 @@
-import { useState } from 'react'
+import { useState, useLayoutEffect } from 'react'
 import { useAuth } from '../../../AuthContext'
 
 export default function Details({submitDetails}) {
+
+    useLayoutEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, []);
 
     const { user, updateUser } = useAuth();
 
@@ -121,7 +125,7 @@ export default function Details({submitDetails}) {
                         {nameErrorMessage ? <p aria-live='polite' className='error-message'>{nameErrorMessage}</p> : null}
                     </div>
                     <div>
-                        <label htmlFor='classNumber'>Class Number*</label>
+                        <label htmlFor='classNumber'>Class Number</label>
                         <input
                             type="text"
                             id="classNumber"

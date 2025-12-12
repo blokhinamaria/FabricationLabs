@@ -30,12 +30,8 @@ export default function Layout() {
 
     if (loading) {
         return (
-        <>
-            <Header isLoading={true} />
-                <LoadingFallback/>
-            <Footer />
-        </>
-    );
+            <LoadingFallback/>
+        );
     }
     
 

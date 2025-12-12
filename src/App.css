@@ -7,7 +7,6 @@
 }
 
 :root {
-
   --white: #fff;
   --white-semi-opaque: rgba(255, 255, 255, 0.9);
   --glass-background: rgba(255, 255, 255, 0.1);
@@ -87,7 +86,9 @@ main {
   margin-block-end: 40px;
   text-align: center;
   overflow: hidden;
+  overflow-wrap: break-word;
   padding: var(--gap-small);
+  text-wrap: balance;
 }
 
 article {
@@ -267,6 +268,10 @@ p {
 .text-to-copy:hover {
   text-decoration: underline solid var(--accent1);
   text-underline-offset: 0.2rem;
+}
+
+.limit-width {
+  max-width: 550px;
 }
 
 input {
