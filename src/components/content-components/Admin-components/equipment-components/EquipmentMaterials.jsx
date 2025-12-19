@@ -378,7 +378,7 @@ async function handleSubmit(e) {
         <section>
             <form onSubmit={handleSubmit}>
                     <div>
-                        <h2>Materials</h2>
+                        <h2>{equipment.name} Materials</h2>
                         {Object.entries(groupedByMaterialAndSize).map(([material, sizeColor]) => (
                             <div key={material}>
                                 <div className='input-group-wrapper'>
