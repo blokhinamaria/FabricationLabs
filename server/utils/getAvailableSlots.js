@@ -3,7 +3,7 @@ import { sendResponse } from './sendResponse.js'
 
 import { ObjectId } from "bson"
 
-import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+import { authenticateUser, isDemoUser } from './checkAuthentication.js';
 
 export async function getAvailableSlots(req, res) {
 

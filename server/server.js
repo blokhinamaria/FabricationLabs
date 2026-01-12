@@ -1,4 +1,5 @@
 import http from 'node:http'
+import url from 'url'
 
 //handlers
 import { handleGet } from './handlers/routeGet.js';
@@ -22,31 +23,40 @@ import logoutHandler from './api/logout.js';
 //notifications
 import sendEmail from './api/send-email.js';
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const server = http.createServer(async (req, res) => {
 
     //CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', process.env.CLIENT_URL || '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+    if (req.method === 'OPTIONS') {
+        res.writeHead(200);
+        res.end();
+        return;
+    }
+
+    const parsedUrl = url.parse(req.url, true);
+    const path = parsedUrl.pathname;
+
     // AUTH ROUTES
-    if (req.url === '/api/request-link' && req.method === 'POST') {
+    if (path === '/api/request-link' && req.method === 'POST') {
         return await requestLinkHandler(req, res);
     }
-    else if (req.url.startsWith('/api/verify')) {
+    else if (path.startsWith('/api/verify')) {
         return await verifyHandler(req, res);
     }
-    else if (req.url === '/api/check-auth' && req.method === 'GET') {
+    else if (path === '/api/check-auth' && req.method === 'GET') {
         return await checkAuthHandler(req, res);
     }
-    else if (req.url === '/api/logout' && req.method === 'POST') {
+    else if (path === '/api/logout' && req.method === 'POST') {
         return await logoutHandler(req, res);
     }
 
     //EMAIL NOTIFICATIONS 
-    if (req.url === '/api/send-email' && req.method === 'POST') {
+    if (path === '/api/send-email' && req.method === 'POST') {
         return await sendEmail(req, res)
     }
 
@@ -57,7 +67,7 @@ const server = http.createServer(async (req, res) => {
     // } 
 
     //OTHER APOOINTMENT METHODS
-    else if (req.url.startsWith('/api/appointments')) {
+    else if (path.startsWith('/api/appointments')) {
         if (req.method === 'GET') {
             return await handleGet(req, res)
         } else if (req.method === 'POST') {
@@ -69,20 +79,20 @@ const server = http.createServer(async (req, res) => {
         }
 
     //EQUIPMENT 
-    } else if (req.url.startsWith('/api/equipment') && req.method === 'GET') {
+    } else if (path.startsWith('/api/equipment') && req.method === 'GET') {
         return await handleGet(req, res)
-    } else if (req.url.startsWith('/api/equipment') && req.method === 'PUT') {
+    } else if (path.startsWith('/api/equipment') && req.method === 'PUT') {
         return await handlePut(req, res, 'equipment')
     
     //AVAILABILITY
-    } else if (req.url.startsWith('/api/availability')) {
-        if (req.url.startsWith('/api/availability/slots')) {
+    } else if (path.startsWith('/api/availability')) {
+        if (path.startsWith('/api/availability/slots')) {
             return await getAvailableSlots(req, res)
-        } else if (req.url.startsWith('/api/availability/date')) {
+        } else if (path.startsWith('/api/availability/date')) {
             return await getBookedEquipment(req, res)
         }
     //SEMESTERS
-        } else if (req.url.startsWith('/api/semesters')) {
+        } else if (path.startsWith('/api/semesters')) {
             if (req.method === 'GET') {
                 return await getSemesters(res, res)
             } else if (req.method === 'POST') {
@@ -93,7 +103,7 @@ const server = http.createServer(async (req, res) => {
                 return await handleDelete(req, res, 'semesterPeriods')
             }
 
-        } else if (req.url.startsWith('/api/blockoutdates')) {
+        } else if (path.startsWith('/api/blockoutdates')) {
             if (req.method === 'GET') {
                 return await getBlockoutDates(req, res)
             } else if (req.method === 'POST') {
@@ -104,7 +114,7 @@ const server = http.createServer(async (req, res) => {
                 return await handleDelete(req, res, 'blockoutDates')
             }
     //USERS
-    } else if (req.url.startsWith('/api/users') && req.method === 'PUT') {
+    } else if (path.startsWith('/api/users') && req.method === 'PUT') {
         return await handlePut(req, res, 'users')
     } else {
         sendResponse(res, 404, ({ error: 'Not Found', url: req.url}))
