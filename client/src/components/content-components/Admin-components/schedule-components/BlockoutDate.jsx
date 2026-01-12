@@ -1,5 +1,6 @@
 import { useState,useRef } from "react"
 import { useAuth } from "../../../../AuthContext"
+import { API_URL } from "../../../../config";
 
 export default function BlockoutDate({date, handleEdit, onUpdate}) {
 
@@ -36,7 +37,7 @@ export default function BlockoutDate({date, handleEdit, onUpdate}) {
         }
 
         try {
-            const response = await fetch(`/api/blockoutdates?id=${id}`, {
+            const response = await fetch(`${API_URL}/api/blockoutdates?id=${id}`, {
                 method: 'DELETE',
             })
 

@@ -5,6 +5,7 @@ import EquipmentMaterials from './equipment-components/EquipmentMaterials.jsx';
 import EquipmentFileReq from './equipment-components/EquipmentFileReq.jsx';
 import { useAuth } from '../../../AuthContext.jsx';
 import './Equipment.css'
+import { API_URL } from '../../../config.js';
 
 
 export default function EditEquipment() {
@@ -27,7 +28,7 @@ export default function EditEquipment() {
 
     async function fetchEquipment(id) {
             try {
-                const response = await fetch(`/api/equipment?id=${id}`)
+                const response = await fetch(`${API_URL}/api/equipment?id=${id}`)
                 const data = await response.json()
                 if (response.ok) {
                     setEquipment(data.equipment)
@@ -50,7 +51,7 @@ export default function EditEquipment() {
         
         
         try {
-            const response = await fetch(`/api/equipment?id=${equipment._id}`, {
+            const response = await fetch(`${API_URL}/api/equipment?id=${equipment._id}`, {
                 method: "PUT",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(differences)

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "../../../AuthContext"
 import { useNavigate } from "react-router-dom"
 import { CheckCircleIcon, LocationIcon, XCircleIcon } from "../../Icons.jsx"
+import { API_URL } from "../../../config.js"
 
 export default function Equipment() {
 
@@ -15,7 +16,7 @@ export default function Equipment() {
     useEffect(() => {
         async function fetchAllEquipment() {
             try {
-                const response = await fetch(`/api/equipment?role=${user.role}&labs=${user.assignedLabs.join(',')}`)
+                const response = await fetch(`${API_URL}/api/equipment?role=${user.role}&labs=${user.assignedLabs.join(',')}`)
                 const data = await response.json()
                 if (response.ok) {
                     setEquipment(data.equipment)

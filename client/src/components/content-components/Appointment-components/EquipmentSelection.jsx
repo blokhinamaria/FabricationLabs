@@ -2,6 +2,7 @@ import { useState, useEffect, useLayoutEffect } from 'react'
 import MaterialSelection from "./MaterialSelection" 
 
 import './EquipmentSelection.css'
+import { API_URL } from '../../../config';
 
 export default function EquipmentSelection({submitEquipment, mode}) {
 
@@ -20,7 +21,7 @@ export default function EquipmentSelection({submitEquipment, mode}) {
             async function fetchEquipment() {
                 try {
                     setLoading(true);
-                    const response = await fetch(`/api/equipment`);
+                    const response = await fetch(`${API_URL}/api/equipment`);
                     const data = await response.json()
                     if (data.success) {
                         const allEquipment = data.equipment.filter((item => item.available === true))
@@ -47,7 +48,7 @@ export default function EquipmentSelection({submitEquipment, mode}) {
 
     async function getBookedEquipment(date) {
         try {
-            const response = await fetch(`/api/availability/date?date=${date}`);
+            const response = await fetch(`${API_URL}/api/availability/date?date=${date}`);
             const data = await response.json()
             if (response.ok) {
                 return data.bookedEquipmentIds;

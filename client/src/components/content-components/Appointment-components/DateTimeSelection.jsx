@@ -7,6 +7,7 @@ import { useAvailability } from '../../../AvailabilityContext.jsx';
 import dayjs from 'dayjs';
 
 import './DateTimeSelection.css'
+import { API_URL } from '../../../config.js';
 
 export default function DateTimeSelection({equipmentId, lab, submitDateTime, mode}) {
 
@@ -66,7 +67,7 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
     useEffect(() => {
         async function fetchEquipment(id) {
         try {
-            const response = await fetch(`/api/equipment?id=${id}`)
+            const response = await fetch(`${API_URL}/api/equipment?id=${id}`)
             const data = await response.json()
                 if (response.ok) {
                     setAvailabilityExceptions(data.equipment.availabilityExceptions)

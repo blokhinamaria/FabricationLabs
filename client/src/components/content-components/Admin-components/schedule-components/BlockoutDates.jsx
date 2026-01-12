@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../../../AuthContext";
 import BlockoutDate from "./BlockoutDate";
+import { API_URL } from "../../../../config";
 
 export default function BlockoutDates() {
 
@@ -50,7 +51,7 @@ export default function BlockoutDates() {
     async function fetchBlockoutDates() {
         
         try {
-            const response = await fetch('/api/blockoutdates');
+            const response = await fetch(`${API_URL}/api/blockoutdates`);
             
             if (!response.ok) {
                 throw new Error('Failed to fetch blockout dates');
@@ -273,13 +274,13 @@ export default function BlockoutDates() {
             let response;
             
             if (editId) {
-                response = await fetch(`/api/blockoutdates?id=${editId}`, {
+                response = await fetch(`${API_URL}/api/blockoutdates?id=${editId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
             } else {
-                response = await fetch('/api/blockoutdates', {
+                response = await fetch(`${API_URL}/api/blockoutdates`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)

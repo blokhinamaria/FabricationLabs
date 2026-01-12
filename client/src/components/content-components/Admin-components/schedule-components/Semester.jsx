@@ -1,5 +1,6 @@
 import { useState,useRef } from "react"
 import { useAuth } from "../../../../AuthContext"
+import { API_URL } from "../../../../config";
 
 export default function Semester({semester, handleEdit, onUpdate}) {
 
@@ -36,7 +37,7 @@ export default function Semester({semester, handleEdit, onUpdate}) {
         }
 
         try {
-            const response = await fetch(`/api/semesters?id=${id}`, {
+            const response = await fetch(`${API_URL}/api/semesters?id=${id}`, {
                 method: 'DELETE',
             })
 

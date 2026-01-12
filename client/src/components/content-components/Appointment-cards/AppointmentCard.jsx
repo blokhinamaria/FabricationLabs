@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
+import { API_URL } from '../../../config'
 import './Appointment.css'
 
 export default function AppointmentCard({id, data}) {
@@ -24,7 +25,7 @@ export default function AppointmentCard({id, data}) {
     async function fetchAppointment(appointmentId) {
         try {
             setLoading(true)
-            const response = await fetch(`/api/appointments?id=${appointmentId}`)
+            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`)
             const data = await response.json()
             console.log(data)
             if (response.ok) {
@@ -118,7 +119,7 @@ export default function AppointmentCard({id, data}) {
 
     async function handleDelete(appointmentId) {
         try {
-            const response = await fetch(`/api/appointments?id=${appointmentId}`, {
+            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`, {
                 method: 'DELETE',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(id)

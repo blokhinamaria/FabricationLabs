@@ -10,6 +10,7 @@ import Details from "./Appointment-components/Details.jsx";
 import AppointmentCard from "./Appointment-cards/AppointmentCard.jsx";
 
 import './NewAppointment.css'
+import { API_URL } from "../../config.js";
 
 export default function NewAppointment() {
 
@@ -151,7 +152,7 @@ export default function NewAppointment() {
     async function bookAppointment(appointmentData = newAppointmentData) {
     
         try {
-            const response = await fetch('/api/appointments', {
+            const response = await fetch(`${API_URL}/api/appointments`, {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(appointmentData)

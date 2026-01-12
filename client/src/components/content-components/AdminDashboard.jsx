@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "../../AuthContext";
 
 import AppointmentCardAdmin from "./Appointment-cards/AppointmentCardAdmin.jsx";
+import { API_URL } from "../../config.js";
 
 export default function AdminDashboard() {
     
@@ -27,7 +28,7 @@ export default function AdminDashboard() {
     if (loading) return (<main>Loading Your Dashboard...</main>)
 
     async function fetchAppointments() {
-                const response = await fetch(`/api/appointments?role=${user.role}&labs=${user.assignedLabs.join(',')}`);
+                const response = await fetch(`${API_URL}/api/appointments?role=${user.role}&labs=${user.assignedLabs.join(',')}`);
                 const data = await response.json()
                 
                 const today = new Date();

@@ -3,6 +3,7 @@ import './Appointment.css'
 import { AlarmIcon, ArrowDownIcon, ArrowUpIcon, CalendarIcon, CloseSmallIcon, ExpandCircleDownIcon, ExpandCircleUpIcon, MailIcon, PersonIcon, StackIcon } from '../../Icons.jsx';
 import { useAuth } from "../../../AuthContext";
 import Tooltip from '@mui/material/Tooltip';
+import { API_URL } from "../../../config.js";
 
 export default function AppointmentCardAdmin({id, data, fetchAppointments}) {
 
@@ -35,7 +36,7 @@ export default function AppointmentCardAdmin({id, data, fetchAppointments}) {
     async function fetchAppointment(appointmentId) {
         try {
             setLoading(true)
-            const response = await fetch(`/api/appointments?id=${appointmentId}`)
+            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`)
             const data = await response.json()
             if (response.ok) {
                 setAppointment(data.appointment)
@@ -154,7 +155,7 @@ export default function AppointmentCardAdmin({id, data, fetchAppointments}) {
         const alert = 'Cancellation notice sent'
 
         try {
-            const response = await fetch(`/api/appointments?id=${appointmentId}`, {
+            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({status: 'cancelled'})
@@ -178,7 +179,7 @@ export default function AppointmentCardAdmin({id, data, fetchAppointments}) {
         setEmailFormError('')
 
         try {
-            const response = await fetch('/api/send-email', {
+            const response = await fetch(`${API_URL}/api/send-email`, {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: email, subject: subject, html: html })

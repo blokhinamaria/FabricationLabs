@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../../../AuthContext";
 import Semester from "./Semester";
+import { API_URL } from "../../../../config";
 
 export default function Semesters() {
     const { userRole } = useAuth()
@@ -31,7 +32,7 @@ export default function Semesters() {
     async function fetchSemesters() {
 
         try {
-            const response = await fetch('/api/semesters')
+            const response = await fetch(`${API_URL}/api/semesters`)
             
             if (!response.ok) {
                 throw new Error('Failed to fetch semesters dates');
@@ -146,7 +147,7 @@ export default function Semesters() {
         if (userRole === 'admin') {
             try {
                     if (editId) {
-                        const response = await fetch(`/api/semesters?id=${editId}`, {
+                        const response = await fetch(`${API_URL}/api/semesters?id=${editId}`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(data)
@@ -156,7 +157,7 @@ export default function Semesters() {
                             throw new Error(errorData.message || 'Failed to save semester');
                         
                     }} else {
-                            const response = await fetch(`/api/semesters`, {
+                            const response = await fetch(`${API_URL}/api/semesters`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(data)
