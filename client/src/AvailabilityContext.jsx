@@ -1,5 +1,6 @@
 // AvailabilityContext.js
 import { createContext, useContext, useState, useEffect } from 'react'
+import { API_URL } from './config';
 
 const AvailabilityContext = createContext();
 
@@ -15,8 +16,8 @@ export function AvailabilityProvider({ children }) {
     async function fetchAvailabilityData () {
         try {
             setLoading(true);
-            const semesterRes = await fetch('/api/semesters');
-            const blackoutRes = await fetch('/api/blockoutdates');
+            const semesterRes = await fetch(`${API_URL}/api/semesters`);
+            const blackoutRes = await fetch(`${API_URL}/api/blockoutdates`);
 
             const semesters = await semesterRes.json();
             const blackouts = await blackoutRes.json();

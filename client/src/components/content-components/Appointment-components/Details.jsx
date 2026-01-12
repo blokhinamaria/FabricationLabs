@@ -1,5 +1,6 @@
 import { useState, useLayoutEffect } from 'react'
 import { useAuth } from '../../../AuthContext'
+import { API_URL } from '../../../config';
 
 export default function Details({submitDetails}) {
 
@@ -67,7 +68,7 @@ export default function Details({submitDetails}) {
 
     async function changeName(name) {
         try {
-            const response = await fetch(`/api/users?id=${user._id}`, {
+            const response = await fetch(`${API_URL}/api/users?id=${user._id}`, {
                     method: "PUT",
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({fullName: name})

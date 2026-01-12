@@ -4,6 +4,7 @@ import { ObjectId } from "bson";
 import AppointmentCardSummary from "./Appointment-cards/AppointmentCardSummary.jsx";
 import EquipmentSelection from "./Appointment-components/EquipmentSelection.jsx";
 import DateTimeSelection from "./Appointment-components/DateTimeSelection.jsx";
+import { API_URL } from "../../config.js";
 
 export default function EditAppointment() {
     const location = useLocation();
@@ -35,7 +36,7 @@ export default function EditAppointment() {
     async function fetchAppointment(appointmentId) {
         try {
             setLoading(true);
-            const response = await fetch(`/api/appointments?id=${appointmentId}`);
+            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`);
             const data = await response.json();
             if (response.ok) {
                 setAppointment(data.appointment)
@@ -188,7 +189,7 @@ export default function EditAppointment() {
 
     async function updateAppointment(differences) {
         try {
-            const response = await fetch(`/api/appointments?id=${appointmentId}`, {
+            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`, {
                 method: "PUT",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(differences)

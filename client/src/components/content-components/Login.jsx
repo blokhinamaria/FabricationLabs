@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { API_URL} from '../../config'
 
 import './Login.css'
 
@@ -48,7 +49,7 @@ async function requestLink(email, password=null) {
     setErrorMessage('')
     try {
         if (!password) {
-            const response = await fetch('/api/request-link', {
+            const response = await fetch(`${API_URL}/api/request-link`, {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: email })
@@ -59,7 +60,7 @@ async function requestLink(email, password=null) {
                 throw new Error('Something went wrong')
             }
         } else {
-            const response = await fetch('/api/request-link', {
+            const response = await fetch(`${API_URL}/api/request-link`, {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: email, password: password })

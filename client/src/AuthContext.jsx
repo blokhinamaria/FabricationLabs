@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from './config'
 
 const AuthContext = createContext(null)
 
@@ -16,7 +17,7 @@ export function AuthProvider( {children} ) {
 
     const checkAuth = async() => {
         try {
-            const response = await fetch('/api/check-auth', 
+            const response = await fetch(`${API_URL}/api/check-auth`, 
                 {
                 credentials: 'include'
             }

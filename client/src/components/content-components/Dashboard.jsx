@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext";
 
 import AppointmentCard from "./Appointment-cards/AppointmentCard";
+import { API_URL } from "../../config";
 
 export default function Dashboard() {
     
@@ -19,7 +20,7 @@ export default function Dashboard() {
             async function fetchUserAppointments() {
                 try {
                     setLoading(true);
-                    const response = await fetch(`/api/appointments?userId=${user._id}`, 
+                    const response = await fetch(`${API_URL}/api/appointments?userId=${user._id}`, 
                     { credentials: 'include' });
                     if (response.ok) {
                         const data = await response.json()
