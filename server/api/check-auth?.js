@@ -1,6 +1,6 @@
 import { sendResponse } from '../utils/sendResponse.js';
 
-import { authenticateUser } from '../utils/checkAuthentication.js';
+import { authenticateUser } from '../utils/checkDemoUsers.js';
 
 export default async function handler(req, res) {
     const auth = await authenticateUser(req);

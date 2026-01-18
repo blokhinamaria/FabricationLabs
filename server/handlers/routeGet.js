@@ -1,13 +1,13 @@
 import { sendResponse } from '../utils/sendResponse.js'
-import { connectDB } from "../utils/connectDB.js"
 
 import { ObjectId } from "bson"
 
-import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+import { isDemoUser } from '../utils/checkDemoUsers.js';
+import { getDB } from '../config/database.js';
 
 export async function handleGet(req, res) {
         
-        const auth = await authenticateUser(req);
+        const auth = await handleCheckAuth(req);
         
         if (!auth.authenticated) {
             return sendResponse(res, 401, { error: auth.error });
@@ -15,7 +15,7 @@ export async function handleGet(req, res) {
     
         try {
             
-            const { client, db } = await connectDB();
+            const db  = await getDB()
 
             if (req.url.startsWith('/api/appointments')) {
 
@@ -31,27 +31,10 @@ export async function handleGet(req, res) {
                 if (id) {
                     const appointment = await collection.findOne( { _id: new ObjectId(id)})
 
-                    await client.close()
-
                     if (appointment) {
                         return sendResponse(res, 200, ({ success: true, appointment: appointment }))
                     } else {
                         return sendResponse(res, 200, ({ success: true, appointment: 'No Appointment Found' }))
-                    }
-                }
-
-                const userId = req.query?.userId || new URLSearchParams(req.url?.split('?')[1]).get('userId')
-
-                if (userId) {
-                    
-                    const appointments = await collection.find( { userId: userId }).toArray()
-                    
-                    await client.close()
-
-                    if (appointments) {
-                        return sendResponse(res, 200, ({ success: true, appointments: appointments }))
-                    } else {
-                        return sendResponse(res, 200, ({ success: true, appointments: 'No Appointments Found' }))
                     }
                 }
 
@@ -67,13 +50,11 @@ export async function handleGet(req, res) {
 
                         const appointments = await collection.find({ location: { $in: assignedLabs }}).toArray()
 
-                        await client.close()
                         return sendResponse(res, 200, ({success: true, appointments: appointments}))
                     } else if (role === 'demo-admin') {
 
                         const appointments = await collection.find({}).toArray()
 
-                        await client.close()
                         return sendResponse(res, 200, ({success: true, appointments: appointments}))
                     }   
                     
@@ -90,33 +71,9 @@ export async function handleGet(req, res) {
                 const collection = db.collection('equipment');
                 const equipment = await collection.find({ location: { $in: assignedLabs }}).toArray()
 
-                await client.close()
                 return sendResponse(res, 200, ({success: true, equipment: equipment}))
             } 
-            const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
-            if (id) {
-                const collection = db.collection('equipment')
-                const equipment = await collection.findOne( { _id: new ObjectId(id)})
-
-                await client.close()
-
-                if (equipment) {
-                    return sendResponse(res, 200, ({ success: true, equipment: equipment }))
-                } else {
-                    return sendResponse(res, 400, ({ success: false, equipment: "No equipment found" }))
-                }
-            }
-            
-            //return all for users
-                const collection = db.collection('equipment')
-                const equipment = await collection.find({}).toArray()
-                await client.close()
-
-                if (equipment) {
-                    return sendResponse(res, 200, ({ success: true, equipment: equipment }))
-                } else {
-                    return sendResponse(res, 400, ({ success: false, equipment: "No equipment found" }))
-                }
+        
         }
     } catch (err) {
         console.log(`Error in routeHandlers, handleGet: ${err}`)

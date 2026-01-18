@@ -1,10 +1,10 @@
 import { parseJSONBody } from "../utils/parseJSONBody.js"
 import { sanitizeInput } from "../utils/sanitizeInput.js"
 import { sendResponse } from '../utils/sendResponse.js'
-import { connectDB } from "../utils/connectDB.js"
-import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+import { isDemoUser } from '../utils/checkDemoUsers.js';
 
 import { ObjectId } from "bson"
+import { getDB } from "../config/database.js";
 
 export async function handlePut(req, res, collectionName) {
     // Verify the user's session
@@ -20,7 +20,7 @@ export async function handlePut(req, res, collectionName) {
         }
             
         try {
-            const { client, db } = await connectDB();
+            const db = await getDB();
             const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
             
             let updateData
@@ -43,8 +43,6 @@ export async function handlePut(req, res, collectionName) {
                 {_id: new ObjectId(id)},
                 { $set: sanitizedData } 
             )
-
-            await client.close()
 
             return sendResponse(res, 200, ({ success: true, modified: result.modifiedCount }))
         

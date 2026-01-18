@@ -1,12 +1,11 @@
-import { connectDB } from "./connectDB.js";
+import { getDB } from "../config/database.js";
 import { sendResponse } from "./sendResponse.js";
 
 export async function getSemesters(req, res) {
     try {
-        const {client, db} = await connectDB();
+        const db = await getDB();
         const collection = db.collection('semesterPeriods');
         const semesters = await collection.find({}).sort({startDay: -1}).toArray();
-        await client.close()
         if (semesters) {
             return sendResponse(res, 200, ({ success: true, semesters: semesters }))
         } else {

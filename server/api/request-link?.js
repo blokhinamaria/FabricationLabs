@@ -2,9 +2,9 @@ import { Resend } from "resend";
 import jwt from "jsonwebtoken";
 import { sendResponse } from "../utils/sendResponse.js";
 import { parseJSONBody } from "../utils/parseJSONBody.js";
-import { connectDB } from "../utils/connectDB.js";
 
 import bcrypt from "bcryptjs";
+import { getDB } from "../config/database.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -34,12 +34,11 @@ export default async function handler(req, res) {
       const demoRegex = /^demo-(student|faculty|admin)@fabricationlabs\.com$/
       const result = demoRegex.test(email)
       if (result) {
-        const { client, db } = await connectDB();
+        const db = await getDB();
         const collection = db.collection('users');
         const existingUser = await collection.findOne({ email });
         if (existingUser) {
           const isPasswordValid = await bcrypt.compare(password, existingUser.password);
-          await client.close();
           if (!isPasswordValid) {
             return sendResponse(res, 401, { error: 'Invalid credentials' });
           }
@@ -72,7 +71,7 @@ export default async function handler(req, res) {
 
     // Create JWT token for magic link
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '30m' });
-    const link = `${process.env.APP_URL}/api/verify?token=${token}`;
+    const link = `${process.env.CLIENT_URL}/api/verify?token=${token}`;
 
     // Send email via Resend
     await resend.emails.send({

@@ -1,9 +1,9 @@
 import { sendResponse } from '../utils/sendResponse.js'
-import { connectDB } from "../utils/connectDB.js"
 
 import { ObjectId } from "bson"
 
-import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+import { isDemoUser } from '../utils/checkDemoUsers.js';
+import { getDB } from '../config/database.js';
 
 export async function handleDelete(req, res, collectionName) {
 
@@ -18,7 +18,7 @@ export async function handleDelete(req, res, collectionName) {
 
     try {
         const id = req.query?.id || new URLSearchParams(req.url?.split('?')[1]).get('id');
-        const { client, db } = await connectDB();
+        const db = await getDB();
         let collection;
         if (isDemoUser(auth.user.email)) {
                 collection = db.collection(`demo-${collectionName}`);
@@ -27,8 +27,6 @@ export async function handleDelete(req, res, collectionName) {
             }
 
         const result = await collection.deleteOne({ _id: new ObjectId(id)})
-
-        await client.close()
 
         sendResponse(res, 200, ({ success: true, deleted: result.deletedCount }))
 

@@ -1,8 +1,8 @@
 import { parseJSONBody } from "../utils/parseJSONBody.js"
 import { sanitizeInput } from "../utils/sanitizeInput.js"
 import { sendResponse } from '../utils/sendResponse.js'
-import { connectDB } from "../utils/connectDB.js"
-import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+import { isDemoUser } from '../utils/checkDemoUsers.js';
+import { getDB } from "../config/database.js";
 
 export async function handlePost(req, res, collectionName) {
         // Verify the user's session
@@ -25,7 +25,7 @@ export async function handlePost(req, res, collectionName) {
             }
             const sanitizedData = sanitizeInput(parsedData)
 
-            const { client, db } = await connectDB();
+            const db = await getDB()
             let collection = db.collection(collectionName);
                 if (isDemoUser(auth.user.email)) {
                     collection = db.collection(`demo-${collectionName}`);
@@ -37,8 +37,6 @@ export async function handlePost(req, res, collectionName) {
                     ...sanitizedData,
                     createdAt: new Date()
             });
-
-            await client.close();
 
             sendResponse(res, 200, ({ success: true, appointmentId: result.insertedId, message: `New entry added to ${collectionName}` }))
             console.log(result)

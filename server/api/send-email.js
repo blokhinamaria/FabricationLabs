@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { sendResponse } from "../utils/sendResponse.js";
 import { parseJSONBody } from "../utils/parseJSONBody.js";
-import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+import { isDemoUser } from '../utils/checkDemoUsers.js';
 import jwt from "jsonwebtoken";
 
 const resend = new Resend(process.env.RESEND_API_KEY);

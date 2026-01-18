@@ -1,6 +1,6 @@
-import { connectDB } from './connectDB.js'
+import { connectDB } from '../config/database.js'
 import { sendResponse } from './sendResponse.js'
-import { authenticateUser, isDemoUser } from '../utils/checkAuthentication.js';
+import { isDemoUser } from './checkDemoUsers.js';
 
 export async function getBookedEquipment(req, res) {
 
