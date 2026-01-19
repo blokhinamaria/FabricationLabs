@@ -51,11 +51,11 @@ export default function NewAppointment() {
     //Navigation between steps
 
     const [ step, setStep ] = useState('equipment')
+    const [ createAppointmentError, setCreateAppointmentError] = useState('')
 
     const [appointmentCreateMode, setAppointmentCreateMode] = useState({
         status: 'create',
     }) 
-
 
     function handleNext(step) {
         setStep(step)
@@ -122,7 +122,6 @@ export default function NewAppointment() {
     // STEP 2: date and time
 
     function submitDateTime(selectedDate, selectedTime) {
-        console.log(selectedDate)
         setNewAppointmentData((prev) => ({
             ...prev,
             date: selectedDate,
@@ -150,25 +149,26 @@ export default function NewAppointment() {
     const [ appointmentId, setAppointmentId] = useState(null)
 
     async function bookAppointment(appointmentData = newAppointmentData) {
-    
+        setCreateAppointmentError('')
         try {
-            const response = await fetch(`${API_URL}/api/appointments`, {
+            const response = await fetch(`${API_URL}/api/me/appointment`, {
+                credentials: 'include',
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(appointmentData)
             })
             const data = await response.json();
-            if (response.ok) {
-                console.log(`success. Response: ${response}`)
-                                
+            if (response.ok) {                                
                 setStep('confirmation')
                 setAppointmentId(data.appointmentId)
-
+                return
             } else {
-                console.error(`Server error: ${response.statusText}`)
+                setCreateAppointmentError(data.error)
+                return
             }
         } catch (err) {
-            console.log(err)
+            console.error(err)
+            setCreateAppointmentError('Something went wrong when creating your appointment. Please try again later')
         }
     }
 
@@ -203,6 +203,7 @@ export default function NewAppointment() {
                             <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                         </div>
                         <Details submitDetails={submitDetails}/>
+                        {createAppointmentError && <p>{createAppointmentError}</p>}
                     </div>
                 )
             }

@@ -31,11 +31,11 @@ async function handleSubmit(formData) {
         if (isValid) {
             setUserEmail(email);
         } else {
-            setErrorMessage('Please, enter valid UT email')
+            setErrorMessage('Please enter valid UT email')
             return
         }
     } else if (email === '') {
-        setErrorMessage('Please, enter valid UT email')
+        setErrorMessage('Please enter valid UT email')
         return
     } else {
         setErrorMessage('Invalid email')
@@ -49,40 +49,42 @@ async function requestLink(email, password=null) {
     setErrorMessage('')
     try {
         if (!password) {
-            const response = await fetch(`${API_URL}/api/request-link`, {
+            const response = await fetch(`${API_URL}/api/login/request-link`, {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: email })
             });
+            const data = await response.json();
+            console.log(response)
             if (response.ok) {
                 setAuthInProgress(true)
+                return
             } else {
-                throw new Error('Something went wrong')
+                setErrorMessage(data.error)
+                return
             }
         } else {
-            const response = await fetch(`${API_URL}/api/request-link`, {
+            const response = await fetch(`${API_URL}/api/login/request-link`, {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: email, password: password })
             });
+            const data = await response.json();
             if (response.ok) {
                 setAuthInProgress(true)
-                const data = await response.json();
                 if (data.redirect) {
                     window.location.href = data.redirect;
                 }
             } else {
-                const data = await response.json();
                 setErrorMessage(data.error)
-                throw new Error('Something went wrong')
-                
+                return 
             }
-        }   
+        }
         
     } catch (err) {
-        setErrorMessage('Something went wrong. Please try again')
+        setErrorMessage('Something went wrong. Please try again later')
         console.log(err)
-    }
+    } 
 }
 
 function isEmailValid(email) {

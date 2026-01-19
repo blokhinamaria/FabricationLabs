@@ -14,41 +14,47 @@ export default function EquipmentSelection({submitEquipment, mode}) {
     const [ selectedEquipment, setSelectedEquipment ] = useState(null);
     const [ bookedEquipment, setBookedEquipment] = useState([]);
     const [ loading, setLoading ] = useState(false);
-    
+    const [ dataError, setDataError ] = useState('')
 
     //fetch equipment
         useEffect(() => {
             async function fetchEquipment() {
                 try {
+                    setDataError('')
                     setLoading(true);
-                    const response = await fetch(`${API_URL}/api/equipment`);
+                    const response = await fetch(`${API_URL}/api/equipment`, { credentials: 'include' });
                     const data = await response.json()
-                    if (data.success) {
-                        const allEquipment = data.equipment.filter((item => item.available === true))
-                        if (mode?.prevEquipmentId) {
-                            const prevEquipment = allEquipment.find(item => item._id === mode.prevEquipmentId)
-                            setSelectedEquipment(prevEquipment);
-                            
-                        }
-                        if (mode?.prevDate) {
-                                const bookedEquipment = await getBookedEquipment(mode.prevDate)
-                                const bookedEquipmentExcludeCurrent = bookedEquipment.filter(equipmentId => equipmentId !== mode.prevEquipmentId)
-                                setBookedEquipment(bookedEquipmentExcludeCurrent);
-                            }
-                        setEquipment(allEquipment);
+                    if(!response.ok) {
+                        setDataError(data.error)
+                        return
                     }
-                } catch (err) {
-                    console.log(err)
+                    
+                    const allEquipment = data.equipment.filter((item => item.available === true))
+                    if (mode?.prevEquipmentId) {
+                        const prevEquipment = allEquipment.find(item => item._id === mode.prevEquipmentId)
+                        setSelectedEquipment(prevEquipment);
+                        
+                    }
+                    if (mode?.prevDate) {
+                            const bookedEquipment = await getBookedEquipment(mode.prevDate)
+                            const bookedEquipmentExcludeCurrent = bookedEquipment.filter(equipmentId => equipmentId !== mode.prevEquipmentId)
+                            setBookedEquipment(bookedEquipmentExcludeCurrent);
+                        }
+                    setEquipment(allEquipment);
+                    return
+                    
+                } catch {
+                    setDataError('Something went wrong when loading equipment data. Please try again later')
                 } finally {
                     setLoading(false)
                 }
             };
             fetchEquipment();
-        }, [])
+    }, [])
 
     async function getBookedEquipment(date) {
         try {
-            const response = await fetch(`${API_URL}/api/availability/date?date=${date}`);
+            const response = await fetch(`${API_URL}/api/availability/equipment?date=${date}`, { credentials: 'include' });
             const data = await response.json()
             if (response.ok) {
                 return data.bookedEquipmentIds;
@@ -106,6 +112,12 @@ export default function EquipmentSelection({submitEquipment, mode}) {
                             <h2 className='limit-width'>Choose a new equipment or confirm your equipment selection below</h2>
                         </>
                     )}     
+                    {   
+                        dataError ? 
+                        <>
+                            <p className='limit-width'>{dataError}</p>
+                        </>
+                        :
                         <div className='button-group'>
                             <fieldset className='button-group'>
                                 <legend>Fabrication Lab</legend>
@@ -134,6 +146,7 @@ export default function EquipmentSelection({submitEquipment, mode}) {
                                     ))}
                             </fieldset>
                         </div>
+                    }
                 </section>
                 :
                 <section className="equipment-list">

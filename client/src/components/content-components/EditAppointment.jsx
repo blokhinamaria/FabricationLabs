@@ -35,8 +35,9 @@ export default function EditAppointment() {
 
     async function fetchAppointment(appointmentId) {
         try {
+            setError('')
             setLoading(true);
-            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`);
+            const response = await fetch(`${API_URL}/api/me/appointment/${appointmentId}`, {credentials:'include'});
             const data = await response.json();
             if (response.ok) {
                 setAppointment(data.appointment)
@@ -46,11 +47,12 @@ export default function EditAppointment() {
                 setReservationEnd(appointment?.type === 'class-reservation' && appointment.endTime ? appointment.endTime : null)
                 setClassNumber(data.appointment.classNumber)
                 setNotes(data.appointment.notes)
+                return
             } else {
-                setError('Failed to load appointment')
+                setError(data.error)
             }
-        } catch (err) {
-            console.log(`Error fetching appointment data: ${err} `)
+        } catch {
+            setError(`Error loading appointment data. Try again later`)
         } finally {
             setLoading(false)
         }
@@ -189,17 +191,18 @@ export default function EditAppointment() {
 
     async function updateAppointment(differences) {
         try {
-            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`, {
+            setError('')
+            const response = await fetch(`${API_URL}/api/me/appointment/${appointmentId}`, {
+                credentials: 'include',
                 method: "PUT",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(differences)
             })
             if (response.ok) {
-                console.log(`success. Response: ${response}`)
                 navigate('/dashboard')
 
             } else {
-                console.error(`Server error: ${response.statusText}`)
+                setError('Something went wrong during the update. Please try again later')
             }
         } catch (err) {
             console.log(err)

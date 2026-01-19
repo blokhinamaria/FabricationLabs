@@ -1,6 +1,6 @@
 import { useAuth } from "../../../AuthContext.jsx"
 import BlockoutDates from "./schedule-components/BlockoutDates.jsx"
-import Semesters from "./schedule-components/Semesters.jsx"
+import Semesters from "./schedule-components/semesters/Semesters.jsx"
 export default function Schedule() {
     const {user} = useAuth();
     return (

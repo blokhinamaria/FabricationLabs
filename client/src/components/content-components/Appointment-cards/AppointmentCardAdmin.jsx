@@ -5,7 +5,7 @@ import { useAuth } from "../../../AuthContext";
 import Tooltip from '@mui/material/Tooltip';
 import { API_URL } from "../../../config.js";
 
-export default function AppointmentCardAdmin({id, data, fetchAppointments}) {
+export default function AppointmentCardAdmin({id, data}) {
 
     const { userRole } = useAuth()
 
@@ -36,7 +36,7 @@ export default function AppointmentCardAdmin({id, data, fetchAppointments}) {
     async function fetchAppointment(appointmentId) {
         try {
             setLoading(true)
-            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`)
+            const response = await fetch(`${API_URL}/api/admin/appointment/${appointmentId}`, {credentials:'include'})
             const data = await response.json()
             if (response.ok) {
                 setAppointment(data.appointment)
@@ -115,11 +115,7 @@ export default function AppointmentCardAdmin({id, data, fetchAppointments}) {
             return
         }
 
-        let html = message.trim();
-
-        const alert = 'Email sent';
-
-        await sendEmail(email, subject.trim(), html, alert)
+        await sendEmail(subject.trim(), message.trim())
         setMessage('')
         setSubject('')
         closeModal(contactDialogRef);
@@ -136,36 +132,18 @@ export default function AppointmentCardAdmin({id, data, fetchAppointments}) {
             return;
         }
 
-        const email = appointment.userEmail
-
-        const subject = 'Appointment Cancelled'
-
-        let html = `
-            <p>Hi there,</p>
-            <p>We had to cancel your ${appointmentType} for ${appointment.equipmentName}</p>
-            <p>On ${appointmentDate.toDateString()} at ${appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
-            <p>Reason for cancellation</p>
-            <p>${cancellationReason}</p>
-            <p>You can use the link below to login and reschedule</p>
-            <a href="{{VERIFY_LINK}}" target="_self" style="background:#6dff60;color:#000;padding:10px 20px;text-decoration:none;border-radius:4px;">Log in</a>
-            <p>This link expires in 30 minutes since the email was sent. If link has expired login to <a href="fabrication-labs.vercel.app>UTampa Fabrication Labs here</a> to reschedule</p>
-            <p>– The FabLab Team</p>
-        `
-
-        const alert = 'Cancellation notice sent'
-
         try {
-            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`, {
+            const response = await fetch(`${API_URL}/api/admin/appointment/${appointmentId}/cancel`, {
+                credentials: 'include',
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({status: 'cancelled'})
+                body: JSON.stringify({cancellationReason: cancellationReason})
             })
             if (response.ok) {
                 console.log(`success. Response: ${response}`)
                 setAppointmentStatus('cancelled')
-                await sendEmail(email, subject, html, alert)
                 closeModal(cancelDialogRef);
-                await fetchAppointments();
+                await fetchAppointment(id);
             }
         } catch (err) {
             console.log(err)
@@ -175,24 +153,22 @@ export default function AppointmentCardAdmin({id, data, fetchAppointments}) {
 
     const [emailFormError, setEmailFormError] = useState('')
 
-    async function sendEmail(email, subject, html, alert) {
+    async function sendEmail(subject, message) {
         setEmailFormError('')
 
         try {
-            const response = await fetch(`${API_URL}/api/send-email`, {
+            const response = await fetch(`${API_URL}/api/admin/user/${appointment.userId}/contact`, {
+                credentials: 'include',
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: email, subject: subject, html: html })
+                body: JSON.stringify({ subject: subject, message: message })
             })
             if (response.ok) {
-                window.alert(alert)
-            } else {
-                throw new Error('Something went wrong')
+                window.alert('Email sent')
             }
         } catch (err) {
             // setErrorMessage('Something went wrong. Please try again')
             console.log(err)
-            setEmailFormError(err)
         }
     }
 

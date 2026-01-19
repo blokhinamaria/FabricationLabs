@@ -28,26 +28,25 @@ export default function AdminDashboard() {
     if (loading) return (<main>Loading Your Dashboard...</main>)
 
     async function fetchAppointments() {
-                const response = await fetch(`${API_URL}/api/appointments?role=${user.role}&labs=${user.assignedLabs.join(',')}`);
-                const data = await response.json()
-                
-                const today = new Date();
-                
-                const filterBookingsByDate = data.appointments.filter((appointment) => {
-                    const appointmentTime = new Date(appointment.date)
-                    return appointmentTime > today;
-                })
+        const response = await fetch(`${API_URL}/api/admin/appointment`, {credentials: 'include'});
+        const data = await response.json()
+        
+        const today = new Date();
+        
+        const filterBookingsByDate = data.appointments.filter((appointment) => {
+            const appointmentTime = new Date(appointment.date)
+            return appointmentTime > today;
+        })
 
-                setShowCancelledButton(filterBookingsByDate.some(booking => booking.status === 'cancelled'))
+        setShowCancelledButton(filterBookingsByDate.some(booking => booking.status === 'cancelled'))
 
-                const sortedBookings = filterBookingsByDate.sort((a, b) => sortBookings(a,b))
-                const groupedBookings = {...Object.groupBy(sortedBookings, ({date}) => {
-                        return new Date(date).toDateString();
-                    })}
-                setBookingGroups(groupedBookings)
-                setDisplayGroups(groupedBookings)
-                
-            }
+        const sortedBookings = filterBookingsByDate.sort((a, b) => sortBookings(a,b))
+        const groupedBookings = {...Object.groupBy(sortedBookings, ({date}) => {
+                return new Date(date).toDateString();
+            })}
+        setBookingGroups(groupedBookings)
+        setDisplayGroups(groupedBookings)
+    }
 
     const userAssignedLabs = user.assignedLabs.join(' & ');
 
@@ -79,7 +78,7 @@ export default function AdminDashboard() {
                         <h2>{date}</h2>
                         <div className="appointment-list">
                                 {group.map((booking) => (
-                                    <AppointmentCardAdmin key={booking._id} data={booking} fetchAppointments={fetchAppointments}/>
+                                    <AppointmentCardAdmin key={booking._id} id={booking._id} data={booking}/>
                             ))}
                         </div>
                     </section>

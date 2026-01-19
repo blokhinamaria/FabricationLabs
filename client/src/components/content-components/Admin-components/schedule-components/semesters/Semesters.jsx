@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
-import { useAuth } from "../../../../AuthContext";
-import Semester from "./Semester";
-import { API_URL } from "../../../../config";
+import { useAuth } from "../../../../../AuthContext";
+import SemesterCard from "./SemesterCard";
+import { API_URL } from "../../../../../config";
 
 export default function Semesters() {
-    const { userRole } = useAuth()
+    const { user } = useAuth()
     const [ semesters, setSemesters ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ formData, setFormData ] = useState({
@@ -13,6 +13,7 @@ export default function Semesters() {
         endDate: '',
         isActive: true
     })
+    
     const [formError, setFormError] = useState('')
     const [success, setSuccess] = useState(false);
 
@@ -32,7 +33,7 @@ export default function Semesters() {
     async function fetchSemesters() {
 
         try {
-            const response = await fetch(`${API_URL}/api/semesters`)
+            const response = await fetch(`${API_URL}/api/semester`, {credentials:'include'})
             
             if (!response.ok) {
                 throw new Error('Failed to fetch semesters dates');
@@ -72,21 +73,21 @@ export default function Semesters() {
 
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-    const openModal = (ref) => {
-        ref.current.showModal()
+    const openModal = () => {
+        dialogRef.current.showModal()
         setIsDialogOpen(true)
     }
 
-    const closeModal = (ref) => {
-        ref.current.close()
+    const closeModal = () => {
+        dialogRef.current.close()
         setIsDialogOpen(false)
         resetForm();
     }
 
     //close dialog when clicking outside
-    const handleDialogClick = (e, ref) => {
-        if (e.target === ref.current) {
-            closeModal(ref);
+    const handleDialogClick = (e) => {
+        if (e.target === dialogRef.current) {
+            closeModal(dialogRef);
         }
     }
 
@@ -125,7 +126,7 @@ export default function Semesters() {
             isActive: formData.isActive
         };
 
-        if (userRole === 'demo-admin') {
+        if (user.role === 'demo-admin') {
             if (editId) {
                 setSemesters(prev => prev.map(semester => {
                     if (semester._id === editId) {
@@ -144,29 +145,32 @@ export default function Semesters() {
                 return;
             }
         }
-        if (userRole === 'admin') {
+        if (user.role === 'admin') {
             try {
-                    if (editId) {
-                        const response = await fetch(`${API_URL}/api/semesters?id=${editId}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
-                        })
-                        if (!response.ok) {
-                            const errorData = await response.json().catch(() => ({}));
-                            throw new Error(errorData.message || 'Failed to save semester');
-                        
-                    }} else {
-                            const response = await fetch(`${API_URL}/api/semesters`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
-                        })
-                        if (!response.ok) {
-                            const errorData = await response.json().catch(() => ({}));
-                            throw new Error(errorData.message || 'Failed to save semester');
+                if (editId) {
+                    const response = await fetch(`${API_URL}/api/semester/${editId}`, {
+                        credentials: 'include',
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                    const responseData = await response.json();
+                    if (!response.ok) {
+                        setFormError(responseData.error)
+                        return 
                     }
-                
+                } else {
+                        const response = await fetch(`${API_URL}/api/semester`, {
+                        credentials: 'include',
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                    const responseData = await response.json();
+                    if (!response.ok) {
+                        setFormError(responseData.error)
+                        return 
+                    }
                 }
                 closeModal(dialogRef);
                 setSuccess(true);
@@ -179,8 +183,9 @@ export default function Semesters() {
                     setLoading(false);
                 }
             }
+            setFormError('Failed to save the semester')
+            return
         }
-
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -190,7 +195,7 @@ export default function Semesters() {
     }, [success]);
 
     async function onUpdate(id) {
-        if (userRole === 'demo-admin') {
+        if (user.role === 'demo-admin') {
             setSemesters(prev => prev.filter(date => date._id !== id))
             setSuccess(true);
             return; 
@@ -206,7 +211,7 @@ export default function Semesters() {
             {semesters.length === 0 ? (<p>No semester periods found</p>
                 ) : (
                     semesters.map(semester => (
-                        <Semester 
+                        <SemesterCard 
                             key={semester._id}
                             semester={semester}
                             handleEdit={handleEdit}
@@ -218,8 +223,7 @@ export default function Semesters() {
                     aria-expanded={isDialogOpen}
                     aria-controls="delete-dialog"
                     aria-haspopup="dialog"
-            >
-                + Add Semester</button>
+            > + Add Semester</button>
             <dialog id='add-new-semester' ref={dialogRef} onClick={handleDialogClick}>
                 <div className="dialog-close-button-wrapper">
                     <button onClick={() => closeModal(dialogRef)} className="dialog-close-button">Close <img src="/icons/close_small_24dp_1F1F1F_FILL1_wght400_GRAD0_opsz24.svg"/></button>

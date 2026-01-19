@@ -25,6 +25,7 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [isAvailable, setIsAvailable] = useState(true);
     const [ availabilityExceptions, setAvailabilityExceptions ] = useState([]);
+    const [ dataError, setDataError ] = useState('')
 
     //Allow shouldDisableDate to handle dayjs objects from the calendar
     function handleDisableDate (dayjsDate) {
@@ -66,14 +67,19 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
 
     useEffect(() => {
         async function fetchEquipment(id) {
-        try {
-            const response = await fetch(`${API_URL}/api/equipment?id=${id}`)
-            const data = await response.json()
-                if (response.ok) {
-                    setAvailabilityExceptions(data.equipment.availabilityExceptions)
+            try {
+                setDataError('')
+                const response = await fetch(`${API_URL}/api/equipment/${id}`, {credentials: 'include'})
+                const data = await response.json()
+                if (!response.ok) {
+                    setDataError(data.error)
+                    return
                 }
-            } catch (err) {
-                console.log(`Failed to fetch equipment: ${err}`)
+                setAvailabilityExceptions(data.equipment.availabilityExceptions)
+                return
+            } catch {
+                setDataError('Failed to fetch equipment information')
+                return
             }
         }
         fetchEquipment(equipmentId)
@@ -85,11 +91,11 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
         setLoadingSlots(true)
             try {
                 const url = appointmentId ?
-                    (`/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}&appointmentId=${appointmentId}`
+                    (`${API_URL}/api/availability/slot?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}&appointmentId=${appointmentId}`
                 ) : (
-                    `/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}`
+                    `${API_URL}/api/availability/slot?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}`
                     )
-                const response = await fetch(url)
+                const response = await fetch(url, { credentials: 'include' })
                 const data = await response.json()
 
                 if (data.available) {
@@ -108,11 +114,13 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
                     const matchSlot = data.slots.find(slot => slot.startTime === mode.prevTime)
                     setSelectedSlot(matchSlot)
                     console.log(`matchSlot: ${matchSlot.startTime}`)
-            }
-            }
+                }
+                }
 
-            } catch (err) {
-                console.log(`Error fetching slots: ${err}`)
+            } catch {
+                setAvailableSlots([])
+                setSelectedSlot(null)
+                return
             } finally {
                 setLoadingSlots(false)
             }
@@ -145,6 +153,8 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
         // bookingDate.setUTCHours(hours, minutes, 0, 0)
         submitDateTime(bookingDate, selectedSlot)
     }
+
+    if (dataError) return (<p>{dataError}</p>)
 
     return (
             <form className='date-time-form' onSubmit={handleSubmit}>

@@ -6,7 +6,7 @@ const AuthContext = createContext(null)
 
 export function AuthProvider( {children} ) {
     const [ user, setUser ] = useState(null);
-    const [ userRole, setUserRole ] = useState(null);
+    const [ redirect, setRedirect ] = useState('/');
     const [ loading, setLoading ] = useState(true);
     const navigate = useNavigate();
 
@@ -17,25 +17,31 @@ export function AuthProvider( {children} ) {
 
     const checkAuth = async() => {
         try {
+            setLoading(true)
             const response = await fetch(`${API_URL}/api/check-auth`, 
                 {
-                credentials: 'include'
-            }
-        )
+                    credentials: 'include'
+                } 
+            )
             const data = await response.json()
 
             if (data.authenticated) {                                
                 setUser(data.user)
-                setUserRole(data.user.role)
-                navigate(data.redirect)
+                setRedirect(data.redirect)
+                
+                if (location.pathname === '/') {
+                    navigate(data.redirect)
+                }
+
+                return
             } else {
                 setUser(null)
-                setUserRole(null)
-                navigate('/')
+                setRedirect('/')
+                return
             }
         } catch (err) {
             console.log(`Auth check failed: ${err}`)
-            navigate('/')
+            setRedirect('/')
             setUser(null)
         } finally {
             setLoading(false)
@@ -48,23 +54,22 @@ export function AuthProvider( {children} ) {
 
     const logout = async () => {
         try {
-            await fetch('/api/logout', {
+            await fetch(`${API_URL}/api/logout`, {
                 method: "POST",
                 credentials: 'include'
             })
             setUser(null)
-            window.location.href = '/'
+            navigate('/')
         } catch (err) {
             console.log(`Logout failed: ${err}`)
         }
     }
 
     return (
-        <AuthContext.Provider value={{ user, userRole, loading, checkAuth, updateUser, logout }}>
+        <AuthContext.Provider value={{ user, redirect, loading, checkAuth, updateUser, logout }}>
             {children}
         </AuthContext.Provider>
     );
-
 };
 
 export function useAuth() {

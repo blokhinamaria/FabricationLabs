@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
 export function ProtectedRoute ({ children, allowedRoles }) {
-    const { user, loading } = useAuth();
+    const { user, redirect, loading } = useAuth();
 
     if (loading) {
         return <div>Loading...</div>
@@ -14,9 +14,9 @@ export function ProtectedRoute ({ children, allowedRoles }) {
 
     if (allowedRoles && !allowedRoles.includes(user.role)) {
         if (user.role === 'admin' || user.role === 'demo-admin') {
-            return <Navigate to='/admin-dashboard' replace />
+            return <Navigate to={redirect} replace />
         }
-        return <Navigate to='/dashboard' replace />
+        return <Navigate to={redirect} replace />
     }
     return children;
 }

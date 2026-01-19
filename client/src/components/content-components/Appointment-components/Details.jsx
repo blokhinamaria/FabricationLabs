@@ -68,7 +68,8 @@ export default function Details({submitDetails}) {
 
     async function changeName(name) {
         try {
-            const response = await fetch(`${API_URL}/api/users?id=${user._id}`, {
+            const response = await fetch(`${API_URL}/api/me/user/${user._id}`, {
+                    credentials: 'include',
                     method: "PUT",
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({fullName: name})

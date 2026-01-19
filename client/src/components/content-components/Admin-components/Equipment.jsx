@@ -16,7 +16,7 @@ export default function Equipment() {
     useEffect(() => {
         async function fetchAllEquipment() {
             try {
-                const response = await fetch(`${API_URL}/api/equipment?role=${user.role}&labs=${user.assignedLabs.join(',')}`)
+                const response = await fetch(`${API_URL}/api/admin/equipment`, { credentials: 'include' })
                 const data = await response.json()
                 if (response.ok) {
                     setEquipment(data.equipment)

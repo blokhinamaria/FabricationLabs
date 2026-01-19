@@ -25,7 +25,7 @@ export default function AppointmentCard({id, data}) {
     async function fetchAppointment(appointmentId) {
         try {
             setLoading(true)
-            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`)
+            const response = await fetch(`${API_URL}/api/me/appointment/${appointmentId}`, {credentials: 'include'})
             const data = await response.json()
             console.log(data)
             if (response.ok) {
@@ -119,13 +119,13 @@ export default function AppointmentCard({id, data}) {
 
     async function handleDelete(appointmentId) {
         try {
-            const response = await fetch(`${API_URL}/api/appointments?id=${appointmentId}`, {
+            const response = await fetch(`${API_URL}/api/me/appointment/${appointmentId}`, {
+                credentials: 'include',
                 method: 'DELETE',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(id)
             })
             if (response.ok) {
-                console.log(`success. Response: ${response}`)
                 setAppointmentStatus('deleted')
                 closeModal();
             }

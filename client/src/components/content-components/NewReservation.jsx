@@ -50,8 +50,8 @@ export default function NewReservation() {
 
     //Navigation between steps
 
-    const [ step, setStep ] = useState('equipment')
-
+    const [ step, setStep ] = useState('equipment');
+    const [ createAppointmentError, setCreateAppointmentError] = useState('')
     const [appointmentCreateMode, setAppointmentCreateMode] = useState({
         status: 'create',
     }) 
@@ -154,25 +154,25 @@ export default function NewReservation() {
     const [ appointmentId, setAppointmentId] = useState(null)
 
     async function bookAppointment(appointmentData = newAppointmentData) {
-    
+        setCreateAppointmentError('')
         try {
-            const response = await fetch(`${API_URL}/api/appointments`, {
+            const response = await fetch(`${API_URL}/api/me/appointment`, {
+                credentials: 'include',
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(appointmentData)
             })
             const data = await response.json();
-            if (response.ok) {
-                console.log(`success. Response: ${response}`)
-                                
+            if (response.ok) {                                
                 setStep('confirmation')
                 setAppointmentId(data.appointmentId)
-
+                return 
             } else {
-                console.error(`Server error: ${response.statusText}`)
+                setCreateAppointmentError(data.error)
+                return
             }
-        } catch (err) {
-            console.log(err)
+        } catch {
+            setCreateAppointmentError('Something went wrong when creating your appointment. Please try again later')
         }
     }
 
@@ -208,6 +208,7 @@ export default function NewReservation() {
                             <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                         </div>
                         <Details submitDetails={submitDetails}/>
+                        {createAppointmentError && <p>{createAppointmentError}</p>}
                     </div>
                 )
             }

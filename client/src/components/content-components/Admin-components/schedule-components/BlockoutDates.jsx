@@ -5,7 +5,7 @@ import { API_URL } from "../../../../config";
 
 export default function BlockoutDates() {
 
-    const { user, userRole } = useAuth()
+    const { user } = useAuth()
 
     const [ blockoutDates, setBlockoutDates ] = useState([]);
     const [ loading, setLoading ] = useState(false);
@@ -51,7 +51,7 @@ export default function BlockoutDates() {
     async function fetchBlockoutDates() {
         
         try {
-            const response = await fetch(`${API_URL}/api/blockoutdates`);
+            const response = await fetch(`${API_URL}/api/blockout-date`, {credentials: 'include'});
             
             if (!response.ok) {
                 throw new Error('Failed to fetch blockout dates');
@@ -253,7 +253,7 @@ export default function BlockoutDates() {
         }; 
 
         // Demo admin 
-        if (userRole === 'demo-admin') {
+        if (user.role === 'demo-admin') {
             if (editId) {
                 setBlockoutDates(prev => prev.map(blockoutdate => 
                     blockoutdate._id === editId ? { ...data, _id: editId } : blockoutdate
@@ -267,20 +267,22 @@ export default function BlockoutDates() {
             return; 
         }
 
-    if (userRole === 'admin') {
+    if (user.role === 'admin') {
         setLoading(true); 
         
         try { 
             let response;
             
             if (editId) {
-                response = await fetch(`${API_URL}/api/blockoutdates?id=${editId}`, {
+                response = await fetch(`${API_URL}/api/blockout-date/${editId}`, {
+                    credentials: 'include',
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
             } else {
-                response = await fetch(`${API_URL}/api/blockoutdates`, {
+                response = await fetch(`${API_URL}/api/blockout-date`, {
+                    credentials: 'include',
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -306,10 +308,11 @@ export default function BlockoutDates() {
             setLoading(false);
         }
     }
+    setFormError('Failed to save the blockout date');
 }   
 
     async function onUpdate(id) {
-        if (userRole === 'demo-admin') {
+        if (user.role === 'demo-admin') {
             setBlockoutDates(prev => prev.filter(date => date._id !== id))
             setSuccess(true);
             return; 
