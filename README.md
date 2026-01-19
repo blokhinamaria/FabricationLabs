@@ -32,11 +32,10 @@ The University of Tampa's fabrication facilities were managing equipment schedul
 - React Context (state management)
 - React Router
 - Material-UI (MUI Date Picker)
-- Pure CSS
+- CSS
 
 **Backend:**
 - Node.js (native HTTP modules)
-- Vercel Serverless Functions
 - Custom routing implementation
 
 **Database:**
@@ -102,7 +101,7 @@ Three user roles with distinct permissions:
 5. Token stored in localStorage (client)
 6. Protected routes validate JWT on each request
 
-## 📧 Email Notifications
+## Email Notifications
 
 Automated emails sent for:
 - Account verification (registration)
