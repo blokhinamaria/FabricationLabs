@@ -35,7 +35,7 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
     useEffect(() => {
         async function fetchEquipment(id) {
         try {
-            const response = await fetch(`${API_URL}/api/equipment?id=${id}`)
+            const response = await fetch(`${API_URL}/api/equipment/${id}`, { credentials: 'include' })
             const data = await response.json()
                 if (response.ok) {
                     setAvailabilityExceptions(data.equipment.availabilityExceptions)
@@ -65,9 +65,6 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
                 if (date.startDate && date.endDate) {
                     const dateStart = dayjs(date.startDate, 'YYYY-MM-DD');
                     const dateEnd = dayjs(date.endDate, 'YYYY-MM-DD');
-                    console.log(dateStart)
-                    console.log(dateEnd)
-                    console.log(dayjsDate)
                     return dayjsDate >= dateStart && dayjsDate <= dateEnd;
                 }
                 return false;
@@ -92,11 +89,12 @@ export default function DateTimeSelectionReservation({equipmentId, lab, submitDa
         setLoadingSlots(true)
             try {
                 const url = appointmentId ?
-                    (`/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}&appointmentId=${appointmentId}`
-                ) : (
-                    `/api/availability/slots?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}`
+                    (
+                        `${API_URL}/api/availability/slot?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}&appointmentId=${appointmentId}`
+                    ) : (
+                        `${API_URL}/api/availability/slot?equipmentId=${equipmentId}&date=${selectedDate.format('YYYY-MM-DD')}`
                     )
-                const response = await fetch(url)
+                const response = await fetch(url, { credentials: 'include' })
                 const data = await response.json()
 
                 if (data.available) {

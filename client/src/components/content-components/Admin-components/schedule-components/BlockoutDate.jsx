@@ -37,7 +37,8 @@ export default function BlockoutDate({date, handleEdit, onUpdate}) {
         }
 
         try {
-            const response = await fetch(`${API_URL}/api/blockoutdates?id=${id}`, {
+            const response = await fetch(`${API_URL}/api/blockout-date/${id}`, {
+                credentials: 'include',
                 method: 'DELETE',
             })
 

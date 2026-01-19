@@ -28,7 +28,7 @@ export default function EditEquipment() {
 
     async function fetchEquipment(id) {
             try {
-                const response = await fetch(`${API_URL}/api/equipment?id=${id}`)
+                const response = await fetch(`${API_URL}/api/equipment/${id}`, { credentials: 'include'})
                 const data = await response.json()
                 if (response.ok) {
                     setEquipment(data.equipment)
@@ -51,7 +51,8 @@ export default function EditEquipment() {
         
         
         try {
-            const response = await fetch(`${API_URL}/api/equipment?id=${equipment._id}`, {
+            const response = await fetch(`${API_URL}/api/equipment/${equipment._id}`, {
+                credentials: 'include',
                 method: "PUT",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(differences)

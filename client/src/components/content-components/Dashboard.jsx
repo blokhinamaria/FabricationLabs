@@ -13,18 +13,28 @@ export default function Dashboard() {
     const [ upcomingReservations, setUpcomingReservations ] = useState([]);
 
     const [ loading, setLoading ] = useState();
+    const [ dataFetchError, setDataFetchError ] = useState('');
 
     useEffect(() => {
 
         if(user) {
             async function fetchUserAppointments() {
+                setDataFetchError('')
                 try {
                     setLoading(true);
-                    const response = await fetch(`${API_URL}/api/appointments?userId=${user._id}`, 
-                    { credentials: 'include' });
-                    if (response.ok) {
-                        const data = await response.json()
-                    
+                    const response = await fetch(`${API_URL}/api/me/appointment`, { credentials: 'include' })
+                    const data = await response.json()
+                    if (!response.ok) {
+                        setUpcomingAppointments([])
+                        setDataFetchError(data.error)
+                        return
+                    }
+
+                    if (data.appointments.length === 0) {
+                        setUpcomingAppointments([])
+                        return
+                    }
+                
                     const today = new Date();
                     const filterAppointmentsByDate = data.appointments.filter((appointment) => {
                         const appointmentTime = new Date(appointment.date)
@@ -51,9 +61,10 @@ export default function Dashboard() {
                     }
                     )
                     setUpcomingReservations(sortedReservations)
-                    }
-                } catch (err) {
-                    console.log(`Error fetching booking information: ${err}`)
+                    
+                } catch (error) {
+                    console.error(error)
+                    setDataFetchError(`We couldn't get your appointments. Please try again later`)
                 } finally {
                     setLoading(false)
                 }
@@ -83,34 +94,41 @@ export default function Dashboard() {
                 </div>
                 
             </article>
-            <article style={{ marginTop: "50px"}} className="upcoming-appointments">
-                {(upcomingAppointments?.length > 0 || upcomingReservations?.length > 0) ? (
-                    <>
-                        {(user.role === 'faculty' || user.role === 'demo-faculty') && upcomingReservations?.length > 0 && (
-                            <div>
-                                <h1>Upcoming Class Reservations</h1>
-                                <section className="appointment-list">
-                                        {upcomingReservations.map((appointment) => (
-                                            <AppointmentCard key={appointment._id} data={appointment}/>
-                                    ))}
-                                </section>
-                            </div>
-                            )}
-                        {upcomingAppointments?.length > 0 && (
-                            <div>
-                                <h1>Upcoming Individual Appointments</h1>
-                                <div className="appointment-list">
-                                        {upcomingAppointments.map((appointment) => (
-                                            <AppointmentCard key={appointment._id} data={appointment}/>
-                                    ))}
+            {
+                dataFetchError ? 
+                <article style={{ marginTop: "50px"}}>
+                    <h3>{dataFetchError}</h3>
+                </article>
+                :             
+                <article style={{ marginTop: "50px"}} className="upcoming-appointments">
+                    {(upcomingAppointments?.length > 0 || upcomingReservations?.length > 0) ? (
+                        <>
+                            {(user.role === 'faculty' || user.role === 'demo-faculty') && upcomingReservations?.length > 0 && (
+                                <div>
+                                    <h1>Upcoming Class Reservations</h1>
+                                    <section className="appointment-list">
+                                            {upcomingReservations.map((appointment) => (
+                                                <AppointmentCard key={appointment._id} data={appointment}/>
+                                        ))}
+                                    </section>
                                 </div>
-                            </div>
-                            )}
-                    </>
-                    ) : (
-                        <h3>You Have No Upcoming Appointments</h3>
-                    )}
-            </article>
+                                )}
+                            {upcomingAppointments?.length > 0 && (
+                                <div>
+                                    <h1>Upcoming Individual Appointments</h1>
+                                    <div className="appointment-list">
+                                            {upcomingAppointments.map((appointment) => (
+                                                <AppointmentCard key={appointment._id} data={appointment}/>
+                                        ))}
+                                    </div>
+                                </div>
+                                )}
+                        </>
+                        ) : (
+                            <h3>You Have No Upcoming Appointments</h3>
+                        )}
+                </article>
+            }
         </main>
     )
 }

@@ -25,7 +25,6 @@ const Schedule = lazy(() => import('./components/content-components/Admin-compon
 
 function App() {
 
-
   //Scroll to the top of the page when the route changes
   const Wrapper = ({children}) => {
     const location = useLocation();
