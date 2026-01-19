@@ -34,9 +34,9 @@ export async function requestLink(req, res) {
                     return sendResponse(res, 401, { error: 'Invalid credentials' });
                 }
                 // Redirect to verify for demo users
-                const baseUrl = process.env.APP_URL || `https://${req.headers.host}`;
+                const baseUrl = process.env.CLIENT_URL;  
                 const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '30m' });
-                const verifyURL = `${baseUrl}/api/verify?token=${token}`;
+                const verifyURL = `${baseUrl}/api/login/verify?token=${token}`;
                 // if (typeof res.redirect === 'function') {
                 //   return res.redirect(302, verifyURL);
                 // }
@@ -66,7 +66,7 @@ export async function requestLink(req, res) {
         const token = jwt.sign(
             { email },
             process.env.JWT_SECRET,
-            { expiresIn: '300m' });
+            { expiresIn: '30m' });
 
         const result = await sendMagicLink(email, token);
         return sendResponse(res, 200, result);
@@ -106,15 +106,15 @@ export async function verifyEmailLink(req, res) {
             {
                 sub: String(user._id),
                 email: user.email,
-            }, process.env.JWT_SECRET, { expiresIn: '300m' });
+            }, process.env.JWT_SECRET, { expiresIn: '30m' });
     
         // Set session cookie
         res.setHeader('Set-Cookie', cookie.serialize('session', sessionToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
             path: '/',
-            maxAge: 24 * 60 * 60 // 1 day
+            maxAge: 60 * 30  
         }));
 
         const dashboard = (

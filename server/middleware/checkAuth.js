@@ -96,8 +96,8 @@ export async function checkAuth(req, res) {
 export function clearSessionCookie(res) {
     res.setHeader('Set-Cookie', cookie.serialize('session', '', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: true,
+        sameSite: 'none',
         path: '/',
         maxAge: 0 
     }))
