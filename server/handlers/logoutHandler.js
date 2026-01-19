@@ -7,8 +7,8 @@ export async function handleLogout(res) {
     // Clear the session cookie
         res.setHeader('Set-Cookie', cookie.serialize('session', '', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
             path: '/',
             maxAge: 0
         }));

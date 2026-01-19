@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 export async function sendMagicLink(email, token) {
     
-    const link = `${process.env.CLIENT_URL}/api/login/verify?token=${token}`;
+    const link = `${process.env.SERVER_URL}/api/login/verify?token=${token}`;
     
     const resend = new Resend(process.env.RESEND_API_KEY);
     
