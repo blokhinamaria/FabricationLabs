@@ -1,5 +1,5 @@
-import { getSemesters } from "../controllers/semesterControllers.js";
-import { requireAuth } from "../middleware/requireAuth.js"
+import { createNewSemester, deleteSemester, getSemesters, updateSemester } from "../controllers/semesterControllers.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 import { sendResponse } from "../utils/sendResponse.js";
 
 export async function semesterHandler(req, res, path) {
@@ -10,20 +10,35 @@ export async function semesterHandler(req, res, path) {
         return
     }
 
-    // if (req.user.role === 'admin' || req.user.role === 'demo-admin') {
-    //     return sendResponse(res, 405, {error: 'The account does not have required permissions'})
-    // }
+    if (path === '/api/semester' && req.method === 'GET') {
+        return await getSemesters(res)
+    }
 
-    if (path === '/api/semester') {
-        if (req.method === 'GET') {
-            return await getSemesters(res)
-        // } else if (req.methos === 'POST') {
-        //     return await updateEquipment(req, res)
+    if (req.user.role !== 'admin') {
+        return sendResponse(res, 405, {error: 'The account does not have required permissions'})
+    }
+    
+    if (path === '/api/semester' && req.method === 'POST') {
+        return await createNewSemester(req, res);
+    }
+
+    //api/semester/:id
+    const segments = path.split('/').filter(Boolean);
+    
+    if (segments.length === 3 && segments[1] === 'semester') {
+        const semesterId = segments[2];
+        if (!semesterId) {
+            return sendResponse(res, 400, {error: 'Semester ID required'}) 
+        }
+        if (req.method === 'PUT') {
+            return await updateSemester(req, res, semesterId)
+        } else if (req.method === 'DELETE') {
+            return await deleteSemester(res, semesterId)
         } else {
             return sendResponse(res, 405, {error: 'Method not allowed'})
         }
-    } else {
-        return sendResponse(res, 404, {error: 'Endpoint not found'})
     }
+
+    return sendResponse(res, 404, {error: 'Endpoint not found'})
 
 }

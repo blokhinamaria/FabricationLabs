@@ -10,22 +10,15 @@ export async function equipmentHandler(req, res, path) {
         return
     }
 
-    // if (req.user.role === 'admin' || req.user.role === 'demo-admin') {
-    //     return sendResponse(res, 405, {error: 'The account does not have required permissions'})
-    // }
-
-
-
     if (path === '/api/equipment') {
         if (req.method === 'GET') {
             return await getEquipment(res)
-        // } else if (req.methos === 'POST') {
-        //     return await updateEquipment(req, res)
         } else {
             return sendResponse(res, 405, {error: 'Method not allowed'})
         }
-    } 
-    
+    }
+
+    //api/equipment/:id
     const segments = path.split('/').filter(Boolean);
     if (segments.length === 3 && segments[1] === 'equipment') {
         const equipmentId = segments[2];
@@ -34,11 +27,15 @@ export async function equipmentHandler(req, res, path) {
         }
         if (req.method === 'GET') {
             return await getEquipmentById(res, equipmentId)
+        } else if (req.method === 'PUT') {
+            if (req.user.role !== 'admin') {
+                return sendResponse(res, 405, {error: 'The account does not have required permissions'})
+            }
+            return await updateEquipment(req, res, equipmentId);
         } else {
             return sendResponse(res, 405, {error: 'Method not allowed'})
         }
     }
-    
 
     return sendResponse(res, 404, {error: 'Endpoint not found'})
 }

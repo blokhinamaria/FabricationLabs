@@ -4,28 +4,21 @@ import url from 'url'
 //database
 import { connectDB, closeDB } from './config/database.js';
 
-//handlers
-import { handleGet } from './handlers/routeGet.js';
-import { handlePost } from './handlers/routePost.js';
-import { handlePut } from './handlers/routePut.js';
-import { handleDelete } from './handlers/routeDelete.js';
-
-//special utils
-import { sendResponse } from './utils/sendResponse.js';
-import { getBookedEquipment } from './utils/getBookedEquipment.js';
-
 // auth handlers
-import handleLogout from './handlers/logoutHandler.js';
-import { handleLogin } from './handlers/loginHandler.js';
+import { handleLogout } from './handlers/logoutHandler.js';
 
-//notifications
-import sendEmail from './api/send-email.js';
+//handlers
 import { checkAuth } from './middleware/checkAuth.js';
+import { handleLogin } from './handlers/loginHandler.js';
 import { meHandler } from './handlers/meHandler.js';
 import { equipmentHandler } from './handlers/equipmentHandler.js';
 import { semesterHandler } from './handlers/semesterHandler.js';
 import { blockoutDateHandler } from './handlers/blockoutDateHandler.js';
 import { availabilityHandler } from './handlers/availabilityHandler.js';
+import { adminHandler } from './handlers/adminHandler.js';
+
+//utils
+import { sendResponse } from './utils/sendResponse.js';
 
 const PORT = process.env.PORT || 3001;
 
@@ -64,6 +57,10 @@ const server = http.createServer(async (req, res) => {
     if (path.startsWith('/api/me')) {
         return await meHandler(req, res, path)
     }
+    if (path.startsWith('/api/admin')) {
+        const query = parsedUrl.query;
+        return await adminHandler(req, res, path, query)
+    }
     if (path.startsWith('/api/equipment')) {
         return await equipmentHandler(req, res, path)
     }
@@ -77,37 +74,8 @@ const server = http.createServer(async (req, res) => {
         const query = parsedUrl.query;
         return await availabilityHandler(req, res, path, query)
     }
-
-
-
-    //OTHER APOOINTMENT METHODS
-    if (path.startsWith('/api/appointments')) {
-        if (req.method === 'PUT') {
-            return await handlePut(req, res, 'bookings')
-        } else if (req.method === 'DELETE') {
-            return await handleDelete(req, res, 'bookings')
-        }
-    
-    //AVAILABILITY
-    } if (path.startsWith('/api/availability')) {
-        if (path.startsWith('/api/availability/date')) {
-            return await getBookedEquipment(req, res)
-        }
-        }
-    //USERS
-    
-    
-    if (path.startsWith('/api/users') && req.method === 'PUT') {
-        return await handlePut(req, res, 'users')
-    } else {
-        sendResponse(res, 404, ({ error: 'Not Found'}))
-    }
-    
-    //EMAIL NOTIFICATIONS 
-    if (path === '/api/send-email' && req.method === 'POST') {
-        return await sendEmail(req, res)
-    }
-    }
+    return sendResponse(res, 404, {error: 'Endpoint not found'})
+}
 )
 
 server.listen(PORT, () => {
@@ -129,45 +97,3 @@ process.on('SIGTERM', async () => {
     await closeDB();
     server.close(() => process.exit(0));
 });
-
-
-// Auth/session
-
-// GET /api/check-auth
-
-// POST /api/logout (optional but recommended)
-
-
-// General user
-
-// GET /api/me
-
-// GET /api/me/appointments
-
-// POST /api/me/appointments
-
-// GET /api/me/appointments/:id
-
-// PUT /api/me/appointments/:id
-
-// DELETE /api/me/appointments/:id
-
-// Shared data
-
-// GET /api/availability/slots
-
-// Admin
-
-// GET /api/admin/appointments (optional)
-
-// GET/POST/PUT/DELETE /api/equipment (+ /:id)
-
-// GET/POST/PUT/DELETE /api/semesters (+ /:id)
-
-// GET/POST/PUT/DELETE /api/blockout-dates (+ /:id)
-
-// Notifications (only if needed)
-
-// Prefer: no direct endpoint; send emails on business actions
-
-// If needed: intent-based endpoints (invitations/support), not /send-email

@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { ObjectId } from "bson"
 import { sendResponse } from '../utils/sendResponse.js';
 import { getDB } from '../config/database.js';
+import { clearSessionCookie } from './checkAuth.js';
 
 export async function requireAuth(req, res) {
     const cookies = cookie.parse(req.headers.cookie || '');

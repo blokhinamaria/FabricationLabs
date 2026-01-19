@@ -1,7 +1,7 @@
 import cookie from 'cookie';
 import { sendResponse } from '../utils/sendResponse.js';
 
-export default async function handleLogout(res) {
+export async function handleLogout(res) {
 
     try {
     // Clear the session cookie

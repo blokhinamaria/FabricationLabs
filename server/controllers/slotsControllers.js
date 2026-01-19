@@ -1,7 +1,7 @@
 import { ObjectId } from "bson"
-import { sendResponse } from '../utils/sendResponse.js'
-import { isDemoUser } from '../utils/checkDemoUsers.js';
 import { getDB } from '../config/database.js';
+import { sendResponse } from '../utils/sendResponse.js';
+import { isDemoUser } from '../utils/checkDemoUsers.js';
 
 export async function getAvailableSlots(req, res, equipmentId, date, appointmentId=null) {
     

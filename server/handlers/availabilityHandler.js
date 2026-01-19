@@ -1,4 +1,4 @@
-import { getSemesters } from "../controllers/semesterControllers.js";
+import { getBookedEquipmentForDate } from "../controllers/bookedEquipmentControllers.js";
 import { getAvailableSlots } from "../controllers/slotsControllers.js";
 import { requireAuth } from "../middleware/requireAuth.js"
 import { sendResponse } from "../utils/sendResponse.js";
@@ -11,10 +11,6 @@ export async function availabilityHandler(req, res, path, query) {
         return
     }
 
-    // if (req.user.role === 'admin' || req.user.role === 'demo-admin') {
-    //     return sendResponse(res, 405, {error: 'The account does not have required permissions'})
-    // }
-
     if (path.startsWith('/api/availability/slot')) {
         if (req.method === 'GET') {
             const { equipmentId, date, appointmentId } = query;
@@ -25,8 +21,16 @@ export async function availabilityHandler(req, res, path, query) {
         } else {
             return sendResponse(res, 405, {error: 'Method not allowed'})
         }
-    } else if (path.startsWith('/api/availability/date')) {
-        console.log('In progress...')
+    } else if (path.startsWith('/api/availability/equipment')) {
+        if (req.method === 'GET') {
+            const { date } = query;
+            if (!date) {
+                return sendResponse(res, 400, {error: 'Insufficient data provided'})
+            }
+            return await getBookedEquipmentForDate(req, res, date)
+        } else {
+            return sendResponse(res, 405, {error: 'Method not allowed'})
+        }
     } else {
         return sendResponse(res, 404, {error: 'Endpoint not found'})
     }

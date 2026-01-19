@@ -1,12 +1,10 @@
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
-import { getDB } from '../config/database.js';
 import { ReturnDocument } from 'mongodb';
-
-
+import { getDB } from '../config/database.js';
 import { sendResponse } from '../utils/sendResponse.js';
 import { parseJSONBody } from '../utils/parseJSONBody.js';
-import { sendMagicLink } from '../utils/authentication/sendMagicLink.js'
+import { sendMagicLink } from '../utils/authentication/sendMagicLink.js';
 import { createOrGetUser } from '../utils/authentication/createOrGetUser.js';
 
 export async function requestLink(req, res) {
@@ -68,7 +66,7 @@ export async function requestLink(req, res) {
         const token = jwt.sign(
             { email },
             process.env.JWT_SECRET,
-            { expiresIn: '60m' });
+            { expiresIn: '300m' });
 
         const result = await sendMagicLink(email, token);
         return sendResponse(res, 200, result);
@@ -108,7 +106,7 @@ export async function verifyEmailLink(req, res) {
             {
                 sub: String(user._id),
                 email: user.email,
-            }, process.env.JWT_SECRET, { expiresIn: '30m' });
+            }, process.env.JWT_SECRET, { expiresIn: '300m' });
     
         // Set session cookie
         res.setHeader('Set-Cookie', cookie.serialize('session', sessionToken, {
@@ -116,7 +114,7 @@ export async function verifyEmailLink(req, res) {
             secure: process.env.NODE_ENV === 'production', // HTTPS only in production
             sameSite: 'lax',
             path: '/',
-            maxAge: 60 * 30 // 30 min
+            maxAge: 24 * 60 * 60 // 1 day
         }));
 
         const dashboard = (

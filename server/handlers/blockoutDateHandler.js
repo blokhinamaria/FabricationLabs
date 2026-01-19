@@ -1,5 +1,4 @@
-import { getBlockoutDates } from "../controllers/blockoutDateControllers.js";
-import { getSemesters } from "../controllers/semesterControllers.js";
+import { getBlockoutDates, createNewBlockoutDate, updateBlockoutDate, deleteBlockoutDate} from '../controllers/blockoutDateControllers.js'
 import { requireAuth } from "../middleware/requireAuth.js"
 import { sendResponse } from "../utils/sendResponse.js";
 
@@ -11,20 +10,35 @@ export async function blockoutDateHandler(req, res, path) {
         return
     }
 
-    // if (req.user.role === 'admin' || req.user.role === 'demo-admin') {
-    //     return sendResponse(res, 405, {error: 'The account does not have required permissions'})
-    // }
+    if (path === '/api/blockout-date' && req.method === 'GET') {
+        return await getBlockoutDates(res)
+    }
 
-    if (path === '/api/blockout-date') {
-        if (req.method === 'GET') {
-            return await getBlockoutDates(res)
-        // } else if (req.methos === 'POST') {
-        //     return await updateEquipment(req, res)
+    if (req.user.role !== 'admin') {
+        return sendResponse(res, 405, {error: 'The account does not have required permissions'})
+    }
+    
+    if (path === '/api/blockout-date' && req.method === 'POST') {
+        return await createNewBlockoutDate(req, res);
+    }
+
+    //api/blockout-dates/:id
+    const segments = path.split('/').filter(Boolean);
+
+    if (segments.length === 3 && segments[1] === 'blockout-date') {
+        const dateId = segments[2];
+        if (!dateId) {
+            return sendResponse(res, 400, {error: 'Blockout date ID required'}) 
+        }
+        if (req.method === 'PUT') {
+            return await updateBlockoutDate(req, res, dateId)
+        } else if (req.method === 'DELETE') {
+            return await deleteBlockoutDate(res, dateId)
         } else {
             return sendResponse(res, 405, {error: 'Method not allowed'})
         }
-    } else {
-        return sendResponse(res, 404, {error: 'Endpoint not found'})
     }
+
+    return sendResponse(res, 404, {error: 'Endpoint not found'})
 
 }
