@@ -1,33 +1,19 @@
-import { connectDB } from './connectDB.js'
-import { sendResponse } from './sendResponse.js'
-
 import { ObjectId } from "bson"
+import { getDB } from '../config/database.js';
+import { sendResponse } from '../utils/sendResponse.js';
+import { isDemoUser } from '../utils/checkDemoUsers.js';
 
-import { authenticateUser, isDemoUser } from './checkAuthentication.js';
-
-export async function getAvailableSlots(req, res) {
-
-    const auth = await authenticateUser(req);
-
-    if (!auth.authenticated) {
-            return sendResponse(res, 401, { error: auth.error });
-        }
-
+export async function getAvailableSlots(req, res, equipmentId, date, appointmentId=null) {
     
-    const equipmentId = req.query?.equipmentId || new URLSearchParams(req.url?.split('?')[1]).get('equipmentId');
-    const date = req.query?.date || new URLSearchParams(req.url?.split('?')[1]).get('date');
-    const appointmentId = req.query?.appointmentId || new URLSearchParams(req.url?.split('?')[1]).get('appointmentId') || null;
-
     // 1. Get the day of week from the date
     const selectedDate = new Date(date);
     const selectedDayOfWeek = selectedDate.getDay();
 
     // 2. Fetch availability rules for this day
-    const { client, db } = await connectDB();
+    const db = getDB();
     const availabilityCollection = db.collection('availability');
     const availability = await availabilityCollection.findOne( { dayOfWeek: selectedDayOfWeek });
     if (!availability || !availability.isOpen ) {
-        await client.close();
         return sendResponse(res, 400, ({ available: false, slots: []}));
     }
 
@@ -57,7 +43,6 @@ export async function getAvailableSlots(req, res) {
     })
 
     if (hasException) {
-        await client.close();
         return sendResponse(res, 200, ({ available: false, slots: [], reason: "Equipment unavailable"}));
     }
 
@@ -68,7 +53,7 @@ export async function getAvailableSlots(req, res) {
     endOfDay.setUTCHours(23, 59, 59, 999)
 
     let bookingCollection;
-        if (isDemoUser(auth.user.email)) {
+        if (isDemoUser(req.user.email)) {
             bookingCollection = db.collection('demo-bookings')
         } else {
             bookingCollection = db.collection('bookings')
@@ -80,7 +65,6 @@ export async function getAvailableSlots(req, res) {
         date: { $gte: startOfDay.toISOString(), $lte: endOfDay.toISOString()},
         status: { $in: ['pending', 'scheduled', 'confirmed'] }
     }).toArray();
-    await client.close();
 
     // 5. Generate all possible time slots
     const daySlots = generateTimeSlots(availability.openTime, availability.closeTime, availability.slotDuration);
