@@ -14,6 +14,7 @@ import Layout from './components/Layout.jsx';
 import LoadingFallback from './components/Layout/LoadingFallback.jsx';
 import Login from './components/Content/Login.jsx';
 import Styles from './components/Layout/Styles.jsx';
+import DemoLogin from './components/Content/DemoLogin.jsx';
 
 // students + faculty
 const Dashboard = lazy(() => import('./components/Content/User/Dashboard.jsx'))
@@ -50,7 +51,7 @@ function App() {
               <Routes>
                 <Route path='/' element={<Layout />}>
                   <Route index element={<Login />} />
-
+                  <Route path='login/demo' element={<DemoLogin />} />
                   {/* Student/Faculty routes */}
                   <Route path='dashboard' element={
                     <ProtectedRoute allowedRoles={['student', 'faculty', 'demo-student', 'demo-faculty']}>

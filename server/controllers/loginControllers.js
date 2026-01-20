@@ -6,6 +6,7 @@ import { sendResponse } from '../utils/sendResponse.js';
 import { parseJSONBody } from '../utils/parseJSONBody.js';
 import { sendMagicLink } from '../utils/authentication/sendMagicLink.js';
 import { createOrGetUser } from '../utils/authentication/createOrGetUser.js';
+import bcrypt from 'bcryptjs'; 
 
 export async function requestLink(req, res) {
     if (req.method !== 'POST') {
@@ -15,42 +16,9 @@ export async function requestLink(req, res) {
     try {
         const data = await parseJSONBody(req);
         const email = data.email;
-        const password = data.password;
 
         if (!email || !email.includes('@')) {
             return sendResponse(res, 400, { error: 'Invalid email address' })
-        }
-
-        if (password) {
-            const demoRegex = /^demo-(student|faculty|admin)@fabricationlabs\.com$/
-            const demoTestResult = demoRegex.test(email)
-            if (demoTestResult) {
-                const db = await getDB();
-                const collection = db.collection('users');
-                const existingUser = await collection.findOne({ email });
-                if (existingUser) {
-                    const isPasswordValid = await bcrypt.compare(password, existingUser.password);
-                if (!isPasswordValid) {
-                    return sendResponse(res, 401, { error: 'Invalid credentials' });
-                }
-                // Redirect to verify for demo users
-                const baseUrl = process.env.CLIENT_URL;  
-                const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '30m' });
-                const verifyURL = `${baseUrl}/api/login/verify?token=${token}`;
-                // if (typeof res.redirect === 'function') {
-                //   return res.redirect(302, verifyURL);
-                // }
-                // res.writeHead(200, { 'Content-Type': 'application/json' });
-                // return res.end(JSON.stringify({ 
-                //   success: true, 
-                //   redirect: verifyURL 
-                // }));
-                return sendResponse(res, 200, { 
-                    success: true, 
-                    redirect: verifyURL 
-                });
-                }
-            }
         }
 
         // Check for valid UTampa email
@@ -132,4 +100,49 @@ export async function verifyEmailLink(req, res) {
         res.writeHead(302, { Location: `${baseUrl}?error=invalid-link` });
         return res.end();
     }
+}
+
+export async function demoLogin(req, res) {
+    const data = await parseJSONBody(req);
+    const role = data.role;
+
+    if (!role) {
+        return sendResponse(res, 400, { error: 'Role required' })
+    }
+
+    const allowedRoles = ['faculty', 'admin', 'student']
+
+    if (!allowedRoles.includes(role)) {
+        return sendResponse(res, 400, { error: 'Invalid role' })
+    }
+
+    const roleObject = {
+        faculty: 'demo-faculty@fabricationlabs.com',
+        admin: 'demo-admin@fabricationlabs.com',
+        student: 'demo-student@fabricationlabs.com'
+    }
+
+    const email = roleObject[role];
+
+    try {
+        const db = getDB();
+        const collection = db.collection('users');
+        const existingUser = await collection.findOne({ email });
+        if (!existingUser) {
+            return sendResponse(res, 401, { error: 'Failed to find the user' });
+        }
+        // only for demo
+        const password = 'FabricationLabsDemo'
+        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+        if (!isPasswordValid) {
+            return sendResponse(res, 401, { error: 'Invalid credentials' });
+        }
+        const baseUrl = process.env.VITE_API_URL;  
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '30m' });
+        const verifyURL = `${baseUrl}/api/login/verify?token=${token}`;
+        return sendResponse(res, 200, { redirect: verifyURL })
+    } catch (error) {
+        console.log(error)
+        return sendResponse(res, 500, { error: 'Failed to login. Please try again later' })
+    }  
 }

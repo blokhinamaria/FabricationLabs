@@ -1,19 +1,27 @@
 import { getDB } from "../../config/database.js";
+import { isDemoUser } from "../checkDemoUsers.js";
 
 export async function createOrGetUser(email) {
-    let role = 'student';
-        if (email.endsWith('@spartan.ut.edu')) {
-            role = 'student'
-        } else if (email.endsWith('@ut.edu')) {
-            role = 'faculty'
-        } else {
-            throw new Error ('Error: invalid email. UTampa email required')
-        }
 
     const db = getDB()
     const collection = db.collection('users');
-    
-    let user = await collection.findOneAndUpdate( 
+    let user;
+
+    if (isDemoUser(email)) {
+        user = await collection.findOne( { email: email})
+        return user;
+    } 
+
+    let role = 'student';
+    if (email.endsWith('@spartan.ut.edu')) {
+        role = 'student'
+    } else if (email.endsWith('@ut.edu')) {
+        role = 'faculty'
+    } else {
+        throw new Error ('Error: invalid email. UTampa email required')
+    }
+
+    user = await collection.findOneAndUpdate( 
         { email },
         {
             $setOnInsert: {

@@ -42,14 +42,11 @@ const server = http.createServer(async (req, res) => {
     const parsedUrl = url.parse(req.url, true);
     const path = parsedUrl.pathname;
 
-    console.log(`Request URL: ${req.url}`)
-    console.log(`Path: ${path}`)
-
     if (path === '/api/check-auth' && req.method === 'GET') {
         return await checkAuth(req, res);
     }
     if (path.startsWith('/api/login')) {
-        return await handleLogin(req, res);
+        return await handleLogin(req, res, path);
     }
     if (path === '/api/logout' && req.method === 'POST') {
         return await handleLogout(res);

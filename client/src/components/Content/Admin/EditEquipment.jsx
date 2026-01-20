@@ -9,7 +9,7 @@ import { API_URL } from '../../../config.js';
 
 
 export default function EditEquipment() {
-    const { userRole } = useAuth();
+    const { user } = useAuth();
     
     const navigate = useNavigate()
     const location = useLocation()
@@ -40,7 +40,7 @@ export default function EditEquipment() {
         }
 
     async function updateEquipment(differences) {
-        if (userRole === 'demo-admin') {
+        if (user.role === 'demo-admin') {
             setEquipment(prev => ({
                 ...prev,
                 ...differences
@@ -48,7 +48,6 @@ export default function EditEquipment() {
             openAndAutoClose();
             return;
         }
-        
         
         try {
             const response = await fetch(`${API_URL}/api/equipment/${equipment._id}`, {

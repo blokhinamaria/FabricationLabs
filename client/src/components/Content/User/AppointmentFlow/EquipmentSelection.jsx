@@ -113,7 +113,7 @@ export default function EquipmentSelection({submitEquipment, mode}) {
                             <p className='limit-width'>{dataError}</p>
                         :
                         <>
-                            <fieldset >
+                            <fieldset>
                                 <legend>Fabrication Lab</legend>
                                 <div className='flow'>
                                     {fablabEquipment.map((item) => (
