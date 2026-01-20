@@ -1,0 +1,22 @@
+.material-selection-button-group {
+    display: flex;
+    gap: var(--gap-small);
+    margin-block: var(--gap-small);
+    width: 100%;
+    max-width: 450px;
+}
+
+.material-selection-button-group > button {
+    min-width: auto;
+    width: 100%;
+}
+
+.equipment-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.equipment-button .button-selected {
+    flex: 3;
+}

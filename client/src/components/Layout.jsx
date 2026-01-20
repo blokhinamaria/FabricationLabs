@@ -1,9 +1,9 @@
 import  { Outlet } from 'react-router-dom';
 import { useEffect } from 'react';
-import Header from './layout-components/Header';
-import Footer from './layout-components/Footer';
+import Header from './Layout/Header';
+import Footer from './Layout/Footer';
 import { useAuth } from '../AuthContext';
-import LoadingFallback from './layout-components/LoadingFallback';
+import LoadingFallback from './Layout/LoadingFallback';
 
 export default function Layout() {
 

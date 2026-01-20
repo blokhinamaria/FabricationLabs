@@ -4,24 +4,30 @@ import { AuthProvider } from './AuthContext.jsx';
 import { AvailabilityProvider } from './AvailabilityContext.jsx';
 import { ProtectedRoute } from './ProtectedRoute.jsx';
 import './App.css'
+import './styles/typography.css'
+import './styles/buttons.css'
+import './styles/form.css'
+import './components/Content/Cards/card.css'
+import './styles/dialog.css'
 
 import Layout from './components/Layout.jsx';
-import LoadingFallback from './components/layout-components/LoadingFallback.jsx';
-import Login from './components/content-components/Login.jsx';
+import LoadingFallback from './components/Layout/LoadingFallback.jsx';
+import Login from './components/Content/Login.jsx';
+import Styles from './components/Layout/Styles.jsx';
 
 // students + faculty
-const Dashboard = lazy(() => import('./components/content-components/Dashboard.jsx'))
-const NewAppointment = lazy(() => import('./components/content-components/NewAppointment.jsx'))
-const EditAppointment = lazy(() => import('./components/content-components/EditAppointment.jsx'))
+const Dashboard = lazy(() => import('./components/Content/User/Dashboard.jsx'))
+const NewAppointment = lazy(() => import('./components/Content/User/NewAppointment.jsx'))
+const EditAppointment = lazy(() => import('./components/Content/User/EditAppointment.jsx'))
 
 //faculty
-const NewReservation = lazy(() => import('./components/content-components/NewReservation.jsx'))
+const NewReservation = lazy(() => import('./components/Content/User/NewReservation.jsx'))
 
 //admin
-const AdminDashboard = lazy(() => import('./components/content-components/AdminDashboard.jsx'))
-const Equipment = lazy(() => import('./components/content-components/Admin-components/Equipment.jsx'))
-const EditEquipment = lazy(() => import('./components/content-components/Admin-components/EditEquipment.jsx'))
-const Schedule = lazy(() => import('./components/content-components/Admin-components/Schedule.jsx'))
+const AdminDashboard = lazy(() => import('./components/Content/Admin/AdminDashboard.jsx'))
+const Equipment = lazy(() => import('./components/Content/Admin/Equipment.jsx'))
+const EditEquipment = lazy(() => import('./components/Content/Admin/EditEquipment.jsx'))
+const Schedule = lazy(() => import('./components/Content/Admin/Schedule.jsx'))
 
 function App() {
 
@@ -100,7 +106,7 @@ function App() {
                       </ProtectedRoute>
                       } /> 
                   </Route>
-
+                  <Route path='/styles' element={<Styles/>} />
                 </Route>
               </Routes>
             </Suspense>

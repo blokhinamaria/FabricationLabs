@@ -1,0 +1,109 @@
+
+.loader-wrap{
+    min-height: 160px;
+    display: grid;
+    place-items: center;
+}
+
+.loader-orbit{
+    width: 72px;
+    height: 72px;
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+
+    /* Contrast: give the whole loader a subtle “chip” behind it */
+    /* background: color-mix(in oklab, white 22%, transparent);
+    box-shadow:
+        0 10px 24px rgba(0,0,0,.18),
+        0 0 0 2px color-mix(in oklab, var(--accent2) 55%, white),
+        0 0 26px color-mix(in oklab, var(--accent1) 40%, transparent); */
+
+    /* Helps align borders/pseudo-elements crisply */
+    isolation: isolate;
+}
+
+/* Core "planet" */
+.loader-orbit::before{
+    content:"";
+    position:absolute;
+    inset: 18px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.75), var(--background-color) 58%),
+        radial-gradient(circle at 70% 70%, color-mix(in oklab, var(--accent1) 35%, transparent), color-mix(in oklab, var(--accent2) 25%, transparent));
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.35),
+        0 10px 18px rgba(0,0,0,.20);
+    z-index: 1;
+}
+
+/* Orbit track */
+.loader-orbit::after{
+    content:"";
+    position:absolute;
+    inset: 1px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.55);
+    opacity: .95;
+    z-index: 0;
+
+    /* Make the ring feel more "techy" and visible */
+    /* box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent2) 18%, transparent); */
+}
+
+/* Satellites: keep them centered using translate(-50%,-50%) FIRST */
+.loader-orbit > span{
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 999px;
+
+    /* Stronger contrast on any background */
+    box-shadow:
+        0 0 0 2px rgba(0,0,0,.18), 
+        0 6px 12px rgba(0,0,0,.18),
+        0 0 14px rgba(255,255,255,.35);
+
+    /* Orbit radius (single source of truth) */
+    --r: 40px;
+}
+
+/* Different sizes + phases */
+.loader-orbit > span:nth-child(1){
+    width: 10px;
+    height: 10px;
+    background: var(--accent1);
+    animation: orbit-spin 1.0s linear infinite;
+}
+
+.loader-orbit > span:nth-child(2){
+    width: 8px;
+    height: 8px;
+    background: var(--accent2);
+    animation: orbit-spin 1.15s linear infinite reverse;
+    opacity: .98;
+}
+
+.loader-orbit > span:nth-child(3){
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,.92);
+    animation: orbit-spin 1.35s linear infinite;
+    opacity: .95;
+}
+
+/* The key: translate to center, rotate, then translateX using the radius var */
+@keyframes orbit-spin{
+    from { transform: translate(-50%,-50%) rotate(0deg) translateX(var(--r)); }
+    to   { transform: translate(-50%,-50%) rotate(360deg) translateX(var(--r)); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+    .loader-orbit,
+    .loader-orbit > span{
+        animation: none !important;
+    }
+}

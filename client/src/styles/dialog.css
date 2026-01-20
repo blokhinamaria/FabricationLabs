@@ -1,0 +1,33 @@
+dialog:open {
+    background-color: var(--dialog-background-color);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-inside);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: var(--gap-small);
+    width: 100%;
+    max-width: 450px;
+}
+
+dialog::backdrop {
+    background-color: var(--dialog-backdrop-color);
+}
+
+dialog > .dialog-close-button-wrapper {
+    display: flex;
+    justify-content: end;
+}
+
+dialog button.dialog-close-button {
+    width: max-content;
+    font-size: 0.875rem;
+}
+
+dialog h2 {
+    margin: 0;
+}
+
+dialog h4 {
+    margin: 0;
+}

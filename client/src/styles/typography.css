@@ -1,0 +1,248 @@
+/* 
+extralight: 200
+light: 300
+regular: 400
+medium: 500
+semibold: 600
+bold: 700
+extrabold: 800
+black: 900
+
+*/
+
+/* h1 {
+    font-family: "Zalando Sans", sans-serif;
+    font-weight: 600;
+    font-size: 3rem;
+    font-variation-settings:
+        "wdth" 125;
+    }
+
+@media (max-width: 425px) {
+    h1 {
+        font-size: 2.25rem;
+    }
+}
+
+h2 {
+    font-family: "Zalando Sans", sans-serif;
+    font-weight: 400;
+    font-size: 1.5rem;
+}
+
+article > h2:not(:first-child) {
+  margin-block-start: calc(var(--gap-small) * 2);
+}
+
+h3 {
+    margin: 0;
+    font-family: "Zalando Sans", sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+h4 {
+    font-family: "Zalando Sans", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-block-start: var(--gap-small);
+    margin-block-end: calc(var(--gap-small) - 15px);
+}
+
+p {
+    margin: 0;
+    font-family: "Zalando Sans", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.disclaimer {
+    font-weight: 400;
+    font-style: italic;
+    font-size: 0.875rem;
+}
+
+.error-message {
+    color: var(--warning);
+    font-style: italic;
+}
+
+.text-to-copy:hover {
+    text-decoration: underline solid var(--accent1);
+    text-underline-offset: 0.2rem;
+}
+
+.limit-width {
+    max-width: 550px;
+}
+
+a {
+    font-family: "Zalando Sans", sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    color: var(--black);
+    text-decoration: none;
+}
+
+a:hover, a:focus {
+    color: var(--link-hover);
+}
+
+a.highlight {
+    text-decoration: underline;
+}  */
+
+
+
+:root {
+    --font-sans: "Zalando Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    
+    /* Text sizes */
+    --text-xs: clamp(0.78rem, 0.75rem + 0.15vw, 0.875rem);
+    --text-sm: clamp(0.88rem, 0.84rem + 0.18vw, 1rem);      
+    --text-md: clamp(1rem, 0.96rem + 0.22vw, 1.125rem);     
+    --text-lg: clamp(1.125rem, 1.06rem + 0.35vw, 1.35rem); 
+
+    --h4: clamp(1rem, 0.96rem + 0.25vw, 1.125rem);          
+    --h3: clamp(1.25rem, 1.12rem + 0.6vw, 1.6rem);          
+    --h2: clamp(1.5rem, 1.28rem + 1vw, 2.1rem);             
+    --h1: clamp(2.05rem, 1.55rem + 2.2vw, 3.1rem);          
+
+  /* Line heights */
+    --lh-tight: 1.1;
+    --lh-snug: 1.25;
+    --lh-body: 1.55;
+
+  /* Letter spacing */
+    --track-tight: -0.015em;
+    --track-normal: 0em;
+}
+
+html {
+    text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: var(--text-sm);
+    line-height: var(--lh-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+p {
+    margin: 0;
+    line-height: var(--lh-body);
+}
+
+a {
+    cursor: pointer;
+    font-weight: 700;
+    /* font-variation-settings: "wdth" 125; */
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--link-hover) 50%, transparent);
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.2em;
+}
+
+a:hover, a:focus {
+    color: var(--link-hover);
+    text-decoration-color: var(--link-hover);
+}
+
+a.highlight {
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    margin: 0;
+    text-wrap: balance;
+}
+
+h1 {
+    font-weight: 750;
+    font-size: var(--h1);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--track-tight);
+    font-variation-settings: "wdth" 125;
+}
+
+.title-emphasis {
+    /* font-size: 6rem; */
+    text-transform: uppercase;
+    font-weight: 900;
+}
+
+h2 {
+    font-weight: 700;
+    font-size: var(--h2);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--track-tight);
+    font-variation-settings: "wdth" 125;
+}
+
+h3 {
+    font-weight: 650;
+    font-size: var(--h3);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--track-tight);
+}
+
+h4 {
+    font-weight: 600;
+    font-size: var(--h4);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--track-normal);
+}
+
+/* small section labels above headings */
+.kicker {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    font-variation-settings: "wdth" 125;
+}
+
+.disclaimer {
+    font-size: var(--text-sm);
+    font-style: italic;
+    line-height: var(--lh-body);
+    opacity: 0.9;
+}
+
+.error-message {
+    color: var(--warning);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    font-style: italic;
+    line-height: var(--lh-body);
+}
+
+/* Click-to-copy / interactive inline text */
+.text-to-copy {
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--accent1) 50%, transparent);
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.2em;
+}
+
+.text-to-copy:hover {
+    text-decoration-color: var(--accent1);
+    font-weight: 500;
+}
+
+.limit-width {
+    max-width: 60ch; 
+}
+
+/* Keep your existing article rule, but make it consistent */
+/* article > h2:not(:first-child) {
+    margin-top: calc(var(--gap-small, 12px) * 2);
+} */
