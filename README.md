@@ -18,12 +18,7 @@ The University of Tampa's fabrication facilities were managing equipment schedul
 
 ## Live Demo
 
-**Try it out:** https://fabrication-labs.vercel.app/
-
-**Demo Accounts:**
-- **Student:** demo-student@fabricationlabs.com / FabricationLabsDemo
-- **Faculty:** demo-faculty@fabricationlabs.com / FabricationLabsDemo
-- **Admin:** demo-admin@fabricationlabs.com / FabricationLabsDemo
+**Try it out:** https://fabrication-labs.vercel.app/login/demo
 
 ## Tech Stack
 
