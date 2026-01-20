@@ -80,7 +80,7 @@ export async function verifyEmailLink(req, res) {
         res.setHeader('Set-Cookie', cookie.serialize('session', sessionToken, {
             httpOnly: true,
             secure: true,
-            sameSite: 'none',
+            sameSite: 'lax',
             path: '/',
             maxAge: 60 * 30  
         }));

@@ -74,7 +74,7 @@ return (
             : 
             <>  
                 <Tooltip 
-                    title={"We are currently using free Render hosting and it might take a while for the dashboard to load."}
+                    title={"The application may take a short moment to initialize. Thank you for your patience."}
                     arrow
                     placement="right"
                     followCursor
