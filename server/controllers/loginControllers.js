@@ -132,7 +132,7 @@ export async function demoLogin(req, res) {
             return sendResponse(res, 401, { error: 'Failed to find the user' });
         }
         // only for demo
-        const password = 'FabricationLabsDemo'
+        const password = process.env.DEMO_PASSWORD;
         const isPasswordValid = await bcrypt.compare(password, existingUser.password);
         if (!isPasswordValid) {
             return sendResponse(res, 401, { error: 'Invalid credentials' });
