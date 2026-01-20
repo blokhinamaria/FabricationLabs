@@ -96,7 +96,7 @@ export function clearSessionCookie(res) {
     res.setHeader('Set-Cookie', cookie.serialize('session', '', {
         httpOnly: true,
         secure: true,
-        sameSite: 'none',
+        sameSite: 'lax',
         path: '/',
         maxAge: 0 
     }))

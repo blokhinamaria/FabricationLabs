@@ -137,9 +137,9 @@ export async function demoLogin(req, res) {
         if (!isPasswordValid) {
             return sendResponse(res, 401, { error: 'Invalid credentials' });
         }
-        const baseUrl = process.env.VITE_API_URL;  
+        const baseUrl = process.env.CLIENT_URL;  
         const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '30m' });
-        const verifyURL = `${baseUrl}/api/login/verify?token=${token}`;
+        const verifyURL = `${baseUrl}/api/login/verify?token=${encodeURIComponent(token)}`;
         return sendResponse(res, 200, { redirect: verifyURL })
     } catch (error) {
         console.log(error)

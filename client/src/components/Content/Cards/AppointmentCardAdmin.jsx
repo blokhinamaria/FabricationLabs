@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { AlarmIcon, ArrowDownIcon, ArrowUpIcon, CalendarIcon, CloseSmallIcon, ExpandCircleDownIcon, ExpandCircleUpIcon, MailIcon, PersonIcon, StackIcon } from '../../Icons/Icons.jsx';
+import { AlarmIcon, ArrowDownIcon, ArrowUpIcon, CalendarIcon, ExpandCircleDownIcon, ExpandCircleUpIcon, MailIcon, PersonIcon, StackIcon } from '../../Icons/Icons.jsx';
 import Tooltip from '@mui/material/Tooltip';
 import { API_URL } from "../../../config.js";
 import ContactDialogAdmin from "./Dialogs/ContactDialogAdmin.jsx";

@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_URL} from '../../config'
-import LoadingOrbit from '../Icons/LoadingOrbit.jsx'
+import { API_URL} from '../../config';
+import LoadingOrbit from '../Icons/LoadingOrbit.jsx';
+import Tooltip from '@mui/material/Tooltip';
+import Zoom from '@mui/material/Zoom';
+
 
 export default function DemoLogin() {
 
@@ -29,6 +32,7 @@ async function handleDemoLogin(role) {
     try {
         setAuthInProgress(true);
         const response = await fetch(`${API_URL}/api/login/demo`, {
+            credentials: 'include',
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ role: role })
@@ -68,9 +72,19 @@ return (
                 </article>
             </>
             : 
-            <>
-                <h2>Loading Your Workspace...</h2>
-                <LoadingOrbit />
+            <>  
+                <Tooltip 
+                    title={"We are currently using free Render hosting and it might take a while for the dashboard to load."}
+                    arrow
+                    placement="right"
+                    followCursor
+                    slots={{transition: Zoom,}}
+                    >
+                    <h2>
+                        Loading Your Workspace...
+                    </h2>
+                    <LoadingOrbit />
+                </Tooltip>
                 {errorMessage && 
                     <div className='flow'>
                         <p>{errorMessage}</p>
