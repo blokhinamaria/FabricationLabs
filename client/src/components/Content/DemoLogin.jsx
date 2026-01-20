@@ -1,73 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { API_URL} from '../../config'
+import LoadingOrbit from '../Icons/LoadingOrbit.jsx'
 
 export default function DemoLogin() {
 
-const [ userEmail, setUserEmail] = useState('');
+
 const [ errorMessage, setErrorMessage ] = useState('');
 
 const [ authInProgress, setAuthInProgress] = useState(false);
-const [ password, setPassword ] = useState('')
 
 const navigate = useNavigate()
 
-//Form submission
-async function handleSubmit(formData) {
-    
-    const email = formData.get('email');
-    setErrorMessage('')
-
-    if (email) {
-        const isDemoUser = isDemo(email);
-        if (isDemoUser) {
-            return;
-        }
-
-        const isValid = isEmailValid(email);
-        if (isValid) {
-            setUserEmail(email);
-        } else {
-            setErrorMessage('Please enter valid UT email')
-            return
-        }
-    } else if (email === '') {
-        setErrorMessage('Please enter valid UT email')
-        return
-    } else {
-        setErrorMessage('Invalid email')
-        return
-        }
-    
-    await requestLink(email)
-}
-
-function isEmailValid(email) {
-
-    const regex = /^[A-Za-z0-9._%+-]+@(ut\.edu|spartans\.ut\.edu)$/;
-    const result = regex.test(email);
-        if(!result) {
-            setErrorMessage('Email is not valid. Please, enter valid UT email');
-            document.getElementById('email').classList.add('invalid');
-            return false;
-        } else {
-            document.getElementById('email').style.borderColor = 'green';
-            return true;
-        }
-}
-
-function isDemo(email) {
-    const demoRegex = /^demo-(student|faculty|admin)@fabricationlabs\.com$/
-    const result = demoRegex.test(email)
-    if (result) {
-        setAuthInProgress(true);
-        setDemoUserInterface(true);
-        return true;
-    }
-    return false;
-}
-
-function handleTryAgain() {
+function handleTryEmail() {
     setErrorMessage('')
     navigate('/')
     setAuthInProgress(false)
@@ -75,13 +20,14 @@ function handleTryAgain() {
 
 async function handleDemoLogin(role) {
     setErrorMessage('')
-
+    
     if (!role) {
         setErrorMessage('Role required')
         return
     }
 
     try {
+        setAuthInProgress(true);
         const response = await fetch(`${API_URL}/api/login/demo`, {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -99,20 +45,41 @@ async function handleDemoLogin(role) {
     }
 }
 
+function handleTryAgain() {
+    setErrorMessage('');
+    setAuthInProgress(false);
+}
+
 return (
     <main className='flow-lg'>
-        <h1>Welcome to the University of Tampa<br /><span className="title-emphasis">Fabrication Labs</span></h1>
-        <article>
-            <section className='wide flow'>
-                <h3>Choose an account</h3>
-                <button onClick={() => handleDemoLogin('faculty')}>Demo Faculty</button>
-                <button onClick={() => handleDemoLogin('admin')}>Demo Admin</button>
-                <button onClick={() => handleDemoLogin('student')}>Demo Student</button>
-            </section>
-            {errorMessage && <p>{errorMessage}</p>}
-            <p><a onClick={handleTryAgain}>Or Sign in with UTampa Email here</a></p>
+        {!authInProgress ?
+            <>
+                <h1>Welcome to the University of Tampa<br /><span className="title-emphasis">Fabrication Labs</span></h1>
+                <article>
+                    <section className='wide flow'>
+                        <h3>Choose an account</h3>
+                        <button onClick={() => handleDemoLogin('faculty')}>Demo Faculty</button>
+                        <button onClick={() => handleDemoLogin('admin')}>Demo Admin</button>
+                        <button onClick={() => handleDemoLogin('student')}>Demo Student</button>
+                    </section>
+                    {errorMessage && <p>{errorMessage}</p>}
+                    <p><a onClick={handleTryEmail}>Or Sign In with UTampa Email Here</a></p>
 
-        </article>
+                </article>
+            </>
+            : 
+            <>
+                <h2>Loading Your Workspace...</h2>
+                <LoadingOrbit />
+                {errorMessage && 
+                    <div className='flow'>
+                        <p>{errorMessage}</p>
+                        <p><a onClick={handleTryAgain}>Try Demo Again</a></p>
+                        <p><a onClick={handleTryEmail}>Or Sign In with UTampa Email Here</a></p>
+                    </div>
+                }
+            </>
+        }
     </main>
 )
 }
