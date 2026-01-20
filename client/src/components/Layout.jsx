@@ -33,7 +33,6 @@ export default function Layout() {
             <LoadingFallback/>
         );
     }
-    
 
     return (
         <>
