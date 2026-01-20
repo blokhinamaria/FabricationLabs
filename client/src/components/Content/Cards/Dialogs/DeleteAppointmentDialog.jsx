@@ -50,7 +50,7 @@ const DeleteAppointmentDialog = forwardRef(function DeleteAppointmentDialog(
     return (
         <dialog
             id={dialogId}
-            className="flow-lg"
+            className="flow"
             ref={dialogRef}
             onClick={(e) => handleDialogClick(e, dialogRef)}
             onClose={onClose}

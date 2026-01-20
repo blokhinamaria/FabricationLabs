@@ -18,8 +18,6 @@ export async function requireAuth(req, res) {
         const verifiedToken = jwt.verify(token, process.env.JWT_SECRET, {
             algorithms: ['HS256']
         });
-        console.log(`Verified Token:`)
-        console.log(verifiedToken)
 
         if (!verifiedToken?.email || !verifiedToken?.sub) {
             sendResponse(res, 401, {error: 'Login Required'});

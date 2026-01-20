@@ -184,6 +184,7 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
                 await onUpdate(equipmentUpdates);
                 setUnavailableDates(sortDates(equipmentUpdates.availabilityExceptions) || [])
                 setNewlyAddedDates([])
+                setDatesUpdated(false)
             } catch (err) {
                 console.log(err);
                 setFormError('Something went wrong. Please try again');
@@ -216,6 +217,7 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
             await onUpdate(equipmentUpdates);
             setUnavailableDates(sortDates(equipmentUpdates.availabilityExceptions) || [])
             setNewlyAddedDates([])
+            setDatesUpdated(false)
         } catch (err) {
             console.log(err);
             setFormError('Something went wrong. Please try again');

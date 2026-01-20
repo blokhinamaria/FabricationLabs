@@ -1,9 +1,9 @@
 import url from 'url'
 import cookie from 'cookie';
-import { requestLink, verifyEmailLink } from '../controllers/loginControllers.js'
+import { demoLogin, requestLink, verifyEmailLink } from '../controllers/loginControllers.js'
 import { clearSessionCookie } from '../middleware/checkAuth.js';
 
-export async function handleLogin(req, res) {
+export async function handleLogin(req, res, path) {
 
     const cookies = cookie.parse(req.headers.cookie || '');
     const token = cookies.session;
@@ -12,8 +12,9 @@ export async function handleLogin(req, res) {
         clearSessionCookie(res);
     }
 
-    const parsedUrl = url.parse(req.url, true);
-    const path = parsedUrl.pathname;
+    if (path === '/api/login/demo') {
+        return await demoLogin(req, res);
+    }
 
     if (path === '/api/login/request-link') {
         return await requestLink(req, res);
