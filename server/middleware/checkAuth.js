@@ -6,7 +6,6 @@ import { getDB } from '../config/database.js';
 export async function checkAuth(req, res) {
     const cookies = cookie.parse(req.headers.cookie || '');
     const token = cookies.session;
-    console.log(cookies);
 
     if (!token) {
         return sendResponse(res, 200, {

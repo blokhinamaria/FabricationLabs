@@ -1,11 +1,11 @@
-import Header from './Header.jsx'
 import Footer from './Footer.jsx'
 import LoadingOrbit from '../Icons/LoadingOrbit.jsx'
+import PublicHeader from './PublicHeader.jsx'
 
 export default function LoadingFallback() {
     return (
         <>
-            <Header isLoading={true} />
+            <PublicHeader/>
                 <main className='flow-lg'>
                     <h2>
                         Loading Your Workspace...

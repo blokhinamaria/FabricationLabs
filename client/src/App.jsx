@@ -15,6 +15,8 @@ import LoadingFallback from './components/Layout/LoadingFallback.jsx';
 import Login from './components/Content/Login.jsx';
 import Styles from './components/Layout/Styles.jsx';
 import DemoLogin from './components/Content/DemoLogin.jsx';
+import PublicLayout from './components/PublicLayout.jsx';
+import AuthLayout from './components/AuthLayout.jsx';
 
 // students + faculty
 const Dashboard = lazy(() => import('./components/Content/User/Dashboard.jsx'))
@@ -43,79 +45,96 @@ function App() {
   }
 
   return (
-    <>
-      <Router>
-        <AuthProvider>
-          <Wrapper>
-            <Suspense fallback={<LoadingFallback/>}>
-              <Routes>
-                <Route path='/' element={<Layout />}>
-                  <Route index element={<Login />} />
-                  <Route path='login/demo' element={<DemoLogin />} />
-                  {/* Student/Faculty routes */}
-                  <Route path='dashboard' element={
-                    <ProtectedRoute allowedRoles={['student', 'faculty', 'demo-student', 'demo-faculty']}>
+    <Router>
+      <Wrapper>
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Login />} />
+              <Route path="/login/demo" element={<DemoLogin />} />
+            </Route>
+
+            <Route element={<AuthLayout />}>
+              <Route element={<Layout />}>
+                {/* Student/Faculty */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute allowedRoles={["student", "faculty", "demo-student", "demo-faculty"]}>
                       <Dashboard />
                     </ProtectedRoute>
-                    } />
+                  }
+                />
 
-
-                  <Route element={<AvailabilityProvider><Outlet /></AvailabilityProvider>}>
-                    <Route path='dashboard/newappointment' element={
-                      <ProtectedRoute allowedRoles={['student', 'faculty', 'demo-student', 'demo-faculty']}>
+                <Route element={<AvailabilityProvider><Outlet /></AvailabilityProvider>}>
+                  <Route
+                    path="/dashboard/newappointment"
+                    element={
+                      <ProtectedRoute allowedRoles={["student", "faculty", "demo-student", "demo-faculty"]}>
                         <NewAppointment />
                       </ProtectedRoute>
-                      } />
-
-                    <Route path='dashboard/editappointment' element={
-                      <ProtectedRoute allowedRoles={['student', 'faculty', 'demo-student', 'demo-faculty']}>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/editappointment"
+                    element={
+                      <ProtectedRoute allowedRoles={["student", "faculty", "demo-student", "demo-faculty"]}>
                         <EditAppointment />
                       </ProtectedRoute>
-                      } />
-
-                    <Route path='dashboard/newreservation' element={
-                      <ProtectedRoute allowedRoles={['faculty', 'demo-faculty']}>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/newreservation"
+                    element={
+                      <ProtectedRoute allowedRoles={["faculty", "demo-faculty"]}>
                         <NewReservation />
                       </ProtectedRoute>
-                      } />
-                  </Route>
+                    }
+                  />
+                </Route>
 
+                {/* Admin */}
+                <Route
+                  path="/admin-dashboard"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "demo-admin"]}>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin-dashboard/equipment"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "demo-admin"]}>
+                      <Equipment />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin-dashboard/equipment/edit"
+                  element={
+                    <ProtectedRoute allowedRoles={["admin", "demo-admin"]}>
+                      <EditEquipment />
+                    </ProtectedRoute>
+                  }
+                />
 
-                  {/* Admin routes */}
-                  <Route path="admin-dashboard" element={
-                      <ProtectedRoute allowedRoles={['admin', 'demo-admin']}>
-                        <AdminDashboard />
-                      </ProtectedRoute>
-                    } />
-
-                  <Route path="admin-dashboard/equipment" element={
-                      <ProtectedRoute allowedRoles={['admin', 'demo-admin']}>
-                        <Equipment />
-                      </ProtectedRoute>
-                    } />
-
-                  <Route path="admin-dashboard/equipment/edit" element={
-                      <ProtectedRoute allowedRoles={['admin', 'demo-admin']}>
-                        <EditEquipment />
-                      </ProtectedRoute>
-                    } />
-                  
-                  <Route element={<AvailabilityProvider><Outlet /></AvailabilityProvider>}>
-                    <Route path="admin-dashboard/schedule" element={
-                      <ProtectedRoute allowedRoles={['admin', 'demo-admin']}>
+                <Route element={<AvailabilityProvider><Outlet /></AvailabilityProvider>}>
+                  <Route
+                    path="/admin-dashboard/schedule"
+                    element={
+                      <ProtectedRoute allowedRoles={["admin", "demo-admin"]}>
                         <Schedule />
                       </ProtectedRoute>
-                      } /> 
-                  </Route>
-                  <Route path='/styles' element={<Styles/>} />
+                    }
+                  />
                 </Route>
-              </Routes>
-            </Suspense>
-          </Wrapper>
-        </AuthProvider>
-      </Router>
-      
-    </>
+              </Route>
+            </Route>
+          </Routes>
+        </Suspense>
+      </Wrapper>
+    </Router>
   )
 }
 
