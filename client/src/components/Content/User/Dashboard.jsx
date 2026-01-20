@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../AuthContext";
+import LoadingOrbit from "../../Icons/LoadingOrbit";
 
 import AppointmentCard from "../Cards/AppointmentCard";
 import { API_URL } from "../../../config";
@@ -83,7 +84,15 @@ export default function Dashboard() {
         navigate('/dashboard/newappointment')
     }
 
-    if (loading) return (<main>Loading Your Dashboard...</main>)
+    if (loading) 
+        return (
+        <main className='flow-lg'>
+            <h2>
+                Loading Your Workspace...
+            </h2>
+            <LoadingOrbit />
+        </main>
+    )
 
     return (
         <main>

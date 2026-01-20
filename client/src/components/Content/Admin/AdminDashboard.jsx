@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "../../../AuthContext.jsx";
+import LoadingOrbit from "../../Icons/LoadingOrbit.jsx";
 
 import AppointmentCardAdmin from "../Cards/AppointmentCardAdmin.jsx";
 import { API_URL } from "../../../config.js";
@@ -67,6 +68,16 @@ export default function AdminDashboard() {
             setShowCancelled(prev => !prev);
         }
     }
+
+    if (loading) 
+        return (
+            <main className='flow-lg'>
+                <h2>
+                    Loading Your Workspace...
+                </h2>
+                <LoadingOrbit />
+            </main>
+    )
 
     return (
         <main>
