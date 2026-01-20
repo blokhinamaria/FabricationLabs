@@ -1,0 +1,61 @@
+button {
+    box-sizing: border-box;
+    background-color: var(--glass-background);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 6px var(--drop-shadow); 
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    font-family: "Zalando Sans", sans-serif;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--black);
+    border-radius: var(--border-radius-inside);
+    padding: 12px;
+    width: 100%;
+    max-width: 450px;
+}
+
+button.small {
+    width: max-content;
+}
+
+button.back-button {
+    flex: 2;
+    text-wrap: nowrap;
+    font-size: 0.85rem;
+}
+
+button:hover, button:focus {
+    background-color: var(--accent1-opaque);
+    border: 1px solid var(--accent1);
+    box-shadow: 0 4px 6px var(--accent1-shadow); 
+}
+
+button.button-selected {
+    background-color: var(--accent1-opaque);
+    box-shadow: 0 4px 6px var(--accent1-shadow); 
+}
+
+button:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: center;
+    width: 100%;
+    max-width: calc(var(--max-width) + (var(--gap-small) * 2));
+    gap: var(--gap-small);
+}
+
+.appointment-buttons {
+    width: 100%;
+}

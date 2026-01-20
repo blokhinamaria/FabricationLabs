@@ -1,0 +1,120 @@
+input {
+    width: 100%;
+    height: 45px;
+    background-color: var(--white-semi-opaque);
+    border: 1px solid var(--light-grey);
+    border-radius: 10px;
+    color: var(--input-text);
+    font-family: "Zalando Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px;
+    text-align: center;
+}
+
+input::placeholder {
+    color: var(--grey);
+    font-family: "Zalando Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+input:hover {
+    outline: 2px solid color-mix(in oklab, var(--accent2) 70%, white);
+    outline-offset: 3px;
+}
+
+input[type='checkbox'], input[type='radio'] {
+    width: 20px;
+    height: 20px;
+    margin-block: 5px;
+    accent-color: var(--accent1);
+    outline: 1px solid var(--accent1-opaque);
+}
+
+input[type="date"] {
+    color-scheme: light;
+}
+
+input.invalid {
+    border: 1px solid var(--warning);
+}
+
+input.invalid:focus, input.invalid:active {
+    outline-color: var(--warning);
+} 
+
+div.input-group-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: start;
+}
+
+div.input-group-wrapper.column {
+    flex-direction: column;
+    gap: 0;
+}
+
+.input-group-wrapper input[type="checkbox"] {
+  flex-shrink: 0; /* Prevents checkbox from shrinking */
+}
+
+form {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+    /* margin: auto; */
+}
+
+form > button[type='submit'] {
+    margin-block-start: var(--gap-small);
+}
+
+textarea {
+    display: block;
+    width: 100%;
+    min-height: 150px;
+    background-color: var(--white-semi-opaque);
+    border: 1px solid var(--light-grey);
+    border-radius: 10px;
+    color: var(--input-text);
+    font-family: "Zalando Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px;
+    text-align: start;
+}
+
+textarea::placeholder {
+    color: var(--grey);
+    font-family: "Zalando Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: start;
+}
+
+textarea:hover, textarea:focus {
+    border: 1px solid var(--accent1);
+}
+
+select {
+    box-sizing: border-box;
+    width: 100%;
+    height: 45px;
+    background-color: var(--white-semi-opaque);
+    border: 1px solid var(--light-grey);
+    border-radius: 10px;
+    color: var(--input-text);
+    font-family: "Zalando Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px;
+    text-align: center;
+
+}

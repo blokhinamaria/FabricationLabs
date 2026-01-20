@@ -1,0 +1,196 @@
+header {
+  background-color: var(--glass-background);
+  border: 1px solid var(--glass-border);
+  border-radius: 15px;
+  box-shadow: 0 4px 12px var(--drop-shadow);
+
+  /* Fluid spacing */
+  padding: clamp(10px, 1.8vw, 16px);
+  margin: clamp(10px, 2.5vw, 20px);
+
+  /* Avoid fixed height for accessibility (text zoom) */
+  min-height: clamp(72px, 9vw, 96px);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(12px, 3vw, 30px);
+
+  position: sticky;
+  top: clamp(10px, 2vw, 20px);
+  z-index: 3;
+
+  /* Glass effect with fallback */
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* Fallback if backdrop-filter unsupported */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  header {
+    background-color: color-mix(in oklab, var(--glass-background) 70%, white);
+  }
+}
+
+/* Only interactive elements should look interactive */
+header * {
+  cursor: default;
+}
+
+/* Make logo container feel like a button/link (accessibility) */
+header > .logo-container {
+  padding: clamp(6px, 1.2vw, 10px);
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-inside);
+
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+
+  font-family: "Zalando Sans Expanded", sans-serif;
+  font-weight: 800;
+  font-size: clamp(1rem, 1.1vw + 0.6rem, 1.2rem);
+  line-height: 1.1;
+
+  /* If the logo container is clickable in your JSX, keep cursor pointer here */
+  cursor: pointer;
+}
+
+header > .logo-container:hover {
+  border-color: var(--glass-border);
+  box-shadow: 0 4px 10px var(--drop-shadow);
+}
+
+/* Keyboard focus: visible and high contrast */
+header a:focus-visible,
+header button:focus-visible,
+header [role="button"]:focus-visible,
+header .logo-container:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--accent2) 70%, white);
+  outline-offset: 4px;
+}
+
+/* Group on the right side */
+header > div {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 3vw, 40px);
+}
+
+/* Nav */
+header nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3.5vw, 40px);
+
+  /* Prevent wrapping but allow overflow on tiny screens */
+  white-space: nowrap;
+  border: 0;
+}
+
+header nav ul {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 3.5vw, 40px);
+
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  font-family: "Zalando Sans", sans-serif;
+  font-size: clamp(0.95rem, 0.35vw + 0.85rem, 1rem);
+  font-weight: 500;
+}
+
+/* Make nav items obviously interactive if they are links/buttons */
+header nav a,
+header nav button {
+  cursor: pointer;
+}
+
+/* User type badge */
+header span.user-type {
+  font-family: "Zalando Sans Expanded", sans-serif;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  font-size: clamp(0.85rem, 0.3vw + 0.8rem, 1rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Logo image */
+img.header-logo {
+  height: clamp(44px, 5.5vw, 58px);
+  width: auto;
+}
+
+/* Hamburger button */
+#hamburger {
+  display: none;
+  /* min-width: none is invalid; use this instead */
+  min-width: 0;
+  cursor: pointer;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  #hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  header > div {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  /* Scope nav styles properly (your original used `nav` not `header nav`) */
+  header nav {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+
+    /* Collapsible panel behavior */
+    max-height: 0;
+    overflow: clip; /* better than hidden when supported */
+    transition: max-height 200ms ease;
+
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    width: min(92vw, 450px);
+    padding: 0; /* open state adds padding */
+
+    border-radius: 15px;
+    background-color: color-mix(in oklab, var(--background-color) 82%, white);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 22px rgba(0,0,0,.18);
+
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+  }
+
+  header nav ul {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  header nav.open {
+    /* Give it room to expand */
+    max-height: 60vh;
+    padding: 16px;
+    opacity: 1;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  header nav {
+    transition: none;
+  }
+}

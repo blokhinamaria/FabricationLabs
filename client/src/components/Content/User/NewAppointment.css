@@ -1,0 +1,52 @@
+.appointment-booking-grid {
+    --appointment-sidebar-width: 305px;
+    display: grid;
+    grid-template-columns: var(--appointment-sidebar-width) minmax(0, 1fr);
+    width: 100%;
+    max-width: 1450px;
+    margin: 0 auto;
+    gap: var(--gap-small);
+    padding: var(--gap-small);
+    align-items: start;
+    text-align: left;
+}
+
+@media (max-width: 900px) {
+    .appointment-booking-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .appointment-sidebar {
+        min-width: 0;
+    }
+}
+
+.appointment-sidebar {
+    width: 100%;
+    min-width: var(--appointment-sidebar-width);
+}
+
+.appointment-sidebar > *:not(:last-child) {
+    margin-bottom: 50px;
+}
+
+.grid-main {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+    .appointment-booking-grid {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .appointment-sidebar {
+        min-width: 0;
+    }
+}
