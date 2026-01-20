@@ -117,9 +117,9 @@ export async function demoLogin(req, res) {
     }
 
     const roleObject = {
-        faculty: 'demo-faculty@fabricationlabs.com',
-        admin: 'demo-admin@fabricationlabs.com',
-        student: 'demo-student@fabricationlabs.com'
+        faculty: 'demo-faculty@fablabs.com',
+        admin: 'demo-admin@fablabs.com',
+        student: 'demo-student@fablabs.com'
     }
 
     const email = roleObject[role];
