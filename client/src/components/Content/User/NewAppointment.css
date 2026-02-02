@@ -5,7 +5,7 @@
     width: 100%;
     max-width: 1450px;
     margin: 0 auto;
-    gap: var(--gap-small);
+    gap: var(--gap-lg);
     padding: var(--gap-small);
     align-items: start;
     text-align: left;
