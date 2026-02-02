@@ -94,6 +94,13 @@ export default function AppointmentCardAdmin({id, data}) {
         }
     }
 
+    function handleKeyActivate(e, callback) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            callback(e);
+        }
+    }
+
     if (loading) return <p>Loading...</p>
     if (error) return <div>Error: {error}</div>
     if (!appointment) return <p>No appointment found</p>
@@ -107,17 +114,38 @@ export default function AppointmentCardAdmin({id, data}) {
                 {isExpanded ? 
                     (
                         <Tooltip title='Hide details' arrow placement="right">
-                            <ExpandCircleUpIcon className="dropdown-icon" onClick={handleExpand}/>
+                            <ExpandCircleUpIcon
+                                className="dropdown-icon"
+                                onClick={handleExpand}
+                                onKeyDown={(e) => handleKeyActivate(e, () => handleExpand())}
+                                role="button"
+                                tabIndex={0}
+                                aria-label="Hide details"
+                            />
                         </Tooltip>
                     ) : (
                         <Tooltip title='See all details' arrow placement="right">
-                            <ExpandCircleDownIcon className="dropdown-icon" onClick={handleExpand} />
+                            <ExpandCircleDownIcon
+                                className="dropdown-icon"
+                                onClick={handleExpand}
+                                onKeyDown={(e) => handleKeyActivate(e, () => handleExpand())}
+                                role="button"
+                                tabIndex={0}
+                                aria-label="Show all details"
+                            />
                         </Tooltip>
                     )
                 }
             </div>
             {!isDateVisible ? (
-                <div  className="card-content-group hover" onClick={() => setIsDateVisible(prev => !prev)}>
+                <div
+                    className="card-content-group hover"
+                    onClick={() => setIsDateVisible(prev => !prev)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => handleKeyActivate(e, () => setIsDateVisible(prev => !prev))}
+                    aria-label="Toggle date details"
+                >
                     <div className="card-icon-text">
                         <AlarmIcon/>
                         <p>
@@ -128,7 +156,14 @@ export default function AppointmentCardAdmin({id, data}) {
                     <ArrowDownIcon className="dropdown-icon"/>
                 </div>
             ) : (
-                <div className="card-content-group hover" onClick={() => setIsDateVisible(prev => !prev)}>
+                <div
+                    className="card-content-group hover"
+                    onClick={() => setIsDateVisible(prev => !prev)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => handleKeyActivate(e, () => setIsDateVisible(prev => !prev))}
+                    aria-label="Toggle date details"
+                >
                     <div className="card-icon-text">
                         <AlarmIcon/>
                         <p>
@@ -156,7 +191,14 @@ export default function AppointmentCardAdmin({id, data}) {
             }
             {appointment.userName ? (
                 !isEmailVisible ? 
-                (<div  className="card-content-group hover" onClick={() => setIsEmailVisible(prev => !prev)}>
+                (<div
+                    className="card-content-group hover"
+                    onClick={() => setIsEmailVisible(prev => !prev)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => handleKeyActivate(e, () => setIsEmailVisible(prev => !prev))}
+                    aria-label="Show email"
+                >
                     <div className="card-icon-text">
                         <PersonIcon />
                         <p>{appointment.userName}</p>
@@ -164,12 +206,26 @@ export default function AppointmentCardAdmin({id, data}) {
                     <ArrowDownIcon className="dropdown-icon"/>
                 </div>
                 ) : (
-                    <div  className="card-content-group hover" onClick={() => setIsEmailVisible(prev => !prev)}>
+                    <div
+                        className="card-content-group hover"
+                        onClick={() => setIsEmailVisible(prev => !prev)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => handleKeyActivate(e, () => setIsEmailVisible(prev => !prev))}
+                        aria-label="Hide email"
+                    >
                         <div className="card-icon-text">
                             <PersonIcon />
                             <p>{appointment.userName}</p>
                         </div>
-                        <div className="card-icon-text" onClick={handleCopyClick}>
+                        <div
+                            className="card-icon-text"
+                            onClick={handleCopyClick}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => handleKeyActivate(e, handleCopyClick)}
+                            aria-label="Copy user email"
+                        >
                             <MailIcon />
                             <Tooltip title={copied ? ('Copied') : "Click to copy the email"} arrow placement="right">
                                 <p ref={userEmailRef} className="text-to-copy">{appointment.userEmail}</p>

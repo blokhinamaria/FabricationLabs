@@ -96,10 +96,10 @@ export default function EquipmentSelection({submitEquipment, mode}) {
     const woodshopEquipment = equipment.filter(equipment => equipment.location === "Woodshop")
 
     return (
-        <section>
-            {mode.status === 'create' && (
-                <p style={{marginBottom: '50px'}} className="limit-width">Before booking, read through <a href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank">the University of Tampa Fabrication Lab and Woodshop Policy and Guidelines</a></p>
-            )}
+            <section>
+                {mode.status === 'create' && (
+                    <p style={{marginBottom: '50px'}} className="limit-width">Before booking, read through <a href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank" rel="noopener noreferrer">the University of Tampa Fabrication Lab and Woodshop Policy and Guidelines</a></p>
+                )}
             { !isEquipmentSelected ?
                 <div className='flow'>
                     {/* Step 1: Select equipment */}

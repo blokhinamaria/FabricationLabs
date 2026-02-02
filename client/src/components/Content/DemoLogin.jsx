@@ -4,6 +4,7 @@ import { API_URL} from '../../config';
 import LoadingOrbit from '../Icons/LoadingOrbit.jsx';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
+import './DemoLogin.css';
 
 
 export default function DemoLogin() {
@@ -60,14 +61,24 @@ return (
             <>
                 <h1>Welcome to the University of Tampa<br /><span className="title-emphasis">Fabrication Labs</span></h1>
                 <article>
-                    <section className='wide flow'>
+                    <section className='wide flow demo-login-account-list'>
                         <h3>Choose an account</h3>
                         <button onClick={() => handleDemoLogin('faculty')}>Demo Faculty</button>
                         <button onClick={() => handleDemoLogin('admin')}>Demo Admin</button>
                         <button onClick={() => handleDemoLogin('student')}>Demo Student</button>
                     </section>
                     {errorMessage && <p>{errorMessage}</p>}
-                    <p><a onClick={handleTryEmail}>Or Sign In with UTampa Email Here</a></p>
+                    <p>
+                        <a
+                            href="/"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleTryEmail();
+                            }}
+                        >
+                            Or Sign In with UTampa Email Here
+                        </a>
+                    </p>
 
                 </article>
             </>
@@ -88,8 +99,28 @@ return (
                 {errorMessage && 
                     <div className='flow'>
                         <p>{errorMessage}</p>
-                        <p><a onClick={handleTryAgain}>Try Demo Again</a></p>
-                        <p><a onClick={handleTryEmail}>Or Sign In with UTampa Email Here</a></p>
+                        <p>
+                            <a
+                                href="/login/demo"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleTryAgain();
+                                }}
+                            >
+                                Try Demo Again
+                            </a>
+                        </p>
+                        <p>
+                            <a
+                                href="/"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleTryEmail();
+                                }}
+                            >
+                                Or Sign In with UTampa Email Here
+                            </a>
+                        </p>
                     </div>
                 }
             </>

@@ -307,6 +307,13 @@ async function handleSubmit(e) {
         setFormError('')
     }
 
+    function handleKeyActivate(e, callback) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            callback();
+        }
+    }
+
     return (
         <section className="flow">
             <h3>{equipment.name} Materials</h3>
@@ -325,7 +332,13 @@ async function handleSubmit(e) {
                                 />
                                 <label htmlFor={material}>{material}</label>
                                 <Tooltip title="Delete Material" arrow placement="right">
-                                    <DeleteIcon onClick={() => handleDelete(material)} />
+                                    <DeleteIcon
+                                        onClick={() => handleDelete(material)}
+                                        onKeyDown={(e) => handleKeyActivate(e, () => handleDelete(material))}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label={`Delete material ${material}`}
+                                    />
                                 </Tooltip>
                             </div>
                             <div style={{marginInlineStart: '20px', textAlign: 'start'}}>
@@ -342,7 +355,13 @@ async function handleSubmit(e) {
                                         />
                                         <label htmlFor={size}>{size}</label>
                                         <Tooltip title="Delete Size" arrow placement="right">
-                                            <DeleteIcon onClick={() => handleDelete(material, size)} />
+                                            <DeleteIcon
+                                                onClick={() => handleDelete(material, size)}
+                                                onKeyDown={(e) => handleKeyActivate(e, () => handleDelete(material, size))}
+                                                role="button"
+                                                tabIndex={0}
+                                                aria-label={`Delete size ${size} for ${material}`}
+                                            />
                                         </Tooltip>
                                     </div>
                                     <div style={{marginInlineStart: '40px', textAlign: 'start'}}>
@@ -358,19 +377,25 @@ async function handleSubmit(e) {
                                                 />
                                                 <label htmlFor={color.id}>{color.color}</label>
                                                 <Tooltip title="Delete Color" arrow placement="right">
-                                                    <DeleteIcon onClick={() => handleDelete(color.material, color.size, color.color)} />
+                                                    <DeleteIcon
+                                                        onClick={() => handleDelete(color.material, color.size, color.color)}
+                                                        onKeyDown={(e) => handleKeyActivate(e, () => handleDelete(color.material, color.size, color.color))}
+                                                        role="button"
+                                                        tabIndex={0}
+                                                        aria-label={`Delete color ${color.color}`}
+                                                    />
                                                 </Tooltip>
                                             </div>
                                         ))}
                                         <div className='input-group-wrapper'>
                                             <input
                                                 type='checkbox'
-                                                id='new-color'
-                                                name='new-color'
+                                                id={`new-color-${colors[0].id}`}
+                                                name={`new-color-${colors[0].id}`}
                                                 disabled
                                             />
                                             <label
-                                                htmlFor='new-color'
+                                                htmlFor={`new-color-${colors[0].id}`}
                                                 ref={el => labelRefs.current[colors[0].id] = el}
                                                 contentEditable={true}
                                                 suppressContentEditableWarning={true}
@@ -384,7 +409,13 @@ async function handleSubmit(e) {
                                                 >
                                                     Add new color                                   
                                             </label>
-                                            {showAddButtons[colors[0].id] && <span onClick={() => handleAddNew(colors[0].id, colors, 'new-color')}>
+                                            {showAddButtons[colors[0].id] && <span
+                                                onClick={() => handleAddNew(colors[0].id, colors, 'new-color')}
+                                                onKeyDown={(e) => handleKeyActivate(e, () => handleAddNew(colors[0].id, colors, 'new-color'))}
+                                                role="button"
+                                                tabIndex={0}
+                                                aria-label="Add new color"
+                                            >
                                                     <Tooltip title={"Add Color"} arrow placement='right'>
                                                         <AddIcon/>
                                                     </Tooltip>
@@ -396,12 +427,12 @@ async function handleSubmit(e) {
                                 <div className='input-group-wrapper'>
                                     <input
                                         type='checkbox'
-                                        id='new-size'
-                                        name='new-size'
+                                        id={`new-size-${material}`}
+                                        name={`new-size-${material}`}
                                         disabled
                                     />
                                     <label
-                                        htmlFor='new-size'
+                                        htmlFor={`new-size-${material}`}
                                         ref={el => labelRefs.current[material] = el}
                                         contentEditable={true}
                                         suppressContentEditableWarning={true}
@@ -415,7 +446,13 @@ async function handleSubmit(e) {
                                         >
                                             Add new size                                   
                                     </label>
-                                    {showAddButtons[material] && <span onClick={() => handleAddNew(material, sizeColor, 'new-size')}>
+                                    {showAddButtons[material] && <span
+                                        onClick={() => handleAddNew(material, sizeColor, 'new-size')}
+                                        onKeyDown={(e) => handleKeyActivate(e, () => handleAddNew(material, sizeColor, 'new-size'))}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Add new size"
+                                    >
                                             <Tooltip title={"Add Size"} arrow placement='right'>
                                                 <AddIcon/>
                                             </Tooltip>

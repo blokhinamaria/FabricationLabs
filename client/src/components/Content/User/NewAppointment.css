@@ -24,10 +24,9 @@
 .appointment-sidebar {
     width: 100%;
     min-width: var(--appointment-sidebar-width);
-}
-
-.appointment-sidebar > *:not(:last-child) {
-    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
 }
 
 .grid-main {
@@ -35,8 +34,20 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    /* justify-content: flex-start; */
+    justify-content: center;
+    align-items: center;
+}
+
+/* .grid-main > * {
+    width: 100%;
+    max-width: 980px;
+} */
+
+.grid-main > * {
+    /* width: 100%; */
+    max-width: 450px;
+    text-align: center;
 }
 
 @media (max-width: 768px) {

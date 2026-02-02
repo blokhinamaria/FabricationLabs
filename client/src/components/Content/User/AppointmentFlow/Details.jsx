@@ -112,71 +112,71 @@ export default function Details({submitDetails}) {
     return (
         <div>
             <h3>Confirm your details</h3>
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor='name'>Full Name</label>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor='name'>Full Name</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder={userFullName || 'Full Name'}
+                        value={userFullName}
+                        onChange={(e) => setUserFullName(e.target.value)}
+                        aria-required={true}
+                        />
+                    {nameErrorMessage ? <p aria-live='polite' className='error-message'>{nameErrorMessage}</p> : null}
+                </div>
+                <div>
+                    <label htmlFor='classNumber'>Class Number</label>
+                    <input
+                        type="text"
+                        id="classNumber"
+                        name="classNumber"
+                        placeholder="ART XXX"
+                        value={classNumber}
+                        onChange={(e) => setClassNumber(e.target.value.toUpperCase())}/>
+                    {classErrorMessage ? <p aria-live='polite' className='error-message'>{classErrorMessage}</p> : null}
+                </div>
+                <div>
+                    <label htmlFor='details'>Additional details*</label>
+                    <textarea
+                        id="details"
+                        name="details"
+                        placeholder="Provide details of your project and the materials you need so we can better prepare for your visit"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}/>
+                    {notesErrorMessage ? <p aria-live='polite' className='error-message'>{notesErrorMessage}</p> : null}
+                </div>
+                <p className="disclaimer">* Optional Fields </p>
+                <div className='input-group-wrapper'>
+                    <input
+                        id='terms'
+                        name='terms'
+                        type="checkbox"
+                        checked={agreedToTerms}
+                        onChange={(e) => setAgreedToTerms(e.target.checked)}
+                        aria-required={true}
+                    />
+                    <label htmlFor='terms'>
+                        I have read and agree to <a className='highlight' href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank" rel="noopener noreferrer">the Terms and Conditions</a>
+                    </label>
+                </div>
+                <div className='input-group-wrapper'> 
                         <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder={userFullName || 'Full Name'}
-                            value={userFullName}
-                            onChange={(e) => setUserFullName(e.target.value)}
-                            aria-required={true}
-                            />
-                        {nameErrorMessage ? <p aria-live='polite' className='error-message'>{nameErrorMessage}</p> : null}
-                    </div>
-                    <div>
-                        <label htmlFor='classNumber'>Class Number</label>
-                        <input
-                            type="text"
-                            id="classNumber"
-                            name="classNumber"
-                            placeholder="ART XXX"
-                            value={classNumber}
-                            onChange={(e) => setClassNumber(e.target.value.toUpperCase())}/>
-                        {classErrorMessage ? <p aria-live='polite' className='error-message'>{classErrorMessage}</p> : null}
-                    </div>
-                    <div>
-                        <label htmlFor='details'>Additional details*</label>
-                        <textarea
-                            id="details"
-                            name="details"
-                            placeholder="Provide details of your project and the materials you need so we can better prepare for your visit"
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}/>
-                        {notesErrorMessage ? <p aria-live='polite' className='error-message'>{notesErrorMessage}</p> : null}
-                    </div>
-                    <p className="disclaimer">* Optional Fields </p>
-                    <div className='input-group-wrapper'>
-                        <input
-                            id='terms'
-                            name='terms'
+                            id='policy'
+                            name='policy'
                             type="checkbox"
-                            checked={agreedToTerms}
-                            onChange={(e) => setAgreedToTerms(e.target.checked)}
+                            checked={agreedToPolicy}
+                            onChange={(e) => setAgreedToPolicy(e.target.checked)}
                             aria-required={true}
                         />
-                        <label htmlFor='terms'>
-                            I have read and agree to <a className='highlight' href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank">the Terms and Conditions</a>
+                        <label htmlFor='policy'>
+                            I have read and understood <a className='highlight' href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank" rel="noopener noreferrer">the University of Tampa Fabrication Lab and Woodshop Policy and Guidelines</a>
                         </label>
-                    </div>
-                    <div className='input-group-wrapper'> 
-                            <input
-                                id='policy'
-                                name='policy'
-                                type="checkbox"
-                                checked={agreedToPolicy}
-                                onChange={(e) => setAgreedToPolicy(e.target.checked)}
-                                aria-required={true}
-                            />
-                            <label htmlFor='policy'>
-                                I have read and understood <a className='highlight' href='https://www.ut.edu/academics/college-of-arts-and-letters/department-of-art-and-design-degrees/rk-bailey-art-studios-featuring-the-fab-lab' target="_blank">the University of Tampa Fabrication Lab and Woodshop Policy and Guidelines</a>
-                            </label>
-                    </div>
-                    {termErrorMessage ? <p aria-live='polite' className='error-message'>{termErrorMessage}</p> : null}
-                    <button type='submit'>Submit</button>
-                </form>
+                </div>
+                {termErrorMessage ? <p aria-live='polite' className='error-message'>{termErrorMessage}</p> : null}
+                <button type='submit'>Submit</button>
+            </form>
         </div>
     )
 }

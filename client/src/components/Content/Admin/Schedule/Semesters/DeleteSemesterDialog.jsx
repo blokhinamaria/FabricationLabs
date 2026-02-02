@@ -61,35 +61,39 @@ const DeleteSemesterDialog = forwardRef(function DeleteSemesterDialog(
             </button>
         </div>
 
-        <h4 id={`${dialogId}-title`}>Are you sure you want to delete this semester</h4>
+        <div className="dialog-content flow">
+            <h4 id={`${dialogId}-title`}>Are you sure you want to delete this semester</h4>
 
-        <div>
-            <h3>{semester.name}</h3>
+            <div>
+                <h3>{semester.name}</h3>
 
-            <div className="appointment-overview-group">
-            <p>
-                From <strong>{convertDate(semester.startDate).toDateString()}</strong>
-            </p>
-            <p>
-                Till <strong>{convertDate(semester.endDate).toDateString()}</strong>
-            </p>
-            <p>
-                <em>Status: </em> {semester.isActive ? "Active" : "Blocked"} /{" "}
-                {semester.isActive
-                ? "Users can schedule appointments"
-                : "Users can NOT schedule appointments"}
-            </p>
+                <div className="appointment-overview-group">
+                <p>
+                    From <strong>{convertDate(semester.startDate).toDateString()}</strong>
+                </p>
+                <p>
+                    Till <strong>{convertDate(semester.endDate).toDateString()}</strong>
+                </p>
+                <p>
+                    <em>Status: </em> {semester.isActive ? "Active" : "Blocked"} /{" "}
+                    {semester.isActive
+                    ? "Users can schedule appointments"
+                    : "Users can NOT schedule appointments"}
+                </p>
+                </div>
+            </div>
+            {formError && (
+                <p className="error-message" role="alert">
+                    {formError}
+                </p>
+                )}
+
+            <div className="dialog-actions">
+                <button type="button" onClick={() => handleDelete(semester._id)}>
+                    Delete
+                </button>
             </div>
         </div>
-        {formError && (
-            <p className="error-message" role="alert">
-                {formError}
-            </p>
-            )}
-
-        <button type="button" onClick={() => handleDelete(semester._id)}>
-            Delete
-        </button>
         </dialog>
     );
     });

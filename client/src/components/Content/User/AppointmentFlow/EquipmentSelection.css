@@ -17,6 +17,13 @@
     align-items: center;
 }
 
-.equipment-button .button-selected {
+.equipment-button.button-selected {
     flex: 3;
+}
+
+@media (max-width: 480px) {
+    .material-selection-button-group {
+        flex-direction: column;
+        max-width: 100%;
+    }
 }

@@ -1,6 +1,7 @@
 form.date-time-form {
     width: 100%;
-    max-width: 100%;
+    max-width: 980px;
+    margin-inline: auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     align-items: start;

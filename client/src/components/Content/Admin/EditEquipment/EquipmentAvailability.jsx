@@ -251,6 +251,13 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
         setDatesUpdated(false)
         setFormError('')
     }
+
+    function handleKeyActivate(e, callback) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            callback();
+        }
+    }
     return (
         <section className="flow-lg">
             <form onSubmit={handleSubmitAvailability}>
@@ -296,7 +303,13 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
                                         </>
                                     )}
                                     <Tooltip title="Delete Date" arrow placement="right">
-                                        <DeleteIcon onClick={() => handleDelete(date)} />
+                                        <DeleteIcon
+                                            onClick={() => handleDelete(date)}
+                                            onKeyDown={(e) => handleKeyActivate(e, () => handleDelete(date))}
+                                            role="button"
+                                            tabIndex={0}
+                                            aria-label="Delete unavailable date"
+                                        />
                                     </Tooltip>
                                 </div>
                             ))
@@ -336,7 +349,7 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
                         {
                             unavailableDateType === 'single' ? (
                                 <div>
-                                    <label htmlFor="startDate">Choose Date</label>
+                                    <label htmlFor="date">Choose Date</label>
                                     <input
                                         type="date"
                                         id="date"
@@ -360,7 +373,7 @@ export default function EquipmentAvailability({equipment, onUpdate}) {
                                         
                                     </div>
                                     <div>
-                                        <label htmlFor='start-date'>End Date</label>
+                                        <label htmlFor='end-date'>End Date</label>
                                         <input
                                             type='date'
                                             id='end-date'

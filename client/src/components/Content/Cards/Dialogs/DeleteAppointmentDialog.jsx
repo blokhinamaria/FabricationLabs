@@ -70,43 +70,47 @@ const DeleteAppointmentDialog = forwardRef(function DeleteAppointmentDialog(
                 </button>
             </div>
 
-            <h4 id={`${dialogId}-title`}>Are you sure you want to delete the {appointmentType} for</h4>
+            <div className="dialog-content flow">
+                <h4 id={`${dialogId}-title`}>Are you sure you want to delete the {appointmentType} for</h4>
 
-            <div>
-                <h3>{appointment?.equipmentName}</h3>
-                <p>on {appointmentDate.toDateString()}</p>
-                <p>
-                at{" "}
-                {appointmentDate.toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                })}
-                {isClassReservation &&
-                    reservationEnd &&
-                    ` to ${reservationEnd.toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                    })}`}
-                </p>
+                <div>
+                    <h3>{appointment?.equipmentName}</h3>
+                    <p>on {appointmentDate.toDateString()}</p>
+                    <p>
+                    at{" "}
+                    {appointmentDate.toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                    })}
+                    {isClassReservation &&
+                        reservationEnd &&
+                        ` to ${reservationEnd.toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                        })}`}
+                    </p>
+                </div>
+
+                {deleteError && (
+                    <p className="error-message" role="alert">
+                    {deleteError}
+                    </p>
+                )}
+
+                <div className="dialog-actions">
+                    {!isClassReservation && appointment?.status !== "cancelled" && (
+                        <button type="button" onClick={onModify}>
+                        Modify
+                        </button>
+                    )}
+
+                    <button type="button" onClick={() => handleDelete(appointment?._id)}>
+                        Delete
+                    </button>
+                </div>
             </div>
-
-            {deleteError && (
-                <p className="error-message" role="alert">
-                {deleteError}
-                </p>
-            )}
-
-            {!isClassReservation && appointment?.status !== "cancelled" && (
-                <button type="button" onClick={onModify}>
-                Modify
-                </button>
-            )}
-
-            <button type="button" onClick={() => handleDelete(appointment?._id)}>
-                Delete
-            </button>
         </dialog>
     );
 });

@@ -18,7 +18,7 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
     const today = dayjs();
     const minDate = today.hour() >= 16 ? today.add(1, 'day') : today
 
-    const { shouldDisableDate, loading } = useAvailability();
+    const { shouldDisableDate } = useAvailability();
 
     const [selectedDate, setSelectedDate] = useState(mode?.prevDate ? dayjs(mode.prevDate) : null);
     const [availableSlots, setAvailableSlots] = useState([]);
@@ -157,8 +157,8 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
     if (dataError) return (<p>{dataError}</p>)
 
     return (
-        <form onSubmit={handleSubmit} className='flow'>
-            <div>
+        <form onSubmit={handleSubmit} className='date-time-form'>
+            <div className='calendar-form'>
                 <h3>Choose a day</h3>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateCalendar
@@ -193,7 +193,7 @@ export default function DateTimeSelection({equipmentId, lab, submitDateTime, mod
             </div>
             
             {selectedDate ?
-                (<div>
+                (<div className='time-form'>
                     <h3>Choose a time</h3>
                     {loadingSlots ? 
                         <p>Loading available slots...</p>

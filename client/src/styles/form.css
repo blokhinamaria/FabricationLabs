@@ -67,8 +67,8 @@ form {
     gap: var(--gap-md);
     justify-content: center;
     text-align: center;
-    width: 100%;
-    max-width: 450px;
+    width: min(100%, 450px);
+    max-width: 100%;
     /* margin: auto; */
 }
 
@@ -79,7 +79,7 @@ form > button[type='submit'] {
 textarea {
     display: block;
     width: 100%;
-    min-height: 150px;
+    min-height: clamp(120px, 18vh, 220px);
     background-color: var(--white-semi-opaque);
     border: 1px solid var(--light-grey);
     border-radius: 10px;
@@ -117,4 +117,10 @@ select {
     padding: 10px;
     text-align: center;
 
+}
+
+@media (max-width: 768px) {
+    form {
+        gap: var(--gap-small);
+    }
 }

@@ -4,9 +4,9 @@
     gap: var(--gap-small);
     justify-content: center;
     text-align: start;
-    width: 305px;
+    width: min(100%, 305px);
     
-    padding: calc(var(--gap-md) - 10px);
+    padding: var(--gap-small);
     background-color: var(--glass-background);
     border: 1px solid var(--glass-border);
     border-radius: var(--border-radius-outside);
@@ -15,7 +15,7 @@
 }
 
 .card > :not(hr) {
-    padding: 10px;
+    padding: clamp(8px, 1.4vw, 10px);
 }
 
 .card > .hover {
@@ -75,4 +75,14 @@ article.edit-appointment {
     max-width: 450px;
     display: flex;
     justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .card {
+        width: 100%;
+    }
+
+    .card-button-group {
+        flex-direction: column;
+    }
 }

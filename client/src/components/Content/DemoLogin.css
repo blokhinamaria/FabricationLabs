@@ -1,0 +1,9 @@
+.demo-login-account-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.demo-login-account-list > button {
+    margin-inline: auto;
+}

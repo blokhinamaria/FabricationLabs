@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../AuthContext.jsx";
 import { ObjectId } from "bson";
 
@@ -189,11 +189,11 @@ export default function NewAppointment() {
                     />}
             {step === 'time' && 
                     (   
-                        <section className="flow-lg">  
-                            <div className="card-box">
+                        <div className="appointment-booking-grid">  
+                            <div className="appointment-sidebar">
                                 <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                             </div>
-                            <div>
+                            <div className="grid-main">
                                 <DateTimeSelection
                                     equipmentId={newAppointmentData.equipmentId}
                                     lab={newAppointmentData.location}
@@ -201,20 +201,20 @@ export default function NewAppointment() {
                                     mode={appointmentCreateMode}
                                     />
                             </div>
-                        </section>
+                        </div>
                     )}
                 
             {step === 'details' && 
                 (   
-                    <section className="flow-lg">  
-                        <div className="card-box">
+                    <div className="appointment-booking-grid">  
+                        <div className="appointment-sidebar">
                             <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
                         </div>
-                        <div>
+                        <div className="grid-main">
                             <Details submitDetails={submitDetails}/>
                             {createAppointmentError && <p>{createAppointmentError}</p>}
                         </div>
-                    </section>
+                    </div>
                 )
             }
             {step === 'confirmation' &&

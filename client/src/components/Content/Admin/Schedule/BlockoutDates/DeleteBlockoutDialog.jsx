@@ -58,36 +58,40 @@ const DeleteBlockoutDialog = forwardRef(function DeleteBlockoutDateDialog(
             </button>
         </div>
 
-        <h4 id={`${dialogId}-title`}>Are you sure you want to delete this blockout date</h4>
+        <div className="dialog-content flow">
+            <h4 id={`${dialogId}-title`}>Are you sure you want to delete this blockout date</h4>
 
-        <div>
-            <h3>{date.name}</h3>
+            <div>
+                <h3>{date.name}</h3>
 
-            {date.date ? (
-            <p>{new Date(date.date + "T00:00:00").toDateString()}</p>
-            ) : (
-            <>
-                <p>
-                From{" "}
-                <strong>
-                    {new Date((date.date || date.startDate) + "T00:00:00").toDateString()}
-                </strong>
+                {date.date ? (
+                <p>{new Date(date.date + "T00:00:00").toDateString()}</p>
+                ) : (
+                <>
+                    <p>
+                    From{" "}
+                    <strong>
+                        {new Date((date.date || date.startDate) + "T00:00:00").toDateString()}
+                    </strong>
+                    </p>
+                    <p>
+                    Till <strong>{new Date(date.endDate + "T00:00:00").toDateString()}</strong>
+                    </p>
+                </>
+                )}
+            </div>
+            {formError && (
+                <p className="error-message" role="alert">
+                    {formError}
                 </p>
-                <p>
-                Till <strong>{new Date(date.endDate + "T00:00:00").toDateString()}</strong>
-                </p>
-            </>
-            )}
+                )}
+
+            <div className="dialog-actions">
+                <button type="button" onClick={() => handleDelete(date._id)}>
+                    Delete
+                </button>
+            </div>
         </div>
-        {formError && (
-            <p className="error-message" role="alert">
-                {formError}
-            </p>
-            )}
-
-        <button type="button" onClick={() => handleDelete(date._id)}>
-            Delete
-        </button>
         </dialog>
     );
 });

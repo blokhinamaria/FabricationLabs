@@ -11,13 +11,14 @@ button {
     gap: 5px;
     font-family: "Zalando Sans", sans-serif;
     font-size: 1.125rem;
+    line-height: 1.2;
     font-weight: 600;
     cursor: pointer;
     color: var(--black);
     border-radius: var(--border-radius-inside);
     padding: 12px;
-    width: 100%;
-    max-width: 450px;
+    width: min(100%, 450px);
+    max-width: 100%;
 }
 
 button.small {
@@ -58,4 +59,11 @@ button:disabled {
 
 .appointment-buttons {
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    button {
+        font-size: 1rem;
+        padding: 10px;
+    }
 }

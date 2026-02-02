@@ -110,7 +110,18 @@ export default function Login() {
                 : 
                 <div className='flow'>
                     <h3>Check <strong>{userEmail}</strong>  and confirm sign in</h3>
-                    <p>Not seeing the email confirmation? Check your span email or <a onClick={handleTryAgain}>Try again</a></p>
+                    <p>
+                        Not seeing the email confirmation? Check your span email or{" "}
+                        <a
+                            href="/"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleTryAgain();
+                            }}
+                        >
+                            Try again
+                        </a>
+                    </p>
                 </div>
             }
             

@@ -1,33 +1,204 @@
-dialog:open {
-    background-color: var(--dialog-background-color);
+dialog,
+dialog:open,
+dialog[open] {
+    box-sizing: border-box;
     border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-inside);
+    border-radius: var(--border-radius-outside);
+    background-color: var(--dialog-background-color);
+    background-color: color-mix(in oklab, var(--dialog-background-color) 92%, white);
+    color: var(--black);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+    width: min(92vw, 500px);
+    max-width: min(92vw, 500px);
+    padding: 0;
+    margin: auto;
     display: flex;
     flex-direction: column;
-    text-align: center;
-    gap: var(--gap-small);
-    width: 100%;
-    max-width: 450px;
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+
+dialog:not([open]) {
+    display: none;
+}
+
+dialog:open,
+dialog[open] {
+    max-height: calc(100vh - 24px);
+}
+
+@supports (height: 1dvh) {
+    dialog:open,
+    dialog[open] {
+        max-height: calc(100dvh - 24px);
+    }
 }
 
 dialog::backdrop {
-    background-color: var(--dialog-backdrop-color);
+    background: var(--dialog-backdrop-color);
+    background: color-mix(in oklab, var(--dialog-backdrop-color) 88%, black);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
 }
 
 dialog > .dialog-close-button-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid color-mix(in oklab, var(--glass-border) 75%, white);
+    background: var(--dialog-background-color);
+    background: color-mix(in oklab, var(--dialog-background-color) 95%, white);
+}
+
+dialog > :not(.dialog-close-button-wrapper):not(form) {
+    padding-inline: 14px;
+}
+
+dialog > :not(.dialog-close-button-wrapper):not(form):last-child {
+    padding-bottom: 14px;
 }
 
 dialog button.dialog-close-button {
     width: max-content;
+    max-width: max-content;
+    min-width: 0;
     font-size: 0.875rem;
+    padding: 8px 10px;
 }
 
-dialog h2 {
-    margin: 0;
+dialog > form,
+dialog .dialog-close-button-wrapper + form {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    padding: 14px;
+    overflow: auto;
+    text-align: left;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 14px;
 }
 
+@supports (height: 1dvh) {
+    dialog > form,
+    dialog .dialog-close-button-wrapper + form {
+        max-height: calc(100dvh - 110px);
+    }
+}
+
+@supports not (height: 1dvh) {
+    dialog > form,
+    dialog .dialog-close-button-wrapper + form {
+        max-height: calc(100vh - 110px);
+    }
+}
+
+dialog h2,
+dialog h3,
 dialog h4 {
     margin: 0;
+    line-height: 1.2;
+}
+
+dialog p {
+    line-height: 1.4;
+}
+
+dialog form > h2,
+dialog form > h3,
+dialog form > h4 {
+    padding-bottom: 8px;
+    border-bottom: 1px solid color-mix(in oklab, var(--glass-border) 70%, white);
+}
+
+dialog .input-group-wrapper {
+    align-items: flex-start;
+}
+
+dialog label {
+    font-weight: 700;
+}
+
+dialog input,
+dialog textarea,
+dialog select {
+    text-align: left;
+}
+
+dialog textarea {
+    min-height: 120px;
+}
+
+dialog form > button[type="submit"] {
+    width: 100%;
+    max-width: none;
+}
+
+dialog .dialog-content {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    padding: 14px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+dialog .dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+}
+
+dialog .dialog-actions > button {
+    flex: 1 1 180px;
+    max-width: none;
+}
+
+@media (max-width: 768px) {
+    dialog,
+    dialog:open,
+    dialog[open] {
+        width: calc(100vw - 16px);
+        max-width: calc(100vw - 16px);
+        border-radius: 14px;
+    }
+
+    dialog > .dialog-close-button-wrapper {
+        padding: 8px 10px;
+    }
+
+    dialog > :not(.dialog-close-button-wrapper):not(form) {
+        padding-inline: 10px;
+    }
+
+    dialog > :not(.dialog-close-button-wrapper):not(form):last-child {
+        padding-bottom: 10px;
+    }
+
+    dialog > form,
+    dialog .dialog-close-button-wrapper + form {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    dialog .dialog-content {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    dialog .dialog-actions {
+        gap: 8px;
+    }
+
+    dialog .dialog-actions > button {
+        flex: 1 1 100%;
+    }
 }

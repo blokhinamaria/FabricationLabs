@@ -2,15 +2,13 @@ footer {
     background: var(--glass-background);
     backdrop-filter: blur(5px);
     border: 1px solid var(--glass-border);
-
-    padding: var(--padding-small);
-    min-height: 200px;
+    min-height: clamp(160px, 18vh, 200px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     gap: var(--gap-small);
-    padding: var(--gap-small);
+    padding: clamp(10px, 1.5vw, 16px);
 }
 
 footer > .information {
@@ -29,16 +27,19 @@ footer > .logo-container {
 
     font-family: "Zalando Sans Expanded", sans-serif;
     font-weight: 800;
-    font-size: 1.3rem;
+    font-size: clamp(1rem, 0.5vw + 0.9rem, 1.3rem);
 }
 
 @media (max-width: 768px) {
     footer > .information  {
         flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
     footer > .logo-container {
         flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
 
 }
-

@@ -16,10 +16,24 @@ export default function AppointmentSummary({appointment, handleClickItem, mode='
         navigate('/dashboard')
     }
 
+    function handleKeyActivate(e, callback) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            callback();
+        }
+    }
+
     return (
         <div className='card'>
             {/* Equipment+Materials section */}
-            <div className="card-content-group hover" onClick={() => handleClickItem('equipment')}>
+            <div
+                className="card-content-group hover"
+                onClick={() => handleClickItem('equipment')}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => handleKeyActivate(e, () => handleClickItem('equipment'))}
+                aria-label="Edit equipment selection"
+            >
                 <div>
                     <p>{appointmentType} for</p>
                     <h3>{appointment?.equipmentName}</h3>           
@@ -36,7 +50,14 @@ export default function AppointmentSummary({appointment, handleClickItem, mode='
             
             {/* Date+Time name */}
             {appointment?.date && (
-                <div className='card-content-group hover' onClick={() => handleClickItem('time')}>
+                <div
+                    className='card-content-group hover'
+                    onClick={() => handleClickItem('time')}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => handleKeyActivate(e, () => handleClickItem('time'))}
+                    aria-label="Edit date and time selection"
+                >
                     <div>
                         <p>{appointmentType} at</p>
                         <div className="card-icon-text">

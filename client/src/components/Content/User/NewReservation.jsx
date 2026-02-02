@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../AuthContext.jsx";
 import { ObjectId } from "bson";
 
@@ -182,52 +182,56 @@ export default function NewReservation() {
 
     return (
         <main className="flow-lg">
-            <h1>New Class Reservation</h1>
-            {(step === 'equipment' || step === 'materials')  && 
-                <EquipmentSelection
-                    submitEquipment={submitEquipment}
-                    mode={appointmentCreateMode}
-                />}
-            {step === 'time' && 
-                (   
-                    <div className="appointment-booking-grid">  
-                        <div className="appointment-sidebar">
-                            <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
-                        </div>
-                        <div className="grid-main">
-                            <DateTimeSelectionReservation
-                                equipmentId={newAppointmentData.equipmentId}
-                                lab={newAppointmentData.location}
-                                submitDateTime={submitDateTime}
-                                mode={appointmentCreateMode}
-                                />
-                        </div>
-                    </div>
-                )}
+            <article>
+
                 
-            {step === 'details' && 
-                (   
-                    <section className="flow-lg">  
-                        <div className="card-box">
-                            <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
+                <h1>New Class Reservation</h1>
+                {(step === 'equipment' || step === 'materials')  && 
+                    <EquipmentSelection
+                        submitEquipment={submitEquipment}
+                        mode={appointmentCreateMode}
+                    />}
+                {step === 'time' && 
+                    (   
+                        <div className="appointment-booking-grid">  
+                            <div className="appointment-sidebar">
+                                <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
+                            </div>
+                            <div className="grid-main">
+                                <DateTimeSelectionReservation
+                                    equipmentId={newAppointmentData.equipmentId}
+                                    lab={newAppointmentData.location}
+                                    submitDateTime={submitDateTime}
+                                    mode={appointmentCreateMode}
+                                    />
+                            </div>
                         </div>
-                        <div>
-                            <Details submitDetails={submitDetails}/>
-                            {createAppointmentError && <p>{createAppointmentError}</p>}
-                        </div>
-                    </section>
-                )
-            }
-            {step === 'confirmation' &&
-                <section className="flow">
-                    <h3>Class Reservation created</h3>
-                    <div className="card-box">
-                        <AppointmentCard id={appointmentId} />
-                    </div>
+                    )}
                     
-                    <button onClick={handleClick}>Back to dashboard</button>
-                </section>
-            }
+                {step === 'details' && 
+                    (   
+                        <div className="appointment-booking-grid">  
+                            <div className="appointment-sidebar">
+                                <AppointmentCardSummary appointment={newAppointmentData} mode={'create'} handleClickItem={handleClickItem}/>
+                            </div>
+                            <div className="grid-main grid-main-centered">
+                                <Details submitDetails={submitDetails}/>
+                                {createAppointmentError && <p>{createAppointmentError}</p>}
+                            </div>
+                        </div>
+                    )
+                }
+                {step === 'confirmation' &&
+                    <section className="flow">
+                        <h3>Class Reservation created</h3>
+                        <div className="card-box">
+                            <AppointmentCard id={appointmentId} />
+                        </div>
+                        
+                        <button onClick={handleClick}>Back to dashboard</button>
+                    </section>
+                }
+            </article>
         </main>
     )
 }

@@ -23,6 +23,13 @@ export default function Header({isLoading = false} ) {
         setIsOpen(prev => !prev);
     }
 
+    function handleKeyActivate(e, callback) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            callback();
+        }
+    }
+
     if (isLoading) {
         return (
             <header>
@@ -47,11 +54,27 @@ export default function Header({isLoading = false} ) {
 
     return (
         <header>
-            <div className='logo-container' onClick={handleLogoClick}>
-                <img className='header-logo' src={logo} />
+            <div
+                className='logo-container'
+                onClick={handleLogoClick}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => handleKeyActivate(e, handleLogoClick)}
+                aria-label="Go to dashboard"
+            >
+                <img className='header-logo' src={logo} alt="FabLab Logo" />
             </div>
             <div>
-                <HumburgerIcon id='hamburger' onClick={menuToggle}/>
+                <HumburgerIcon
+                    id='hamburger'
+                    onClick={menuToggle}
+                    onKeyDown={(e) => handleKeyActivate(e, menuToggle)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Toggle navigation menu"
+                    aria-controls="main-menu"
+                    aria-expanded={isOpen}
+                />
                 <nav id='main-menu' className={isOpen ? 'open' : ''}>
                     <ul>
                         {isAdmin ? (

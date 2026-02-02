@@ -1,6 +1,5 @@
 import { useLayoutEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom';
-import { AuthProvider } from './AuthContext.jsx';
 import { AvailabilityProvider } from './AvailabilityContext.jsx';
 import { ProtectedRoute } from './ProtectedRoute.jsx';
 import './App.css'
@@ -13,7 +12,6 @@ import './styles/dialog.css'
 import Layout from './components/Layout.jsx';
 import LoadingFallback from './components/Layout/LoadingFallback.jsx';
 import Login from './components/Content/Login.jsx';
-import Styles from './components/Layout/Styles.jsx';
 import DemoLogin from './components/Content/DemoLogin.jsx';
 import PublicLayout from './components/PublicLayout.jsx';
 import AuthLayout from './components/AuthLayout.jsx';

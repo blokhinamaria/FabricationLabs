@@ -214,118 +214,142 @@ export default function EditAppointment() {
         navigate('/dashboard')
     }
 
+    function handleKeyActivate(e, callback) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            callback();
+        }
+    }
+
     return (
         <main className="flow">
-            <h2>Modify Appointment</h2>
-            {step === 'overview' && 
-                <article className="edit-appointment">
-                    <section className="card edit-appointment">
-                        {/* Equipment+Materials section */}
-                        <div className="card-content-group hover" onClick={() => handleClickItem('equipment')}>
-                            <div>
-                                <p>{appointmentType} for</p>
-                                <h3>{appointment?.equipmentName}</h3>           
-                            </div>                     
-                            { appointment.materialPreference ? (
-                                <div> 
-                                    <p>Preferred  Materials</p>
-                                        {appointment.materialSelections.map(material => (
-                                            <p key={material.id}><strong>{material.material} {material.size} {material.color}</strong></p>
-                                        ))}
-                                </div>
-                                ) : null}
-                        </div>
-                        
-                        {/* Date+Time name */}
-                        {appointment?.date && (
-                            <div className='card-content-group hover' onClick={() => handleClickItem('time')}>
-                                    <div>   
-                                        <p>{appointmentType} at</p>
-                                        <div className="card-icon-text">
-                                            <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
-                                            <p>{appointmentDate.toDateString()}</p>
-                                        </div>
-                                        <div className="card-icon-text">
-                                            <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
-                                            <p>{appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}{isClassReservation && `–${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}</p>
+            <article>
+
+                
+                <h1>Modify Appointment</h1>
+                {step === 'overview' && 
+                    <article className="edit-appointment">
+                        <section className="card edit-appointment">
+                            {/* Equipment+Materials section */}
+                            <div
+                                className="card-content-group hover"
+                                onClick={() => handleClickItem('equipment')}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => handleKeyActivate(e, () => handleClickItem('equipment'))}
+                                aria-label="Edit equipment selection"
+                            >
+                                <div>
+                                    <p>{appointmentType} for</p>
+                                    <h3>{appointment?.equipmentName}</h3>           
+                                </div>                     
+                                { appointment.materialPreference ? (
+                                    <div> 
+                                        <p>Preferred  Materials</p>
+                                            {appointment.materialSelections.map(material => (
+                                                <p key={material.id}><strong>{material.material} {material.size} {material.color}</strong></p>
+                                            ))}
+                                    </div>
+                                    ) : null}
+                            </div>
+                            
+                            {/* Date+Time name */}
+                            {appointment?.date && (
+                                <div
+                                    className='card-content-group hover'
+                                    onClick={() => handleClickItem('time')}
+                                    role="button"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => handleKeyActivate(e, () => handleClickItem('time'))}
+                                    aria-label="Edit date and time selection"
+                                >
+                                        <div>   
+                                            <p>{appointmentType} at</p>
+                                            <div className="card-icon-text">
+                                                <img src="/icons/calendar_month_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Calendar" width="24" height="24" />
+                                                <p>{appointmentDate.toDateString()}</p>
+                                            </div>
+                                            <div className="card-icon-text">
+                                                <img src="/icons/alarm_24dp_1F1F1F_FILL1_wght400_GRAD-25_opsz24.svg" alt="Clock" width="24" height="24" />
+                                                <p>{appointmentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}{isClassReservation && `–${reservationEnd.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`}</p>
+                                            </div>
                                         </div>
                                     </div>
+                                    
+                            )}
+                            <form onSubmit={e => handleSubmit(e)}>
+                                <div>
+                                    <label htmlFor='classNumber'>Class</label>
+                                    <input
+                                        type="text"
+                                        id="classNumber"
+                                        name="classNumber"
+                                        placeholder="ART XXX"
+                                        value={classNumber}
+                                        onChange={(e) => {
+                                            setClassNumber(e.target.value);
+                                            setIsUpdated(true);
+                                        }}/>
                                 </div>
-                                
-                        )}
-                        <form onSubmit={e => handleSubmit(e)}>
-                            <div>
-                                <label htmlFor='classNumber'>Class</label>
-                                <input
-                                    type="text"
-                                    id="classNumber"
-                                    name="classNumber"
-                                    placeholder="ART XXX"
-                                    value={classNumber}
-                                    onChange={(e) => {
-                                        setClassNumber(e.target.value);
-                                        setIsUpdated(true);
-                                    }}/>
+                                <div> 
+                                    <label htmlFor='details'>Additional details</label>
+                                    <textarea
+                                        id="details"
+                                        name="details"
+                                        placeholder="Provide details of what you need to do so we can better prepare for your visit"
+                                        value={notes}
+                                        onChange={(e) => {
+                                            setNotes(e.target.value);
+                                            setIsUpdated(true);
+                                        }}
+                                        />
+                                </div>
+                            </form>
+                            <div className='card-button-group column'>
+                                <button disabled={!isUpdated} onClick={e => handleSubmit(e)}>Submit</button>
+                                <button onClick={handleCancel}>Cancel</button>
                             </div>
-                            <div> 
-                                <label htmlFor='details'>Additional details</label>
-                                <textarea
-                                    id="details"
-                                    name="details"
-                                    placeholder="Provide details of what you need to do so we can better prepare for your visit"
-                                    value={notes}
-                                    onChange={(e) => {
-                                        setNotes(e.target.value);
-                                        setIsUpdated(true);
-                                    }}
-                                    />
-                            </div>
-                        </form>
-                        <div className='card-button-group column'>
-                            <button disabled={!isUpdated} onClick={e => handleSubmit(e)}>Submit</button>
-                            <button onClick={handleCancel}>Cancel</button>
+                        </section>
+                        
+                    </article>
+                }
+                {(step === 'equipment' || step === 'materials') && 
+                    <section className="appointment-booking-grid">
+                        <div className="appointment-sidebar flow">
+                            <button className='back-button' onClick={() => setStep('overview')}>Go back</button>
+                            <AppointmentCardSummary
+                                appointment={appointment}
+                                handleClickItem={handleClickItem}
+                                mode={'edit'}/>
+                            
+                        </div>
+                        <div className="grid-main grid-main-centered">
+                            <EquipmentSelection
+                                submitEquipment={submitEquipment}
+                                mode={equipmentEditMode}
+                                />
                         </div>
                     </section>
-                    
-                </article>
-            }
-            {(step === 'equipment' || step === 'materials') && 
-                <section className="flow-lg">
-                    <div className="card-box">
-                        <button className='back-button' onClick={() => setStep('overview')}>Go back</button>
-                        <AppointmentCardSummary
-                            appointment={appointment}
-                            handleClickItem={handleClickItem}
-                            mode={'edit'}/>
-                        
-                    </div>
-                    <div>
-                        <EquipmentSelection
-                            submitEquipment={submitEquipment}
-                            mode={equipmentEditMode}
-                            />
-                    </div>
-                </section>
-            }
-            {step === 'time' &&
-                <section className="flow-lg">
-                    <div className="card-box">
-                        <button className='back-button' onClick={() => setStep('overview')}>Go back</button>
-                        <AppointmentCardSummary
-                            appointment={appointment}
-                            handleClickItem={handleClickItem}
-                            mode={'edit'}/>
-                    </div>
-                    <div className="grid-main">
-                        <DateTimeSelection 
-                            equipmentId={appointment.equipmentId}
-                            submitDateTime={submitDateTime}
-                            mode={dateTimeEditMode}
-                            />
-                    </div>
-                </section>
-            }
-            
+                }
+                {step === 'time' &&
+                    <section className="appointment-booking-grid">
+                        <div className="appointment-sidebar flow">
+                            <button className='back-button' onClick={() => setStep('overview')}>Go back</button>
+                            <AppointmentCardSummary
+                                appointment={appointment}
+                                handleClickItem={handleClickItem}
+                                mode={'edit'}/>
+                        </div>
+                        <div className="grid-main">
+                            <DateTimeSelection 
+                                equipmentId={appointment.equipmentId}
+                                submitDateTime={submitDateTime}
+                                mode={dateTimeEditMode}
+                                />
+                        </div>
+                    </section>
+                }
+            </article>
         </main>
     )
 }
